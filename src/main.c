@@ -17,6 +17,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
+#include "mpu60X0.h"
 
 /*
  * This is a periodic thread that does absolutely nothing except flashing
