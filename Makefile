@@ -101,7 +101,7 @@ CSRC = $(PORTSRC) \
        $(OSALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
-       main.c
+       src/main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -132,7 +132,7 @@ ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
-         $(CHIBIOS)/os/various
+         $(CHIBIOS)/os/various src/
 
 #
 # Project, sources and paths
