@@ -34,6 +34,7 @@ static THD_FUNCTION(Thread1, arg) {
     palClearPad(GPIOD, GPIOD_LED3);     /* Orange.  */
     chThdSleepMilliseconds(500);
   }
+  return 0;
 }
 
 /*
