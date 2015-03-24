@@ -18,6 +18,7 @@
 #include "hal.h"
 #include "test.h"
 #include "mpu60X0.h"
+#include "natives.h"
 
 /*
  * This is a periodic thread that does absolutely nothing except flashing
@@ -28,11 +29,14 @@ static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
   chRegSetThreadName("blinker");
+
+  int16_t half_period = aseba_sqrt(4000);
+
   while (TRUE) {
     palSetPad(GPIOD, GPIOD_LED3);       /* Orange.  */
-    chThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(half_period);
     palClearPad(GPIOD, GPIOD_LED3);     /* Orange.  */
-    chThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(half_period);
   }
   return 0;
 }
