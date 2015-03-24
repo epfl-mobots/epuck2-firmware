@@ -30,7 +30,7 @@ endif
 
 # Enable this if you want link time optimizations (LTO)
 ifeq ($(USE_LTO),)
-  USE_LTO = nein
+  USE_LTO = no
 endif
 
 # If enabled, this option allows to compile the application in THUMB mode.
@@ -133,7 +133,9 @@ ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
-         $(CHIBIOS)/os/various src/
+         $(CHIBIOS)/os/various src/ \
+         $(CHIBIOS)/os/hal/lib/streams \
+         $(CHIBIOS)/os/various
 
 #
 # Project, sources and paths
