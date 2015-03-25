@@ -14,13 +14,16 @@
     limitations under the License.
 */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
-
 #include "chprintf.h"
 #include "shell.h"
 #include "usbcfg.h"
+#include "natives.h"
 
 /* Virtual serial port over USB.*/
 SerialUSBDriver SDU1;
@@ -101,10 +104,29 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
   chThdWait(tp);
 }
 
+static void cmd_sqrt(BaseSequentialStream *chp, int argc, char *argv[]) {
+  uint16_t input, result;
+
+  if (argc != 1) {
+    chprintf(chp, "Usage: sqrt int\r\n");
+  } else {
+    if (argv[0][0] == '-') {
+      input = (uint16_t) (- atoi(argv[0]));
+      result = aseba_sqrt(input);
+      chprintf(chp, "sqrt(-%u) = %ui \r\n", input, result);
+    } else {
+      input = (uint16_t) atoi(argv[0]);
+      result = aseba_sqrt(input);
+      chprintf(chp, "sqrt(%u) = %u \r\n", input, result);
+    }
+  }
+}
+
 static const ShellCommand commands[] = {
   {"mem", cmd_mem},
   {"threads", cmd_threads},
   {"test", cmd_test},
+  {"sqrt", cmd_sqrt},
   {NULL, NULL}
 };
 
