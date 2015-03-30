@@ -1,19 +1,3 @@
-/*
-    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -23,171 +7,103 @@
 #include "chprintf.h"
 #include "shell.h"
 #include "usbcfg.h"
-
-/* Virtual serial port over USB.*/
-SerialUSBDriver SDU1;
-
-/*
- * This is a periodic thread that does absolutely nothing except flashing
- * a LED.
- */
-static THD_WORKING_AREA(waThread1, 128);
-static THD_FUNCTION(Thread1, arg) {
-
-  (void)arg;
-  chRegSetThreadName("blinker");
-  while (TRUE) {
-    palSetPad(GPIOD, GPIOD_LED3);       /* Orange.  */
-    chThdSleepMilliseconds(500);
-    palClearPad(GPIOD, GPIOD_LED3);     /* Orange.  */
-    chThdSleepMilliseconds(500);
-  }
-  return 0;
-}
-
-/*===========================================================================*/
-/* Command line related.                                                     */
-/*===========================================================================*/
+#include "cmd.h"
+#include "mpu60X0.h"
 
 #define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
-#define TEST_WA_SIZE    THD_WORKING_AREA_SIZE(256)
 
-static void cmd_mem(BaseSequentialStream *chp, int argc, char *argv[]) {
-  size_t n, size;
 
-  (void)argv;
-  if (argc > 0) {
-    chprintf(chp, "Usage: mem\r\n");
-    return;
-  }
-  n = chHeapStatus(NULL, &size);
-  chprintf(chp, "core free memory : %u bytes\r\n", chCoreGetStatusX());
-  chprintf(chp, "heap fragments   : %u\r\n", n);
-  chprintf(chp, "heap free total  : %u bytes\r\n", size);
+// blink orange led
+static THD_WORKING_AREA(led_blinker_wa, 128);
+static THD_FUNCTION(led_blinker, arg) {
+
+    (void)arg;
+    chRegSetThreadName("blinker");
+    while (TRUE) {
+        palSetPad(GPIOD, GPIOD_LED3);
+        chThdSleepMilliseconds(500);
+        palClearPad(GPIOD, GPIOD_LED3);
+        chThdSleepMilliseconds(500);
+    }
+    return 0;
 }
 
-static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
-  static const char *states[] = {CH_STATE_NAMES};
-  thread_t *tp;
 
-  (void)argv;
-  if (argc > 0) {
-    chprintf(chp, "Usage: threads\r\n");
-    return;
-  }
-  chprintf(chp, "    addr    stack prio refs     state\r\n");
-  tp = chRegFirstThread();
-  do {
-    chprintf(chp, "%08lx %08lx %4lu %4lu %9s\r\n",
-             (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
-             (uint32_t)tp->p_prio, (uint32_t)(tp->p_refs - 1),
-             states[tp->p_state]);
-    tp = chRegNextThread(tp);
-  } while (tp != NULL);
+
+static mpu60X0_t mpu6050;
+
+// PB7: I2C1_SDA (AF4)
+// PB8: I2C1_SCL (AF4)
+static void mpu6050_setup(void)
+{
+    static const I2CConfig i2c_cfg = {
+        .op_mode = OPMODE_I2C,
+        .clock_speed = 400000,
+        .duty_cycle = FAST_DUTY_CYCLE_2
+    };
+
+    chSysLock();
+    palSetPadMode(GPIOB, 7, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
+    palSetPadMode(GPIOB, 8, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
+    chSysUnlock();
+
+    i2cStart(&I2CD1, &i2c_cfg);
+
+    mpu60X0_init_using_i2c(&mpu6050, &I2CD1, 0);
+    mpu60X0_setup(&mpu6050, MPU60X0_ACC_FULL_RANGE_2G
+                          | MPU60X0_GYRO_FULL_RANGE_250DPS
+                          | MPU60X0_SAMPLE_RATE_DIV(100)
+                          | MPU60X0_LOW_PASS_FILTER_6);
 }
 
-static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
-  thread_t *tp;
-
-  (void)argv;
-  if (argc > 0) {
-    chprintf(chp, "Usage: test\r\n");
-    return;
-  }
-  tp = chThdCreateFromHeap(NULL, TEST_WA_SIZE, chThdGetPriorityX(),
-                           TestThread, chp);
-  if (tp == NULL) {
-    chprintf(chp, "out of memory\r\n");
-    return;
-  }
-  chThdWait(tp);
+void mpu6050_read(float *gyro, float *acc)
+{
+    float temp;
+    mpu60X0_read(&mpu6050, gyro, acc, &temp);
 }
 
-static const ShellCommand commands[] = {
-  {"mem", cmd_mem},
-  {"threads", cmd_threads},
-  {"test", cmd_test},
-  {NULL, NULL}
-};
 
-static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&SDU1,
-  commands
-};
-
-/*===========================================================================*/
-/* Initialisation and main thread.                                           */
-/*===========================================================================*/
-
-/*
- * Application entry point.
- */
 int main(void) {
-  thread_t *shelltp = NULL;
+    thread_t *shelltp = NULL;
 
-  /*
-   * System initializations.
-   * - HAL initialization, this also initializes the configured device drivers
-   *   and performs the board-specific initializations.
-   * - Kernel initialization, the main() function becomes a thread and the
-   *   RTOS is active.
-   */
-  halInit();
-  chSysInit();
+    halInit();
+    chSysInit();
 
-  /*
-   * Shell manager initialization.
-   */
-  shellInit();
+    // UART2 on PA2(TX) and PA3(RX)
+    sdStart(&SD2, NULL);
+    palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
+    palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
 
-  /*
-   * Initializes a serial-over-USB CDC driver.
-   */
-  sduObjectInit(&SDU1);
-  sduStart(&SDU1, &serusbcfg);
+    // serial-over-USB CDC driver.
+    sduObjectInit(&SDU1);
+    sduStart(&SDU1, &serusbcfg);
+    usbDisconnectBus(serusbcfg.usbp);
+    chThdSleepMilliseconds(1000);
+    usbStart(serusbcfg.usbp, &usbcfg);
+    usbConnectBus(serusbcfg.usbp);
 
-  /*
-   * Activates the USB driver and then the USB bus pull-up on D+.
-   * Note, a delay is inserted in order to not have to disconnect the cable
-   * after a reset.
-   */
-  usbDisconnectBus(serusbcfg.usbp);
-  chThdSleepMilliseconds(1000);
-  usbStart(serusbcfg.usbp, &usbcfg);
-  usbConnectBus(serusbcfg.usbp);
+    mpu6050_setup();
 
-  /*
-   * Activates the serial driver 2 using the driver default configuration.
-   * PA2(TX) and PA3(RX) are routed to USART2.
-   */
-  sdStart(&SD2, NULL);
-  palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
-  palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
+    chThdCreateStatic(led_blinker_wa, sizeof(led_blinker_wa), NORMALPRIO, led_blinker, NULL);
 
-  /*
-   * Creates the example thread.
-   */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+    shellInit();
 
-  /*
-   * Normal main() thread activity, in this demo it just performs
-   * a shell respawn upon its termination.
-   */
-  while (TRUE) {
-    if (!shelltp) {
-      if (SDU1.config->usbp->state == USB_ACTIVE) {
-        /* Spawns a new shell.*/
-        shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
-      }
+    static const ShellConfig shell_cfg1 = {
+        (BaseSequentialStream *)&SDU1,
+        shell_commands
+    };
+
+    while (TRUE) {
+        if (!shelltp) {
+            if (SDU1.config->usbp->state == USB_ACTIVE) {
+                shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
+            }
+        } else {
+            if (chThdTerminatedX(shelltp)) {
+                chThdRelease(shelltp);
+                shelltp = NULL;
+            }
+        }
+        chThdSleepMilliseconds(500);
     }
-    else {
-      /* If the previous shell exited.*/
-      if (chThdTerminatedX(shelltp)) {
-        /* Recovers memory of the previous shell.*/
-        chThdRelease(shelltp);
-        shelltp = NULL;
-      }
-    }
-    chThdSleepMilliseconds(500);
-  }
 }
