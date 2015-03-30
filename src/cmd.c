@@ -61,9 +61,23 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[])
 }
 
 
+extern void mpu6050_read(float *gyro, float *acc);
+
+static void cmd_mpu6050(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    (void)argc;
+    (void)argv;
+    static float gyro[3];
+    static float acc[3];
+    mpu6050_read(gyro, acc);
+    chprintf(chp, "gyro: %f %f %f, acc %f %f %f\n", gyro[0], gyro[1], gyro[2], acc[0], acc[1], acc[2]);
+}
+
+
 const ShellCommand shell_commands[] = {
     {"mem", cmd_mem},
     {"threads", cmd_threads},
     {"test", cmd_test},
+    {"mpu6050", cmd_mpu6050},
     {NULL, NULL}
 };
