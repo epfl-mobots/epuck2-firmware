@@ -17,6 +17,8 @@
 #include "ch.h"
 #include "hal.h"
 
+SerialUSBDriver SDU1;
+
 /*
  * Endpoints to be used for USBD1.
  */
