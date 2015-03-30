@@ -8,6 +8,7 @@
 #include "shell.h"
 #include "usbcfg.h"
 #include "cmd.h"
+#include "mpu60X0.h"
 
 
 // blink orange led
@@ -27,6 +28,37 @@ static THD_FUNCTION(led_blinker, arg) {
 
 
 
+static mpu60X0_t mpu6050;
+
+// PB7: I2C1_SDA (AF4)
+// PB8: I2C1_SCL (AF4)
+static void mpu6050_setup(void)
+{
+    static const I2CConfig i2c_cfg = {
+        .op_mode = OPMODE_I2C,
+        .clock_speed = 400000,
+        .duty_cycle = FAST_DUTY_CYCLE_2
+    };
+
+    chSysLock();
+    palSetPadMode(GPIOB, 7, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
+    palSetPadMode(GPIOB, 8, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
+    chSysUnlock();
+
+    i2cStart(&I2CD1, &i2c_cfg);
+
+    mpu60X0_init_using_i2c(&mpu6050, &I2CD1, 0);
+    mpu60X0_setup(&mpu6050, MPU60X0_ACC_FULL_RANGE_2G
+                          | MPU60X0_GYRO_FULL_RANGE_250DPS
+                          | MPU60X0_SAMPLE_RATE_DIV(100)
+                          | MPU60X0_LOW_PASS_FILTER_6);
+}
+
+void mpu6050_read(float *gyro, float *acc)
+{
+    float temp;
+    mpu60X0_read(&mpu6050, gyro, acc, &temp);
+}
 
 
 int main(void) {
@@ -47,6 +79,8 @@ int main(void) {
     chThdSleepMilliseconds(1000);
     usbStart(serusbcfg.usbp, &usbcfg);
     usbConnectBus(serusbcfg.usbp);
+
+    mpu6050_setup();
 
     chThdCreateStatic(led_blinker_wa, sizeof(led_blinker_wa), NORMALPRIO, led_blinker, NULL);
 
