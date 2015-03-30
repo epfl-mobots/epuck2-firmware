@@ -1,8 +1,12 @@
-SRC = 	src/cmd.c \
-		src/main.c \
-		src/sensors/mpu60X0.c \
-		src/usbcfg.c \
-		src/sensors/proximity.c \
-		src/sensors/imu.c \
-		src/exti.c \
-		src/panic.c
+SRC += src/panic.c
+SRC += src/cmd.c
+SRC += src/main.c
+SRC += src/sensors/mpu60X0.c
+SRC += src/sensors/proximity.c
+SRC += src/sensors/imu.c
+SRC += src/usbcfg.c
+SRC += src/exti.c
+SRC += src/cmp/cmp.c
+SRC += src/cmp_mem_access/cmp_mem_access.c
+SRC += src/crc/crc32.c
+SRC += src/serial-datagram/serial_datagram.c
