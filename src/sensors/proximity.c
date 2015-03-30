@@ -36,8 +36,8 @@ static const ADCConversionGroup adcgrpcfg1 = {
 
 int proximity_main(void) {
 
-	//Sets two pins used for testing tcrt1000
-	palSetGroupMode(TCRT1000_GPIO_BASE, TCRT1000_GPIO_LED | TCRT1000_GPIO_VOLTAGE,
+	//Sets pin used for testing tcrt1000
+	palSetGroupMode(TCRT1000_GPIO_BASE, TCRT1000_GPIO_VOLTAGE,
 	              0, PAL_MODE_INPUT_ANALOG);
 
   adcStart(&ADCD1, NULL);
@@ -45,7 +45,5 @@ int proximity_main(void) {
   adcConvert(&ADCD1, &adcgrpcfg1, samples1, ADC_GRP1_BUF_DEPTH);
   chThdSleepMilliseconds(1000);
 
-
-
-	return 0;
+ return samples1[0];
 }
