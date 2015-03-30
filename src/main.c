@@ -10,6 +10,8 @@
 #include "cmd.h"
 #include "mpu60X0.h"
 
+#define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
+
 
 // blink orange led
 static THD_WORKING_AREA(led_blinker_wa, 128);
@@ -85,6 +87,11 @@ int main(void) {
     chThdCreateStatic(led_blinker_wa, sizeof(led_blinker_wa), NORMALPRIO, led_blinker, NULL);
 
     shellInit();
+
+    static const ShellConfig shell_cfg1 = {
+        (BaseSequentialStream *)&SDU1,
+        shell_commands
+    };
 
     while (TRUE) {
         if (!shelltp) {

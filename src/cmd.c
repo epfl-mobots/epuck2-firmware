@@ -6,7 +6,7 @@
 
 #define TEST_WA_SIZE    THD_WORKING_AREA_SIZE(256)
 
-void cmd_mem(BaseSequentialStream *chp, int argc, char *argv[]) {
+static void cmd_mem(BaseSequentialStream *chp, int argc, char *argv[]) {
   size_t n, size;
 
   (void)argv;
@@ -20,7 +20,7 @@ void cmd_mem(BaseSequentialStream *chp, int argc, char *argv[]) {
   chprintf(chp, "heap free total  : %u bytes\r\n", size);
 }
 
-void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
+static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
   static const char *states[] = {CH_STATE_NAMES};
   thread_t *tp;
 
@@ -40,7 +40,7 @@ void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
   } while (tp != NULL);
 }
 
-void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
+static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
   thread_t *tp;
 
   (void)argv;
@@ -56,3 +56,11 @@ void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
   chThdWait(tp);
 }
+
+
+const ShellCommand shell_commands[] = {
+  {"mem", cmd_mem},
+  {"threads", cmd_threads},
+  {"test", cmd_test},
+  {NULL, NULL}
+};
