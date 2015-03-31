@@ -14,20 +14,20 @@
 
 
 // blink orange led
-static THD_WORKING_AREA(led_blinker_wa, 128);
-static THD_FUNCTION(led_blinker, arg) {
+static THD_WORKING_AREA(mputest_thd_wa, 128);
+static THD_FUNCTION(mputest_thd, arg) {
 
     (void)arg;
-    chRegSetThreadName("blinker");
+    chRegSetThreadName("MPUtest");
+    static bool mpu_mode;
     while (TRUE) {
-        palSetPad(GPIOD, GPIOD_LED3);
-        chThdSleepMilliseconds(500);
-        palClearPad(GPIOD, GPIOD_LED3);
-        chThdSleepMilliseconds(500);
+        if(palReadPad(GPIOA, 0)) {  //switches mpu_mode when user button is pressed
+            mpu_mode = !mpu_mode;
+            chThdSleepMilliseconds(500) ;
+        }
     }
     return 0;
 }
-
 
 
 static mpu60X0_t mpu6050;
@@ -84,7 +84,7 @@ int main(void) {
 
     mpu6050_setup();
 
-    chThdCreateStatic(led_blinker_wa, sizeof(led_blinker_wa), NORMALPRIO, led_blinker, NULL);
+    chThdCreateStatic(mputest_thd_wa, sizeof(mputest_thd_wa), NORMALPRIO, mputest_thd, NULL);
 
     shellInit();
 
