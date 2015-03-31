@@ -15,8 +15,8 @@
 
 // blink orange led
 static THD_WORKING_AREA(led_blinker_wa, 128);
-static THD_FUNCTION(led_blinker, arg) {
-
+static THD_FUNCTION(led_blinker, arg)
+{
     (void)arg;
     chRegSetThreadName("blinker");
     while (TRUE) {
@@ -27,7 +27,6 @@ static THD_FUNCTION(led_blinker, arg) {
     }
     return 0;
 }
-
 
 
 static mpu60X0_t mpu6050;
