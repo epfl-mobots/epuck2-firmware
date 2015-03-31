@@ -13,24 +13,24 @@
 #define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
 
 
+static mpu60X0_t mpu6050;
+static bool mpu_mode;
+
 // blink orange led
 static THD_WORKING_AREA(mputest_thd_wa, 128);
 static THD_FUNCTION(mputest_thd, arg) {
 
     (void)arg;
     chRegSetThreadName("MPUtest");
-    static bool mpu_mode;
     while (TRUE) {
         if(palReadPad(GPIOA, 0)) {  //switches mpu_mode when user button is pressed
             mpu_mode = !mpu_mode;
-            chThdSleepMilliseconds(500) ;
         }
+        chThdSleepMilliseconds(500);
     }
     return 0;
 }
 
-
-static mpu60X0_t mpu6050;
 
 // PB7: I2C1_SDA (AF4)
 // PB8: I2C1_SCL (AF4)
@@ -62,6 +62,11 @@ void mpu6050_read(float *gyro, float *acc)
     mpu60X0_read(&mpu6050, gyro, acc, &temp);
 }
 
+
+int mputest_mode(void)
+{
+    return mpu_mode;
+}
 
 int main(void) {
     thread_t *shelltp = NULL;

@@ -82,11 +82,11 @@ static void cmd_mputest(BaseSequentialStream *chp, int argc, char *argv[])
     static float gyro[3];
     static float acc[3];
     mpu6050_read(gyro, acc);
-    if(1) {
-        chprintf(chp, "Acc: %f %f %f", acc[0], acc[1], acc[2]);
+    if(mputest_mode()) {
+        chprintf(chp, "Acc: %f %f %f\n", acc[0], acc[1], acc[2]);
     }
     else {
-        chprintf(chp, "Gyro: %f %f %f", gyro[0], gyro[1], gyro[2]);
+        chprintf(chp, "Gyro: %f %f %f\n", gyro[0], gyro[1], gyro[2]);
     }
 }
 
