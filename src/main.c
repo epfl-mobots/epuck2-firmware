@@ -40,8 +40,27 @@ static THD_FUNCTION(mputest_thd, arg) {
     while (TRUE) {
         if(palReadPad(GPIOA, 0)) {  //toggles mpu_mode when user button is pressed
             mpu_mode = !mpu_mode;
+
+            palSetPad(GPIOD, 12);
+            chThdSleepMilliseconds(500);
+
+            palSetPad(GPIOD, 13);
+            chThdSleepMilliseconds(500);
+
+            palSetPad(GPIOD, 14);
+            chThdSleepMilliseconds(500);
+
+            palSetPad(GPIOD, 15);
+
+            chThdSleepMilliseconds(500);
+
+            palClearPad(GPIOD, 12);
+            palClearPad(GPIOD, 13);
+            palClearPad(GPIOD, 14);
+            palClearPad(GPIOD, 15);
+
         }
-        chThdSleepMilliseconds(500);
+        chThdSleepMilliseconds(400);
     }
     return 0;
 }
