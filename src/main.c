@@ -11,6 +11,8 @@
 #include "mpu60X0.h"
 
 #define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
+#define ACC_THRESHOLD   2.3
+#define GYRO_THRESHOLD  0.5
 
 
 static mpu60X0_t mpu6050;
@@ -53,12 +55,64 @@ static THD_FUNCTION(mpuled_thd, arg) {
     static float buf_gyro[3];
     while (TRUE) {
         //MPU reading
-        mpu6050_read(buf_acc, buf_gyro);
+        mpu6050_read(buf_gyro, buf_acc);
 
+        //LED activation
         if(mpu_mode) {
+            //Horizontal LEDs
+            if(buf_acc[0] >= ACC_THRESHOLD) {
+                palSetPad(GPIOD, 12);
+                palClearPad(GPIOD, 14);
+            }
+            else if(buf_acc[0] <= -ACC_THRESHOLD) {
+                palSetPad(GPIOD, 14);
+                palClearPad(GPIOD, 12);
+            }
+            else {
+                palClearPad(GPIOD, 14);
+                palClearPad(GPIOD, 12);
+            }
+            //Vertical LEDs
+            if(buf_acc[1] >= ACC_THRESHOLD) {
+                palSetPad(GPIOD, 15);
+                palClearPad(GPIOD, 13);
+            }
+            else if(buf_acc[1] <= -ACC_THRESHOLD) {
+                palSetPad(GPIOD, 13);
+                palClearPad(GPIOD, 15);
+            }
+            else {
+                palClearPad(GPIOD, 13);
+                palClearPad(GPIOD, 15);
+            }
         }
         else {
-
+            //Horizontal LEDs
+            if(buf_gyro[1] >= GYRO_THRESHOLD) {
+                palSetPad(GPIOD, 14);
+                palClearPad(GPIOD, 12);
+            }
+            else if(buf_gyro[1] <= -GYRO_THRESHOLD) {
+                palSetPad(GPIOD, 12);
+                palClearPad(GPIOD, 14);
+            }
+            else {
+                palClearPad(GPIOD, 12);
+                palClearPad(GPIOD, 14);
+            }
+            //Vertical LEDs
+            if(buf_gyro[0] >= GYRO_THRESHOLD) {
+                palSetPad(GPIOD, 13);
+                palClearPad(GPIOD, 15);
+            }
+            else if(buf_gyro[0] <= -GYRO_THRESHOLD) {
+                palSetPad(GPIOD, 15);
+                palClearPad(GPIOD, 13);
+            }
+            else {
+                palClearPad(GPIOD, 13);
+                palClearPad(GPIOD, 15);
+            }
         }
         chThdSleepMilliseconds(50);
     }
