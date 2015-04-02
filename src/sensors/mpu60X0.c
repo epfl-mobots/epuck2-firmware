@@ -1,8 +1,8 @@
 #include <stdint.h>
 #include <math.h>
 
-#include "mpu60X0.h"
-#include "mpu60X0_registers.h"
+#include "sensors/mpu60X0.h"
+#include "sensors/mpu60X0_registers.h"
 
 #define STANDARD_GRAVITY 9.80665f
 #define DEG2RAD(deg) (deg/180*M_PI)
