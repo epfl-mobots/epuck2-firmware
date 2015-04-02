@@ -8,7 +8,7 @@
 #include "shell.h"
 #include "usbcfg.h"
 #include "cmd.h"
-#include "mpu60X0.h"
+#include "sensors/mpu60X0.h"
 
 #define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
 
