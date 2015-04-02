@@ -16,6 +16,19 @@
 static mpu60X0_t mpu6050;
 static bool mpu_mode;
 
+
+void mpu6050_read(float *gyro, float *acc)
+{
+    float temp;
+    mpu60X0_read(&mpu6050, gyro, acc, &temp);
+}
+
+
+int mputest_mode(void)
+{
+    return mpu_mode;
+}
+
 // blink orange led
 static THD_WORKING_AREA(mputest_thd_wa, 128);
 static THD_FUNCTION(mputest_thd, arg) {
@@ -23,7 +36,7 @@ static THD_FUNCTION(mputest_thd, arg) {
     (void)arg;
     chRegSetThreadName("MPUtest");
     while (TRUE) {
-        if(palReadPad(GPIOA, 0)) {  //switches mpu_mode when user button is pressed
+        if(palReadPad(GPIOA, 0)) {  //toggles mpu_mode when user button is pressed
             mpu_mode = !mpu_mode;
         }
         chThdSleepMilliseconds(500);
@@ -31,9 +44,30 @@ static THD_FUNCTION(mputest_thd, arg) {
     return 0;
 }
 
+static THD_WORKING_AREA(mpuled_thd_wa, 128);
+static THD_FUNCTION(mpuled_thd, arg) {
 
-// PB7: I2C1_SDA (AF4)
-// PB8: I2C1_SCL (AF4)
+    (void)arg;
+    chRegSetThreadName("MPUled");
+    static float buf_acc[3];   /* Last mpudata data.*/
+    static float buf_gyro[3];
+    while (TRUE) {
+        //MPU reading
+        mpu6050_read(buf_acc, buf_gyro);
+
+        if(mpu_mode) {
+        }
+        else {
+
+        }
+        chThdSleepMilliseconds(50);
+    }
+    return 0;
+}
+
+
+// PB9: I2C1_SDA (AF4)
+// PB6: I2C1_SCL (AF4)
 static void mpu6050_setup(void)
 {
     static const I2CConfig i2c_cfg = {
@@ -56,17 +90,7 @@ static void mpu6050_setup(void)
                           | MPU60X0_LOW_PASS_FILTER_6);
 }
 
-void mpu6050_read(float *gyro, float *acc)
-{
-    float temp;
-    mpu60X0_read(&mpu6050, gyro, acc, &temp);
-}
 
-
-int mputest_mode(void)
-{
-    return mpu_mode;
-}
 
 int main(void) {
     thread_t *shelltp = NULL;
@@ -90,6 +114,7 @@ int main(void) {
     mpu6050_setup();
 
     chThdCreateStatic(mputest_thd_wa, sizeof(mputest_thd_wa), NORMALPRIO, mputest_thd, NULL);
+    chThdCreateStatic(mpuled_thd_wa, sizeof(mpuled_thd_wa), NORMALPRIO, mpuled_thd, NULL);
 
     shellInit();
 
