@@ -10,7 +10,9 @@ extern "C" {
 }
 #endif
 
-#define EXTI_EVENT_MPU6000_INT     1
+#define EXTI_EVENT_MPU6000_INT     5
+
+void exti_setup(void);
 
 
 #endif /* EXTI_H */
