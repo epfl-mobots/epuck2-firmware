@@ -11,6 +11,7 @@ static mpu60X0_t 		mpu6050;
 gyrometer_sample_t 		imu_gyro_sample;
 accelerometer_sample_t 	imu_acc_sample;
 
+event_source_t imu_events;
 
 
 void mpu6050_read(float *gyro, float *acc)
@@ -35,6 +36,7 @@ static THD_FUNCTION(imu_reader_thd, arg) {
         //MPU reading
         chEvtWaitAny(IMU_INTERRUPT_EVENT);
         mpu6050_read(imu_gyro_sample.rate, imu_acc_sample.acceleration);
+        chEvtBroadcastFlags(&imu_events, IMU_EVENT_READING);
     }
     return 0;
 }

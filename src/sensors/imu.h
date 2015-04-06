@@ -18,6 +18,10 @@ typedef struct {
 
 extern gyrometer_sample_t       imu_gyro_sample;
 extern accelerometer_sample_t   imu_acc_sample;
+extern event_source_t imu_events;
+
+#define IMU_EVENT_READING        (1<<0)
+
 
 #ifdef __cplusplus
 }
