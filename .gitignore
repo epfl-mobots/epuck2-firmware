@@ -1,6 +1,7 @@
 # ChibiOS build files
 .dep/*
 build/
+debug/
 
 # Vim swap
 *.swp

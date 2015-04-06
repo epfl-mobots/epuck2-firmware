@@ -5,7 +5,9 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -Os -ggdb -fomit-frame-pointer -falign-functions=16 -fno-strict-aliasing
+  USE_OPT = -Os -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT += -lm # To use math.h
+  USE_OPT += -fno-strict-aliasing # This is only for Aseba because it doesn't respect the C aliasing rules
 endif
 
 # C specific options here (added to USE_OPT).
@@ -189,7 +191,7 @@ CPPWARN = -Wall -Wextra
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = -DARM_MATH_CM4
 
 # Define ASM defines here
 UADEFS =
