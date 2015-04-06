@@ -21,7 +21,7 @@ typedef struct {
 	float rate[3];
 } accelerometer_sample_t;
 
-extern gyrometer_sample_t 		imu_gyro_sample;
-extern accelerometer_sample_t 	imu_acc_sample;
+extern gyrometer_sample_timu_   gyro_sample;
+extern accelerometer_sample_t   imu_acc_sample;
 
 #endif /* IMU_H */
