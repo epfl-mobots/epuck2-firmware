@@ -72,18 +72,12 @@ static void cmd_adctest(BaseSequentialStream *chp, int argc, char *argv[])
     chprintf(chp, "adctest value: %i", analog_input);
 }
 
-extern int mputest_mode(void);
-extern void mpu6050_read(float *gyro, float *acc);
-
 
 static void cmd_mpu6050(BaseSequentialStream *chp, int argc, char *argv[])
 {
     (void)argc;
     (void)argv;
-    static float gyro[3];
-    static float acc[3];
-    mpu6050_read(gyro, acc);
-    chprintf(chp, "gyro: %f %f %f, acc %f %f %f\n", gyro[0], gyro[1], gyro[2], acc[0], acc[1], acc[2]);
+    chprintf(chp, "gyro: %f %f %f, acc %f %f %f\n", imu_gyro_sample.rate[0], imu_gyro_sample.rate[1], imu_gyro_sample.rate[2], imu_acc_sample.rate[0], imu_acc_sample.rate[1], imu_acc_sample.rate[2]);
 }
 
 

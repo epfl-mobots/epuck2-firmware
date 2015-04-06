@@ -2,11 +2,14 @@
 #include "hal.h"
 #include "sensors/mpu60X0.h"
 #include "exti.h"
+#include "imu.h"
 
-#define ACC_THRESHOLD   2.3
-#define GYRO_THRESHOLD  0.5
+#define IMU_INTERRUPT_EVENT		1
 
-static mpu60X0_t mpu6050;
+
+static mpu60X0_t 		mpu6050;
+gyrometer_sample_t 		imu_gyro_sample;
+accelerometer_sample_t 	imu_acc_sample;
 
 
 
@@ -52,21 +55,21 @@ static THD_FUNCTION(mputest_thd, arg) {
 }
 
 
-static THD_WORKING_AREA(mpuled_thd_wa, 128);
-static THD_FUNCTION(mpuled_thd, arg) {
+static THD_WORKING_AREA(imu_reader_thd_wa, 128);
+static THD_FUNCTION(imu_reader_thd, arg) {
 
     (void)arg;
     static event_listener_t imu_int;
-    // chEvtRegisterMaskWithFlags(&exti_event, &imu_int_1,
-    //                        (eventmask_t)IMU_INTERRUPT_EVENT,
-    //                        (eventflags_t)BUTTON_INTERRUPT_EVENT);
+    chEvtRegisterMaskWithFlags(&exti_events, &imu_int,
+                           (eventmask_t)IMU_INTERRUPT_EVENT,
+                           (eventflags_t)EXTI_EVENT_MPU6000_INT);
 
-    chRegSetThreadName("MPUled");
-    static float buf_acc[3];   /* Last mpudata data.*/
-    static float buf_gyro[3];
+    chRegSetThreadName("IMU_reader");
+
     while (TRUE) {
         //MPU reading
-        mpu6050_read(buf_gyro, buf_acc);
+        chEvtWaitAny(IMU_INTERRUPT_EVENT);
+        mpu6050_read(imu_gyro_sample.rate, imu_acc_sample.rate);
     }
     return 0;
 }
@@ -75,7 +78,7 @@ void imu_start(void)
 {
     exti_setup();
     chThdCreateStatic(mputest_thd_wa, sizeof(mputest_thd_wa), NORMALPRIO, mputest_thd, NULL);
-    chThdCreateStatic(mpuled_thd_wa, sizeof(mpuled_thd_wa), NORMALPRIO, mpuled_thd, NULL);
+    chThdCreateStatic(imu_reader_thd_wa, sizeof(imu_reader_thd_wa), NORMALPRIO, imu_reader_thd, NULL);
 }
 
 
