@@ -20,41 +20,6 @@ void mpu6050_read(float *gyro, float *acc)
 }
 
 
-// blink orange led
-static THD_WORKING_AREA(mputest_thd_wa, 128);
-static THD_FUNCTION(mputest_thd, arg) {
-
-    (void)arg;
-    chRegSetThreadName("MPUtest");
-    while (TRUE) {
-        if(palReadPad(GPIOA, 0)) {  //toggles mpu_mode when user button is pressed
-
-
-            chThdSleepMilliseconds(300);
-            palSetPad(GPIOD, 12);
-            chThdSleepMilliseconds(300);
-
-            palSetPad(GPIOD, 13);
-            chThdSleepMilliseconds(300);
-
-            palSetPad(GPIOD, 14);
-            chThdSleepMilliseconds(300);
-
-            palSetPad(GPIOD, 15);
-
-            chThdSleepMilliseconds(300);
-
-            palClearPad(GPIOD, 12);
-            palClearPad(GPIOD, 13);
-            palClearPad(GPIOD, 14);
-            palClearPad(GPIOD, 15);
-        }
-        chThdSleepMilliseconds(400);
-    }
-    return 0;
-}
-
-
 static THD_WORKING_AREA(imu_reader_thd_wa, 128);
 static THD_FUNCTION(imu_reader_thd, arg) {
 
@@ -77,7 +42,6 @@ static THD_FUNCTION(imu_reader_thd, arg) {
 void imu_start(void)
 {
     exti_setup();
-    chThdCreateStatic(mputest_thd_wa, sizeof(mputest_thd_wa), NORMALPRIO, mputest_thd, NULL);
     chThdCreateStatic(imu_reader_thd_wa, sizeof(imu_reader_thd_wa), NORMALPRIO, imu_reader_thd, NULL);
 }
 
