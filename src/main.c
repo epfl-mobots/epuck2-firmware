@@ -33,7 +33,7 @@ int main(void) {
     usbStart(serusbcfg.usbp, &usbcfg);
     usbConnectBus(serusbcfg.usbp);
 
-    imu_setup();
+    imu_init();
     imu_start();
 
     shellInit();

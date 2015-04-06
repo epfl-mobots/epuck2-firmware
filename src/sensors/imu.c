@@ -84,7 +84,7 @@ void imu_start(void)
 
 // PB9: I2C1_SDA (AF4)
 // PB6: I2C1_SCL (AF4)
-void imu_setup(void)
+void imu_init(void)
 {
     static const I2CConfig i2c_cfg = {
         .op_mode = OPMODE_I2C,
