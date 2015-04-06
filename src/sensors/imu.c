@@ -69,7 +69,7 @@ static THD_FUNCTION(imu_reader_thd, arg) {
     while (TRUE) {
         //MPU reading
         chEvtWaitAny(IMU_INTERRUPT_EVENT);
-        mpu6050_read(imu_gyro_sample.rate, imu_acc_sample.rate);
+        mpu6050_read(imu_gyro_sample.rate, imu_acc_sample.acceleration);
     }
     return 0;
 }

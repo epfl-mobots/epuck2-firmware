@@ -18,7 +18,7 @@ typedef struct {
 } gyrometer_sample_t;
 
 typedef struct {
-	float rate[3];
+	float acceleration[3];
 } accelerometer_sample_t;
 
 extern gyrometer_sample_t       imu_gyro_sample;
