@@ -22,16 +22,20 @@ void mpu6050_read(float *gyro, float *acc)
 
 void imu_get_gyro(float *gyro)
 {
+    chSysLock();
     gyro[0] = imu_gyro_sample.rate[0];
     gyro[1] = imu_gyro_sample.rate[1];
     gyro[2] = imu_gyro_sample.rate[2];
+    chSysUnlock();
 }
 
 void imu_get_acc(float *acc)
 {
+    chSysLock();
     acc[0] = imu_acc_sample.acceleration[0];
     acc[1] = imu_acc_sample.acceleration[1];
     acc[2] = imu_acc_sample.acceleration[2];
+    chSysUnlock();
 }
 
 static THD_WORKING_AREA(imu_reader_thd_wa, 128);
@@ -49,7 +53,9 @@ static THD_FUNCTION(imu_reader_thd, arg) {
         //MPU reading
         chEvtWaitAny(IMU_INTERRUPT_EVENT);
         chEvtGetAndClearFlags(&imu_int);
+        chSysLock();
         mpu6050_read(imu_gyro_sample.rate, imu_acc_sample.acceleration);
+        chSysUnlock();
         chEvtBroadcastFlags(&imu_events, IMU_EVENT_READING);
     }
     return 0;
