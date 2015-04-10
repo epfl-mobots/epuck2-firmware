@@ -4,4 +4,5 @@ SRC = 	src/cmd.c \
 		src/usbcfg.c \
 		src/sensors/proximity.c \
 		src/sensors/imu.c \
-		src/exti.c
+		src/exti.c \
+		src/panic.c
