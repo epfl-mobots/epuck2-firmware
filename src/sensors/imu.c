@@ -13,13 +13,6 @@ accelerometer_sample_t 	imu_acc_sample;
 
 event_source_t imu_events;
 
-
-void mpu6050_read(float *gyro, float *acc)
-{
-    float temp;
-    mpu60X0_read(&mpu6050, gyro, acc, &temp);
-}
-
 void imu_get_gyro(float *gyro)
 {
     chSysLock();
@@ -43,6 +36,7 @@ static THD_FUNCTION(imu_reader_thd, arg) {
 
     (void)arg;
     static event_listener_t imu_int;
+    float temp;
     chEvtRegisterMaskWithFlags(&exti_events, &imu_int,
                            (eventmask_t)IMU_INTERRUPT_EVENT,
                            (eventflags_t)EXTI_EVENT_MPU6000_INT);
@@ -54,7 +48,7 @@ static THD_FUNCTION(imu_reader_thd, arg) {
         chEvtWaitAny(IMU_INTERRUPT_EVENT);
         chEvtGetAndClearFlags(&imu_int);
         chSysLock();
-        mpu6050_read(imu_gyro_sample.rate, imu_acc_sample.acceleration);
+        mpu60X0_read(&mpu6050, imu_gyro_sample.rate, imu_acc_sample.acceleration, &temp);
         chSysUnlock();
         chEvtBroadcastFlags(&imu_events, IMU_EVENT_READING);
     }
