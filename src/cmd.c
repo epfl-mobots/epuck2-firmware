@@ -77,10 +77,11 @@ static void cmd_mpu6050(BaseSequentialStream *chp, int argc, char *argv[])
 {
     (void)argc;
     (void)argv;
-    chprintf(chp, "gyro: %f %f %f, acc %f %f %f\n", 
-        imu_gyro_sample.rate[0], imu_gyro_sample.rate[1], 
-        imu_gyro_sample.rate[2], imu_acc_sample.acceleration[0], 
-        imu_acc_sample.acceleration[1], imu_acc_sample.acceleration[2]);
+    float *acc = NULL;
+    float *gyro =NULL;
+    imu_get_gyro(gyro);
+    imu_get_acc(acc);
+    chprintf(chp, "gyro: %f %f %f, acc %f %f %f\n", gyro[0], gyro[1], gyro[2], acc[0], acc[1], acc[2]);
 }
 
 

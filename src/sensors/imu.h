@@ -16,8 +16,9 @@ typedef struct {
     float acceleration[3];
 } accelerometer_sample_t;
 
-extern gyrometer_sample_t       imu_gyro_sample;
-extern accelerometer_sample_t   imu_acc_sample;
+void imu_get_gyro(float *gyro);
+void imu_get_acc(float *acc);
+
 extern event_source_t imu_events;
 
 #define IMU_EVENT_READING        (1<<0)
