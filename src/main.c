@@ -33,12 +33,10 @@ int main(void) {
     usbStart(serusbcfg.usbp, &usbcfg);
     usbConnectBus(serusbcfg.usbp);
 
-    shellInit();
-
     imu_init();
     imu_start();
 
-
+    shellInit();
 
     static const ShellConfig shell_cfg1 = {
         (BaseSequentialStream *)&SDU1,
