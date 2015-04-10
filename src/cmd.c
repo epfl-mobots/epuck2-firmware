@@ -77,8 +77,8 @@ static void cmd_mpu6050(BaseSequentialStream *chp, int argc, char *argv[])
 {
     (void)argc;
     (void)argv;
-    float *acc = NULL;
-    float *gyro =NULL;
+    float acc[3];
+    float gyro[3];
     imu_get_gyro(gyro);
     imu_get_acc(acc);
     chprintf(chp, "gyro: %f %f %f, acc %f %f %f\n", gyro[0], gyro[1], gyro[2], acc[0], acc[1], acc[2]);

@@ -22,12 +22,16 @@ void mpu6050_read(float *gyro, float *acc)
 
 void imu_get_gyro(float *gyro)
 {
-    gyro = imu_gyro_sample.rate;
+    gyro[0] = imu_gyro_sample.rate[0];
+    gyro[1] = imu_gyro_sample.rate[1];
+    gyro[2] = imu_gyro_sample.rate[2];
 }
 
 void imu_get_acc(float *acc)
 {
-    acc = imu_acc_sample.acceleration;
+    acc[0] = imu_acc_sample.acceleration[0];
+    acc[1] = imu_acc_sample.acceleration[1];
+    acc[2] = imu_acc_sample.acceleration[2];
 }
 
 static THD_WORKING_AREA(imu_reader_thd_wa, 128);
