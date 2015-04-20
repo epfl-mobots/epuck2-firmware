@@ -84,6 +84,14 @@ static void cmd_mpu6050(BaseSequentialStream *chp, int argc, char *argv[])
     chprintf(chp, "gyro: %f %f %f, acc %f %f %f\n", gyro[0], gyro[1], gyro[2], acc[0], acc[1], acc[2]);
 }
 
+static void cmd_readclock(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    (void)argc;
+    (void)argv;
+    chprintf(chp, "SYSCLK: %i \n HCLK: %i \n PCLK1  %i \n PCLK2 %i \n",
+        STM32_SYSCLK, STM32_HCLK, STM32_PCLK1, STM32_PCLK2);
+}
+
 
 const ShellCommand shell_commands[] = {
     {"mem", cmd_mem},
@@ -91,5 +99,6 @@ const ShellCommand shell_commands[] = {
     {"test", cmd_test},
     {"adctest", cmd_adctest},
     {"mpu6050", cmd_mpu6050},
+    {"clock", cmd_readclock},
     {NULL, NULL}
 };
