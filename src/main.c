@@ -9,6 +9,7 @@
 #include "usbcfg.h"
 #include "sensors/imu.h"
 #include "cmd.h"
+#include "sensors/motor_pwm.h"
 
 
 static THD_WORKING_AREA(waThread1, 128);
@@ -28,6 +29,9 @@ int main(void) {
 
     halInit();
     chSysInit();
+
+    motor_pwm_start();
+
 
     chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 

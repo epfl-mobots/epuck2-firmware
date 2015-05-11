@@ -364,8 +364,8 @@
  * PB14 - PIN14                     (input pullup).
  * PB15 - PIN15                     (input pullup).
  */
-#define VAL_GPIOB_MODER             (PIN_MODE_INPUT(GPIOB_PWM0_PHASE_A) |           \
-                                     PIN_MODE_INPUT(GPIOB_PWM0_PHASE_B) |           \
+#define VAL_GPIOB_MODER             (PIN_MODE_OUTPUT(GPIOB_PWM0_PHASE_A) |           \
+                                     PIN_MODE_OUTPUT(GPIOB_PWM0_PHASE_B) |           \
                                      PIN_MODE_INPUT(GPIOB_BOOT1) |           \
                                      PIN_MODE_INPUT(GPIOB_SPI_CLK) |        \
                                      PIN_MODE_INPUT(GPIOB_SPI_MISO) |           \
@@ -412,8 +412,8 @@
                                      PIN_OSPEED_100M(GPIOB_PIN13) |         \
                                      PIN_OSPEED_100M(GPIOB_IR_PWM) |         \
                                      PIN_OSPEED_100M(GPIOB_PIN15))
-#define VAL_GPIOB_PUPDR             (PIN_PUPDR_PULLUP(GPIOB_PWM0_PHASE_A) |         \
-                                     PIN_PUPDR_PULLUP(GPIOB_PWM0_PHASE_B) |         \
+#define VAL_GPIOB_PUPDR             (PIN_PUPDR_FLOATING(GPIOB_PWM0_PHASE_A) |         \
+                                     PIN_PUPDR_FLOATING(GPIOB_PWM0_PHASE_B) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_BOOT1) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_SPI_CLK) |        \
                                      PIN_PUPDR_PULLUP(GPIOB_SPI_MISO) |         \
@@ -428,8 +428,8 @@
                                      PIN_PUPDR_PULLUP(GPIOB_PIN13) |        \
                                      PIN_PUPDR_PULLUP(GPIOB_IR_PWM) |        \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN15))
-#define VAL_GPIOB_ODR               (PIN_ODR_HIGH(GPIOB_PWM0_PHASE_A) |             \
-                                     PIN_ODR_HIGH(GPIOB_PWM0_PHASE_B) |             \
+#define VAL_GPIOB_ODR               (PIN_ODR_LOW(GPIOB_PWM0_PHASE_A) |             \
+                                     PIN_ODR_LOW(GPIOB_PWM0_PHASE_B) |             \
                                      PIN_ODR_HIGH(GPIOB_BOOT1) |             \
                                      PIN_ODR_HIGH(GPIOB_SPI_CLK) |              \
                                      PIN_ODR_HIGH(GPIOB_SPI_MISO) |             \
@@ -610,8 +610,8 @@
                                      PIN_MODE_INPUT(GPIOD_CAM_FREX) |           \
                                      PIN_MODE_INPUT(GPIOD_PIN10) |          \
                                      PIN_MODE_INPUT(GPIOD_PIN11) |          \
-                                     PIN_MODE_INPUT(GPIOD_PWM1_PHASE_A) |          \
-                                     PIN_MODE_INPUT(GPIOD_PWM1_PHASE_B) |          \
+                                     PIN_MODE_OUTPUT(GPIOD_PWM1_PHASE_A) |  \
+                                     PIN_MODE_OUTPUT(GPIOD_PWM1_PHASE_B) |  \
                                      PIN_MODE_INPUT(GPIOD_LED_DRIVER_RST) |          \
                                      PIN_MODE_OUTPUT(GPIOD_LED_ERROR))
 #define VAL_GPIOD_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOD_CAN_RX) |       \
@@ -658,8 +658,8 @@
                                      PIN_PUPDR_PULLUP(GPIOD_CAM_FREX) |         \
                                      PIN_PUPDR_PULLUP(GPIOD_PIN10) |        \
                                      PIN_PUPDR_PULLUP(GPIOD_PIN11) |        \
-                                     PIN_PUPDR_PULLUP(GPIOD_PWM1_PHASE_A) |       \
-                                     PIN_PUPDR_PULLUP(GPIOD_PWM1_PHASE_B) |       \
+                                     PIN_PUPDR_FLOATING(GPIOD_PWM1_PHASE_A) |       \
+                                     PIN_PUPDR_FLOATING(GPIOD_PWM1_PHASE_B) |       \
                                      PIN_PUPDR_PULLUP(GPIOD_LED_DRIVER_RST) |       \
                                      PIN_PUPDR_FLOATING(GPIOD_LED_ERROR))
 #define VAL_GPIOD_ODR               (PIN_ODR_HIGH(GPIOD_CAN_RX) |             \
