@@ -9,4 +9,6 @@ SRC = 	src/cmd.c \
 		src/panic.c \
 		src/encoder.c \
 		src/motor_pwm.c \
-		src/board/board.c
+		src/board/board.c \
+		src/analogic.c \
+		src/controller.c
