@@ -84,7 +84,6 @@ PROJECT = ch
 # Imported source files and paths
 CHIBIOS = ./ChibiOS
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/boards/ST_STM32F4_DISCOVERY/board.mk
 include $(CHIBIOS)/os/hal/ports/STM32/STM32F4xx/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/rt/rt.mk
@@ -141,7 +140,8 @@ INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
          $(CHIBIOS)/os/various \
          $(CHIBIOS)/os/hal/lib/streams \
-         src/
+         src/ \
+         src/board/
 
 #
 # Project, sources and paths

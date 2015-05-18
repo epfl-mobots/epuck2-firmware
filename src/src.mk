@@ -5,4 +5,5 @@ SRC = 	src/cmd.c \
 		src/sensors/proximity.c \
 		src/sensors/imu.c \
 		src/exti.c \
-		src/panic.c
+		src/panic.c \
+		src/board/board.c
