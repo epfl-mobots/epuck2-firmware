@@ -10,21 +10,29 @@
 #include "sensors/imu.h"
 #include "cmd.h"
 
-#define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
 
+static THD_WORKING_AREA(waThread1, 128);
+static THD_FUNCTION(Thread1, arg) {
 
+  (void)arg;
+  chRegSetThreadName("Heartbeat");
+  while (TRUE) {
+    palSetPad(GPIOE, GPIOE_LED_HEARTBEAT);       
+    chThdSleepMilliseconds(300);
+    palClearPad(GPIOE, GPIOE_LED_HEARTBEAT);
+    chThdSleepMilliseconds(300);
+  }
+}
 
 int main(void) {
 
     halInit();
     chSysInit();
 
-    palClearPort(GPIOE,GPIOE_LED_STATUS);
-	palClearPort(GPIOD,GPIOD_LED_ERROR);
-	palClearPort(GPIOE,GPIOE_LED_HEARTBEAT);
+    chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
-	palSetPort(GPIOE,GPIOE_LED_STATUS);
-	palSetPort(GPIOD,GPIOD_LED_ERROR);
-	palSetPort(GPIOE,GPIOE_LED_HEARTBEAT);
+    while(TRUE) {
+    	chThdSleepMilliseconds(1000);
+    }
 
 }
