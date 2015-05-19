@@ -19,6 +19,10 @@ int main(void) {
     halInit();
     chSysInit();
 
+    palClearPort(GPIOE,GPIOE_LED_STATUS);
+	palClearPort(GPIOD,GPIOD_LED_ERROR);
+	palClearPort(GPIOE,GPIOE_LED_HEARTBEAT);
+
 	palSetPort(GPIOE,GPIOE_LED_STATUS);
 	palSetPort(GPIOD,GPIOD_LED_ERROR);
 	palSetPort(GPIOE,GPIOE_LED_HEARTBEAT);

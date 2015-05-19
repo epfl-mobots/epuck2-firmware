@@ -67,7 +67,7 @@
 #define GPIOA_OTG_FS_DP             12
 #define GPIOA_SWDIO                 13
 #define GPIOA_SWCLK                 14
-#define GPIOA_MOT1_QEB            15
+#define GPIOA_MOT1_QEB              15
 
 #define GPIOB_PWM0_PHASE_A          0
 #define GPIOB_PWM0_PHASE_B          1
@@ -613,7 +613,7 @@
                                      PIN_MODE_INPUT(GPIOD_PWM1_PHASE_A) |          \
                                      PIN_MODE_INPUT(GPIOD_PWM1_PHASE_B) |          \
                                      PIN_MODE_INPUT(GPIOD_LED_DRIVER_RST) |          \
-                                     PIN_MODE_INPUT(GPIOD_LED_ERROR))
+                                     PIN_MODE_OUTPUT(GPIOD_LED_ERROR))
 #define VAL_GPIOD_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOD_CAN_RX) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOD_CAN_TX) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOD_SDIO_CMD) |       \
@@ -661,7 +661,7 @@
                                      PIN_PUPDR_PULLUP(GPIOD_PWM1_PHASE_A) |       \
                                      PIN_PUPDR_PULLUP(GPIOD_PWM1_PHASE_B) |       \
                                      PIN_PUPDR_PULLUP(GPIOD_LED_DRIVER_RST) |       \
-                                     PIN_PUPDR_PULLUP(GPIOD_LED_ERROR))
+                                     PIN_PUPDR_FLOATING(GPIOD_LED_ERROR))
 #define VAL_GPIOD_ODR               (PIN_ODR_HIGH(GPIOD_CAN_RX) |             \
                                      PIN_ODR_HIGH(GPIOD_CAN_TX) |             \
                                      PIN_ODR_HIGH(GPIOD_SDIO_CMD) |             \
@@ -722,8 +722,8 @@
                                      PIN_MODE_INPUT(GPIOE_DCMI_D4) |           \
                                      PIN_MODE_INPUT(GPIOE_DCMI_D6) |           \
                                      PIN_MODE_INPUT(GPIOE_DCMI_D7) |           \
-                                     PIN_MODE_INPUT(GPIOE_LED_HEARTBEAT) |           \
-                                     PIN_MODE_INPUT(GPIOE_LED_STATUS) |           \
+                                     PIN_MODE_OUTPUT(GPIOE_LED_HEARTBEAT) |           \
+                                     PIN_MODE_OUTPUT(GPIOE_LED_STATUS) |           \
                                      PIN_MODE_INPUT(GPIOE_MOT0_QEA) |           \
                                      PIN_MODE_INPUT(GPIOE_LED_SD) |          \
                                      PIN_MODE_INPUT(GPIOE_MOT0_QEB) |          \
@@ -770,8 +770,8 @@
                                      PIN_PUPDR_PULLUP(GPIOE_DCMI_D4) |       \
                                      PIN_PUPDR_PULLUP(GPIOE_DCMI_D6) |       \
                                      PIN_PUPDR_PULLUP(GPIOE_DCMI_D7) |       \
-                                     PIN_PUPDR_PULLUP(GPIOE_LED_HEARTBEAT) |       \
-                                     PIN_PUPDR_PULLUP(GPIOE_LED_STATUS) |       \
+                                     PIN_PUPDR_FLOATING(GPIOE_LED_HEARTBEAT) |       \
+                                     PIN_PUPDR_FLOATING(GPIOE_LED_STATUS) |       \
                                      PIN_PUPDR_PULLUP(GPIOE_MOT0_QEA) |       \
                                      PIN_PUPDR_PULLUP(GPIOE_LED_SD) |      \
                                      PIN_PUPDR_PULLUP(GPIOE_MOT0_QEB) |      \
@@ -786,8 +786,8 @@
                                      PIN_ODR_HIGH(GPIOE_DCMI_D4) |             \
                                      PIN_ODR_HIGH(GPIOE_DCMI_D6) |             \
                                      PIN_ODR_HIGH(GPIOE_DCMI_D7) |             \
-                                     PIN_ODR_HIGH(GPIOE_LED_HEARTBEAT) |             \
-                                     PIN_ODR_HIGH(GPIOE_LED_STATUS) |             \
+                                     PIN_ODR_LOW(GPIOE_LED_HEARTBEAT) |             \
+                                     PIN_ODR_LOW(GPIOE_LED_STATUS) |             \
                                      PIN_ODR_HIGH(GPIOE_MOT0_QEA) |             \
                                      PIN_ODR_HIGH(GPIOE_LED_SD) |            \
                                      PIN_ODR_HIGH(GPIOE_MOT0_QEB) |            \
@@ -881,7 +881,7 @@
                                      PIN_OSPEED_100M(GPIOF_POWER_BUTTON) |         \
                                      PIN_OSPEED_100M(GPIOF_PIN15))
 #define VAL_GPIOF_PUPDR             (PIN_PUPDR_PULLUP(GPIOF_SD_DETECT) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_POWERON) |    \
+                                     PIN_PUPDR_FLOATING(GPIOF_POWERON) |    \
                                      PIN_PUPDR_PULLUP(GPIOF_PIN2) |       \
                                      PIN_PUPDR_PULLUP(GPIOF_IR_AN0) |       \
                                      PIN_PUPDR_PULLUP(GPIOF_IR_AN1) |       \
