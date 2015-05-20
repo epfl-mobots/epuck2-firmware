@@ -59,6 +59,7 @@ static void adc2_proximity_cb(ADCDriver *adcp, adcsample_t *adc2_proximity_sampl
     uint32_t accumulator = 0;
     int i;
     if(proximity_change_adc_trigger()) {
+
         for (i = 0; i < (int)(n); i += PROXIMITY_NB_CHANNELS_ADC2) {
             accumulator += adc2_proximity_samples[i];
         }
