@@ -6,4 +6,5 @@ SRC = 	src/cmd.c \
 		src/sensors/imu.c \
 		src/exti.c \
 		src/panic.c \
+		src/motor_pwm.c \
 		src/board/board.c
