@@ -71,8 +71,8 @@ void motor_pwm_set(int pwm_select, float pwm_command)
             pwmEnableChannel(&PWMD3, MOT0_PHASE_B, (pwmcnt_t) 0);
         }
         else {
-            pwmEnableChannel(&PWMD4, MOT1_PHASE_A, (pwmcnt_t) (PWM_CYCLE * pwm_command));
-            pwmEnableChannel(&PWMD4, MOT1_PHASE_B, (pwmcnt_t) 0);
+            pwmEnableChannel(&PWMD4, MOT1_PHASE_B, (pwmcnt_t) (PWM_CYCLE * pwm_command));
+            pwmEnableChannel(&PWMD4, MOT1_PHASE_A, (pwmcnt_t) 0);
         }
     }
     else {
@@ -85,8 +85,8 @@ void motor_pwm_set(int pwm_select, float pwm_command)
             pwmEnableChannel(&PWMD3, MOT0_PHASE_A, (pwmcnt_t) 0);
         }
         else {
-            pwmEnableChannel(&PWMD4, MOT1_PHASE_B, (pwmcnt_t) (PWM_CYCLE * pwm_command));
-            pwmEnableChannel(&PWMD4, MOT1_PHASE_A, (pwmcnt_t) 0);
+            pwmEnableChannel(&PWMD4, MOT1_PHASE_A, (pwmcnt_t) (PWM_CYCLE * pwm_command));
+            pwmEnableChannel(&PWMD4, MOT1_PHASE_B, (pwmcnt_t) 0);
         }
     }
 }
