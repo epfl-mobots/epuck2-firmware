@@ -4,6 +4,12 @@
 #define PWM_CLK_FREQ 42000000
 #define PWM_CYCLE 2000
 
+#define MOT0_PHASE_A 2
+#define MOT0_PHASE_B 3
+#define MOT1_PHASE_A 0
+#define MOT1_PHASE_B 1
+
+
 
 static const PWMConfig pwmcfg1 = {
     PWM_CLK_FREQ,                                   /* 42MHz PWM clock frequency.  */
@@ -61,25 +67,26 @@ void motor_pwm_set(int pwm_select, float pwm_command)
             pwm_command = 0.75;
         }
         if(!pwm_select) {
-            pwmEnableChannel(&PWMD3, 3, (pwmcnt_t) (PWM_CYCLE * pwm_command));
-            pwmEnableChannel(&PWMD3, 4, (pwmcnt_t) 0);
+            pwmEnableChannel(&PWMD3, MOT0_PHASE_A, (pwmcnt_t) (PWM_CYCLE * pwm_command));
+            pwmEnableChannel(&PWMD3, MOT0_PHASE_B, (pwmcnt_t) 0);
         }
         else {
-            pwmEnableChannel(&PWMD4, 1, (pwmcnt_t) (PWM_CYCLE * pwm_command));
-            pwmEnableChannel(&PWMD3, 2, (pwmcnt_t) 0);
+            pwmEnableChannel(&PWMD4, MOT1_PHASE_A, (pwmcnt_t) (PWM_CYCLE * pwm_command));
+            pwmEnableChannel(&PWMD4, MOT1_PHASE_B, (pwmcnt_t) 0);
         }
     }
     else {
         if(pwm_command < -0.75) {
             pwm_command = -0.75;
         }
+        pwm_command = -pwm_command;
         if(!pwm_select) {
-            pwmEnableChannel(&PWMD3, 4, (pwmcnt_t) (PWM_CYCLE * pwm_command));
-            pwmEnableChannel(&PWMD3, 3, (pwmcnt_t) 0);
+            pwmEnableChannel(&PWMD3, MOT0_PHASE_B, (pwmcnt_t) (PWM_CYCLE * pwm_command));
+            pwmEnableChannel(&PWMD3, MOT0_PHASE_A, (pwmcnt_t) 0);
         }
         else {
-            pwmEnableChannel(&PWMD4, 2, (pwmcnt_t) (PWM_CYCLE * pwm_command));
-            pwmEnableChannel(&PWMD4, 1, (pwmcnt_t) 0);
+            pwmEnableChannel(&PWMD4, MOT1_PHASE_B, (pwmcnt_t) (PWM_CYCLE * pwm_command));
+            pwmEnableChannel(&PWMD4, MOT1_PHASE_A, (pwmcnt_t) 0);
         }
     }
 }

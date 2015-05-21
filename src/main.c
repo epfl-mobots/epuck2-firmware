@@ -30,10 +30,11 @@ int main(void) {
     halInit();
     chSysInit();
 
+    chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+
+    
     motor_pwm_start();
 
-
-    chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
     while(TRUE) {
     	chThdSleepMilliseconds(1000);
