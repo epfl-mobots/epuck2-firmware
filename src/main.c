@@ -33,6 +33,9 @@ int main(void) {
     usbStart(serusbcfg.usbp, &usbcfg);
     usbConnectBus(serusbcfg.usbp);
 
+    imu_init();
+    imu_start();
+
     shellInit();
 
     static const ShellConfig shell_cfg1 = {
