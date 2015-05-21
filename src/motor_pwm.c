@@ -57,8 +57,8 @@ void motor_pwm_stop(void)
 void motor_pwm_set(int pwm_select, float pwm_command)
 {
     if(pwm_command >= 0) {
-        if (pwm_command > 1) {
-            pwm_command = 1;
+        if (pwm_command > 0.75) {
+            pwm_command = 0.75;
         }
         if(!pwm_select) {
             pwmEnableChannel(&PWMD3, 3, (pwmcnt_t) (PWM_CYCLE * pwm_command));
@@ -70,8 +70,8 @@ void motor_pwm_set(int pwm_select, float pwm_command)
         }
     }
     else {
-        if(pwm_command < -1) {
-            pwm_command = -1;
+        if(pwm_command < -0.75) {
+            pwm_command = -0.75;
         }
         if(!pwm_select) {
             pwmEnableChannel(&PWMD3, 4, (pwmcnt_t) (PWM_CYCLE * pwm_command));
