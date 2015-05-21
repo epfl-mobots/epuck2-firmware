@@ -40,8 +40,8 @@ int encoder_tick_diff(uint32_t enc_old, uint32_t enc_new)
 void encoder_init(void)
 {
 	/* Left Encoder Init*/
-    palSetPadMode(GPIOE, 9, PAL_MODE_ALTERNATE(1) | PAL_MODE_INPUT);  //Tim1_Ch1 -> PE9
-    palSetPadMode(GPIOE, 11, PAL_MODE_ALTERNATE(1) | PAL_MODE_INPUT); //Tim1_Ch2 -> PE11
+    palSetPadMode(GPIOE, GPIOE_MOT0_QEA, PAL_MODE_ALTERNATE(1) | PAL_MODE_INPUT);  //Tim1_Ch1 -> PE9
+    palSetPadMode(GPIOE, GPIOE_MOT0_QEB, PAL_MODE_ALTERNATE(1) | PAL_MODE_INPUT); //Tim1_Ch2 -> PE11
 
     rccEnableTIM1(FALSE);                           // enable timer 1 clock
     rccResetTIM1();
@@ -57,8 +57,8 @@ void encoder_init(void)
     STM32_TIM1->CR1    = 1;                         // start
 
 	/* Right Encoder Init*/
-	palSetPadMode(GPIOA, 15, PAL_MODE_ALTERNATE(1) | PAL_MODE_INPUT);  //Tim2_Ch1 -> PA15
-    palSetPadMode(GPIOA, 1, PAL_MODE_ALTERNATE(1) | PAL_MODE_INPUT);   //Tim2_Ch2 -> PA1
+	palSetPadMode(GPIOA, GPIOA_MOT1_QEB, PAL_MODE_ALTERNATE(1) | PAL_MODE_INPUT);  //Tim2_Ch1 -> PA15
+    palSetPadMode(GPIOA, GPIOA_MOT1_QEA, PAL_MODE_ALTERNATE(1) | PAL_MODE_INPUT);   //Tim2_Ch2 -> PA1
 
     rccEnableTIM2(FALSE);                           // enable timer 2 clock
     rccResetTIM2();
