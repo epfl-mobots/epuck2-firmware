@@ -10,7 +10,7 @@
 #include "sensors/imu.h"
 #include "cmd.h"
 #include "motor_pwm.h"
-
+#include "analogic.h"
 
 static THD_WORKING_AREA(waThread1, 128);
 static THD_FUNCTION(Thread1, arg) {
@@ -25,6 +25,11 @@ static THD_FUNCTION(Thread1, arg) {
   }
 }
 
+void test_function(void)
+{
+
+}
+
 int main(void) {
 
     halInit();
@@ -32,12 +37,11 @@ int main(void) {
 
     chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
-    
-    motor_pwm_start();
-
+    test_function();
 
     while(TRUE) {
     	chThdSleepMilliseconds(1000);
     }
-
 }
+
+

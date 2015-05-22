@@ -102,16 +102,16 @@ static THD_FUNCTION(adc_motor_current, arg)
     static const ADCConversionGroup adcgrpcfg1 = {
         TRUE,                   							// circular
         MOTOR_NB_CHANNELS,      							// nb channels
-        adc_motor_cb,	           						// callback fn
+        adc_motor_cb,	           						     // callback fn
         NULL,                   							// error callback fn
         0,                      							// CR1
-        ADC_CR2_SWSTART,			            							// CR2
-        ADC_SMPR1_SMP_AN11(ADC_SAMPLE_112) | 
-        ADC_SMPR1_SMP_AN12(ADC_SAMPLE_112),					//SMPR1
-        0,   												// SMPR2
+        ADC_CR2_SWSTART,			            			// CR2
+        0,		                                			//SMPR1
+        ADC_SMPR2_SMP_AN0(ADC_SAMPLE_112) |
+        ADC_SMPR2_SMP_AN2(ADC_SAMPLE_112),   				// SMPR2
         ADC_SQR1_NUM_CH(MOTOR_NB_CHANNELS),     		    // SQR1
         0,                      							// SQR2
-        ADC_SQR3_SQ1_N(11) | ADC_SQR3_SQ2_N(12)       		// SQR3 
+        ADC_SQR3_SQ1_N(0) | ADC_SQR3_SQ2_N(2)       		// SQR3 
         //PC1 (IN11) and PC2(IN12)
     };
 

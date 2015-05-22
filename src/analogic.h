@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-void analogic_start(void);
+void analogic_start(bool adc1, bool adc2, bool adc3);
 void analog_get_motor(int32_t *value);
 void analog_get_proximity(int32_t *value);
 

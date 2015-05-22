@@ -247,9 +247,9 @@
  * PA14 - SWCLK                     (alternate 0).
  * PA15 - PIN15                     (input pullup).
  */
-#define VAL_GPIOA_MODER             (PIN_MODE_INPUT(GPIOA_MOT0_CURRENT) |         \
+#define VAL_GPIOA_MODER             (PIN_MODE_ANALOG(GPIOA_MOT0_CURRENT) |         \
                                      PIN_MODE_INPUT(GPIOA_MOT1_QEA) |           \
-                                     PIN_MODE_INPUT(GPIOA_MOT1_CURRENT) |           \
+                                     PIN_MODE_ANALOG(GPIOA_MOT1_CURRENT) |           \
                                      PIN_MODE_INPUT(GPIOA_VSYS_ADC) |           \
                                      PIN_MODE_INPUT(GPIOA_DCMI_HSYNC) |       \
                                      PIN_MODE_INPUT(GPIOA_AUDIO_SPEAKER) |        \
@@ -263,9 +263,9 @@
                                      PIN_MODE_INPUT(GPIOA_SWDIO) |      \
                                      PIN_MODE_INPUT(GPIOA_SWCLK) |      \
                                      PIN_MODE_INPUT(GPIOA_MOT1_QEB))
-#define VAL_GPIOA_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOA_MOT0_CURRENT) |     \
+#define VAL_GPIOA_OTYPER            (PIN_OTYPE_OPENDRAIN(GPIOA_MOT0_CURRENT) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOA_MOT1_QEA) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_MOT1_CURRENT) |       \
+                                     PIN_OTYPE_OPENDRAIN(GPIOA_MOT1_CURRENT) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOA_VSYS_ADC) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOA_DCMI_HSYNC) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOA_AUDIO_SPEAKER) |        \
@@ -295,9 +295,9 @@
                                      PIN_OSPEED_100M(GPIOA_SWDIO) |         \
                                      PIN_OSPEED_100M(GPIOA_SWCLK) |         \
                                      PIN_OSPEED_100M(GPIOA_MOT1_QEB))
-#define VAL_GPIOA_PUPDR             (PIN_PUPDR_PULLUP(GPIOA_MOT0_CURRENT) |     \
+#define VAL_GPIOA_PUPDR             (PIN_PUPDR_FLOATING(GPIOA_MOT0_CURRENT) |     \
                                      PIN_PUPDR_PULLUP(GPIOA_MOT1_QEA) |         \
-                                     PIN_PUPDR_PULLUP(GPIOA_MOT1_CURRENT) |         \
+                                     PIN_PUPDR_FLOATING(GPIOA_MOT1_CURRENT) |         \
                                      PIN_PUPDR_PULLUP(GPIOA_VSYS_ADC) |         \
                                      PIN_PUPDR_PULLUP(GPIOA_DCMI_HSYNC) |       \
                                      PIN_PUPDR_PULLUP(GPIOA_AUDIO_SPEAKER) |        \
@@ -311,9 +311,9 @@
                                      PIN_PUPDR_PULLUP(GPIOA_SWDIO) |      \
                                      PIN_PUPDR_PULLUP(GPIOA_SWCLK) |      \
                                      PIN_PUPDR_PULLUP(GPIOA_MOT1_QEB))
-#define VAL_GPIOA_ODR               (PIN_ODR_HIGH(GPIOA_MOT0_CURRENT) |           \
+#define VAL_GPIOA_ODR               (PIN_ODR_LOW(GPIOA_MOT0_CURRENT) |           \
                                      PIN_ODR_HIGH(GPIOA_MOT1_QEA) |             \
-                                     PIN_ODR_HIGH(GPIOA_MOT1_CURRENT) |             \
+                                     PIN_ODR_LOW(GPIOA_MOT1_CURRENT) |             \
                                      PIN_ODR_HIGH(GPIOA_VSYS_ADC) |             \
                                      PIN_ODR_HIGH(GPIOA_DCMI_HSYNC) |             \
                                      PIN_ODR_HIGH(GPIOA_AUDIO_SPEAKER) |              \
