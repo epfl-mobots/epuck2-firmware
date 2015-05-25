@@ -6,6 +6,31 @@
 #include "hal.h"
 
 
+void motor_left_init(pid_filter_t* p_left_position,
+ 		pid_filter_t* p_left_velocity, pid_filter_t* p_left_current)
+{
+    pid_set_gains(p_left_position, 0, 0, 0);
+    pid_set_gains(p_left_velocity, 0, 0, 0);
+    pid_set_gains(p_left_current, 0, 0, 0);
+
+    pid_set_integral_limit(p_left_position, 0);
+    pid_set_integral_limit(p_left_velocity, 0);
+    pid_set_integral_limit(p_left_current, 0);
+}
+
+void motor_right_init(pid_filter_t* p_right_position,
+ 		pid_filter_t* p_right_velocity, pid_filter_t* p_right_current)
+{
+    pid_set_gains(p_right_position, 0, 0, 0);
+    pid_set_gains(p_right_velocity, 0, 0, 0);
+    pid_set_gains(p_right_current, 0, 0, 0);
+
+    pid_set_integral_limit(p_right_position, 0);
+    pid_set_integral_limit(p_right_velocity, 0);
+    pid_set_integral_limit(p_right_current, 0);
+}
+
+
 static THD_WORKING_AREA(waThdMotorLeft, 128);
 static THD_FUNCTION(ThdMotorLeft, arg) {
 
@@ -15,6 +40,8 @@ static THD_FUNCTION(ThdMotorLeft, arg) {
  	pid_filter_t left_position_pid;
  	pid_filter_t left_velocity_pid;
  	pid_filter_t left_current_pid;
+
+ 	motor_left_init(&left_position_pid, &left_velocity_pid, &left_current_pid);
 
 	while (TRUE) {
 
@@ -44,6 +71,8 @@ static THD_FUNCTION(ThdMotorRight, arg) {
  	pid_filter_t right_position_pid;
  	pid_filter_t right_velocity_pid;
  	pid_filter_t right_current_pid;
+
+ 	motor_right_init(&right_position_pid, &right_velocity_pid, &right_current_pid);
 
  	(void)arg;
  	chRegSetThreadName("motor right");

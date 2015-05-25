@@ -8,6 +8,7 @@ extern "C" {
 #include <stdbool.h>
 #include "pid/pid.h"
 
+void motor_control_init(void);
 
 #ifdef __cplusplus
 }
