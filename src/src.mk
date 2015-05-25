@@ -4,11 +4,11 @@ SRC = 	src/cmd.c \
 		src/usbcfg.c \
 		src/sensors/proximity.c \
 		src/sensors/imu.c \
-		src/analogic.c \
 		src/exti.c \
 		src/panic.c \
 		src/encoder.c \
 		src/motor_pwm.c \
 		src/board/board.c \
 		src/analogic.c \
-		src/controller.c
+		src/controller.c \
+		src/motor_control.c
