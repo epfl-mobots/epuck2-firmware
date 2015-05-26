@@ -13,4 +13,5 @@ SRC = 	src/cmd.c \
 		src/control.c \
 		src/pid_cascade.c \
 		src/feedback.c \
-		src/setpoints.c
+		src/setpoints.c \
+		src/pid/pid.c

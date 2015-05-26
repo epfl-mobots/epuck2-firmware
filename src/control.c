@@ -34,13 +34,17 @@ static THD_FUNCTION(ThreadControl, arg) {
 
         /*Controller*/
         left.pwm_input = cascade_step(&(left.cascade));
-
+        right.pwm_input = cascade_step(&(right.cascade));
 
         /*Output*/
+        if(left.pwm_input == 0.f) {
+            motor_pwm_set(FALSE, 0.3);
+        }
+        else {
+            palSetPad(GPIOE, GPIOE_LED_STATUS);
+        }
 
-
-
-        chThdSleepMilliseconds(5);
+        chThdSleepMilliseconds(100);
     }
     return 0;
 };
@@ -50,8 +54,7 @@ static THD_FUNCTION(ThreadControl, arg) {
 void control_start(void)
 {
     cascade_init(&(left.cascade), &(right.cascade));
-    void motor_pwm_start(void);
+    motor_pwm_start();
     
-    chThdCreateStatic(waThreadControl, sizeof(waThreadControl), NORMALPRIO, ThreadControl, NULL);
     chThdCreateStatic(waThreadControl, sizeof(waThreadControl), NORMALPRIO, ThreadControl, NULL);
 }
