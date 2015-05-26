@@ -17,6 +17,9 @@ struct setpoints {
 	float max_current;
 };
 
+void setpoints_get(struct setpoints left, struct setpoints right);
+
+
 #ifdef __cplusplus
 }
 #endif
