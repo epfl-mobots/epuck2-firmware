@@ -7,7 +7,7 @@ extern "C" {
 
 #include <stdbool.h>
 
-struct setpoints {
+typedef struct setpoints {
 	float position;
 	float velocity;
 	float current;
@@ -15,9 +15,9 @@ struct setpoints {
 	float max_position;
 	float max_velocity;
 	float max_current;
-};
+}setpoints;
 
-void setpoints_get(struct setpoints left, struct setpoints right);
+void setpoints_get(setpoints *left, setpoints *right);
 
 
 #ifdef __cplusplus

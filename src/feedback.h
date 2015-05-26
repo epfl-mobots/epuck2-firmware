@@ -7,13 +7,13 @@ extern "C" {
 
 #include <stdbool.h>
 
-struct feedback {
+typedef struct feedback {
 	float position;
 	float velocity;
 	float current;
-};
+}feedback;
 
-void feedback_get (struct feedback left, struct feedback right);
+void feedback_get (feedback *left, feedback *right);
 
 
 #ifdef __cplusplus

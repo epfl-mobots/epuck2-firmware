@@ -8,7 +8,7 @@ extern "C" {
 #include <stdbool.h>
 #include "pid/pid.h"
 
-struct cascade_controller{
+typedef struct cascade_controller{
     pid_filter_t current_pid;
     pid_filter_t velocity_pid;
     pid_filter_t position_pid;
@@ -21,10 +21,10 @@ struct cascade_controller{
     float current_output;
 
     float* output;
-};
+}cascade_controller;
 
-float cascade_step(struct cascade_controller ctrl);
-void cascade_init(struct cascade_controller ctrl_left, struct cascade_controller ctrl_right);
+float cascade_step(cascade_controller *ctrl);
+void cascade_init(cascade_controller *ctrl_left, cascade_controller *ctrl_right);
 
 
 #ifdef __cplusplus

@@ -27,13 +27,13 @@ static THD_FUNCTION(ThreadControl, arg) {
     while (TRUE) {
 
         /*Setpoints*/
-        setpoints_get(left.setpoints, right.setpoints);
+        setpoints_get(&(left.setpoints), &(right.setpoints));
 
         /*Feedback*/
-        feedback_get(left.feedback, right.feedback);
+        feedback_get(&(left.feedback), &(right.feedback));
 
         /*Controller*/
-        left.pwm_input = cascade_step(left.cascade);
+        left.pwm_input = cascade_step(&(left.cascade));
 
 
         /*Output*/
@@ -49,7 +49,7 @@ static THD_FUNCTION(ThreadControl, arg) {
 
 void control_start(void)
 {
-    cascade_init(left.cascade, right.cascade);
+    cascade_init(&(left.cascade), &(right.cascade));
     void motor_pwm_start(void);
     
     chThdCreateStatic(waThreadControl, sizeof(waThreadControl), NORMALPRIO, ThreadControl, NULL);
