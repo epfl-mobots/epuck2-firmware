@@ -1,5 +1,5 @@
-#ifndef CONTROLLER_H
-#define CPNTROLLER_H
+#ifndef CONTROL_H
+#define CONTROL_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,4 +13,4 @@ extern "C" {
 }
 #endif
 
-#endif /* PID_CASCADE_H */
+#endif /* CONTROL_H */

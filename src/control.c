@@ -6,6 +6,7 @@
 #include "motor_csp.h"
 #include "motor_pwm.h"
 #include "pid_cascade.h"
+#include "feedback.h"
 
 static struct cascade_controller cascade_left;
 static struct cascade_controller cascade_right;
