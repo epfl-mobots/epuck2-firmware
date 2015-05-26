@@ -10,5 +10,5 @@ SRC = 	src/cmd.c \
 		src/motor_pwm.c \
 		src/board/board.c \
 		src/analogic.c \
-		src/controller.c \
-		src/motor_control.c
+		src/control.c \
+		src/pid_cascade.c
