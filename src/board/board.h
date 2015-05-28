@@ -258,8 +258,8 @@
                                      PIN_MODE_INPUT(GPIOA_CAM_CLK) |           \
                                      PIN_MODE_INPUT(GPIOA_PIN9) |        \
                                      PIN_MODE_INPUT(GPIOA_PIN10) |  \
-                                     PIN_MODE_INPUT(GPIOA_OTG_FS_DM) |  \
-                                     PIN_MODE_INPUT(GPIOA_OTG_FS_DP) |  \
+                                     PIN_MODE_ALTERNATE(GPIOA_OTG_FS_DM) |  \
+                                     PIN_MODE_ALTERNATE(GPIOA_OTG_FS_DP) |  \
                                      PIN_MODE_INPUT(GPIOA_SWDIO) |      \
                                      PIN_MODE_INPUT(GPIOA_SWCLK) |      \
                                      PIN_MODE_INPUT(GPIOA_MOT1_QEB))
@@ -306,8 +306,8 @@
                                      PIN_PUPDR_PULLUP(GPIOA_CAM_CLK) |         \
                                      PIN_PUPDR_PULLUP(GPIOA_PIN9) |    \
                                      PIN_PUPDR_PULLUP(GPIOA_PIN10) |  \
-                                     PIN_PUPDR_PULLUP(GPIOA_OTG_FS_DM) |  \
-                                     PIN_PUPDR_PULLUP(GPIOA_OTG_FS_DP) |  \
+                                     PIN_PUPDR_FLOATING(GPIOA_OTG_FS_DM) |  \
+                                     PIN_PUPDR_FLOATING(GPIOA_OTG_FS_DP) |  \
                                      PIN_PUPDR_PULLUP(GPIOA_SWDIO) |      \
                                      PIN_PUPDR_PULLUP(GPIOA_SWCLK) |      \
                                      PIN_PUPDR_FLOATING(GPIOA_MOT1_QEB))
