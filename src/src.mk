@@ -19,3 +19,4 @@ SRC += src/pid_cascade.c
 SRC += src/feedback.c
 SRC += src/setpoints.c
 SRC += src/pid/pid.c
+SRC += src/communication.c
