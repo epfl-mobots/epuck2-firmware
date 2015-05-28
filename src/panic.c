@@ -5,11 +5,8 @@ void panic_handler(const char *reason)
 {
     (void)reason;
 
-    //Turns on all 4 LEDs
-    palSetPad(GPIOD, 12);
-    palSetPad(GPIOD, 13);
-    palSetPad(GPIOD, 14);
-    palSetPad(GPIOD, 15);
+    //Turns on LED_ERROR
+    palSetPad(GPIOD, GPIOD_LED_ERROR);
 
     // static volatile uint32_t ipsr;
     // static volatile const char *msg;
