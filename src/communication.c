@@ -2,7 +2,11 @@
 #include <string.h>
 #include "cmp_mem_access/cmp_mem_access.h"
 #include "serial-datagram/serial_datagram.h"
+#include "datagram_dispatcher.h"
 #include "sensors/imu.h"
+
+
+static mutex_t send_lock;
 
 static int send_imu(cmp_ctx_t *cmp)
 {
@@ -32,7 +36,6 @@ static int send_imu(cmp_ctx_t *cmp)
 }
 
 
-
 static void _stream_imu_values_sndfn(void *arg, const void *p, size_t len)
 {
     if (len > 0) {
@@ -41,12 +44,10 @@ static void _stream_imu_values_sndfn(void *arg, const void *p, size_t len)
 }
 
 
-
-static THD_WORKING_AREA(periodic_comm_wa, 512);
-static THD_FUNCTION(periodic_comm, arg)
+static THD_WORKING_AREA(comm_tx_stream_wa, 1024);
+static THD_FUNCTION(comm_tx_stream, arg)
 {
     BaseSequentialStream *out = (BaseSequentialStream*)arg;
-    chRegSetThreadName("periodic-comm");
 
     static char dtgrm[100];
     static cmp_mem_access_t mem;
@@ -55,7 +56,9 @@ static THD_FUNCTION(periodic_comm, arg)
 
         cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
         if (send_imu(&cmp) == 0) {
+            chMtxLock(&send_lock);
             serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
+            chMtxUnlock(&send_lock);
         }
 
     }
@@ -64,7 +67,54 @@ static THD_FUNCTION(periodic_comm, arg)
 
 
 
+static char reply_buf[100];
+static cmp_mem_access_t reply_mem;
+static cmp_ctx_t reply_cmp;
+
+int ping_cb(cmp_ctx_t *cmp, cmp_mem_access_t *mem, void *arg)
+{
+    (void)cmp;
+    (void)mem;
+    if (!cmp_read_nil(cmp)) {
+        return -1;
+    }
+    cmp_mem_access_init(&reply_cmp, &reply_mem, reply_buf, sizeof(reply_buf));
+    const char *ping_resp = "ping";
+    if (cmp_write_str(cmp, ping_resp, strlen(ping_resp))) {
+        chMtxLock(&send_lock);
+        serial_datagram_send(reply_buf, cmp_mem_access_get_pos(&reply_mem), _stream_imu_values_sndfn, arg);
+        chMtxUnlock(&send_lock);
+    }
+    return 0;
+}
+
+
+static THD_WORKING_AREA(comm_rx_wa, 1024);
+static THD_FUNCTION(comm_rx, arg)
+{
+    struct dispatcher_entry_s dispatcher_table[] = {
+        {"ping", ping_cb, arg},
+        {NULL, NULL, NULL}
+    };
+    static serial_datagram_rcv_handler_t rcv_handler;
+    static char rcv_buffer[1024];
+
+    chRegSetThreadName("comm rx");
+
+    BaseSequentialStream *in = (BaseSequentialStream*)arg;
+    serial_datagram_rcv_handler_init(&rcv_handler,rcv_buffer,
+            sizeof(rcv_buffer), datagram_dispatcher_cb, dispatcher_table);
+    while (1) {
+        char c = chSequentialStreamGet(in);
+        serial_datagram_receive(&rcv_handler, &c, 1);
+    }
+    return 0;
+}
+
+
 void communication_start(BaseSequentialStream *out)
 {
-    chThdCreateStatic(periodic_comm_wa, sizeof(periodic_comm_wa), LOWPRIO, periodic_comm, out);
+    chMtxObjectInit(&send_lock);
+    chThdCreateStatic(comm_tx_stream_wa, sizeof(comm_tx_stream_wa), LOWPRIO, comm_tx_stream, out);
+    chThdCreateStatic(comm_rx_wa, sizeof(comm_rx_wa), LOWPRIO, comm_rx, out);
 }
