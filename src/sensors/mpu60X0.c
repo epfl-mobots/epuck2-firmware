@@ -11,11 +11,11 @@ static uint8_t mpu60X0_reg_read(mpu60X0_t *dev, uint8_t reg)
 {
     uint8_t ret = 0;
     if (dev->spi) {
-        // spiSelect(dev->spi);
-        // reg |= 0x80;
-        // spiSend(dev->spi, 1, &reg);
-        // spiReceive(dev->spi, 1, &ret);
-        // spiUnselect(dev->spi);
+        spiSelect(dev->spi);
+        reg |= 0x80;
+        spiSend(dev->spi, 1, &reg);
+        spiReceive(dev->spi, 1, &ret);
+        spiUnselect(dev->spi);
     } else if (dev->i2c_driver) {
         I2CDriver *driver = dev->i2c_driver;
         uint8_t addr = dev->i2c_address;
@@ -28,9 +28,9 @@ static void mpu60X0_reg_write(mpu60X0_t *dev, uint8_t reg, uint8_t val)
 {
     uint8_t buf[] = {reg, val};
     if (dev->spi) {
-        // spiSelect(dev->spi);
-        // spiSend(dev->spi, 2, buf);
-        // spiUnselect(dev->spi);
+        spiSelect(dev->spi);
+        spiSend(dev->spi, 2, buf);
+        spiUnselect(dev->spi);
     } else if (dev->i2c_driver) {
         I2CDriver *driver = dev->i2c_driver;
         uint8_t addr = dev->i2c_address;
@@ -41,11 +41,11 @@ static void mpu60X0_reg_write(mpu60X0_t *dev, uint8_t reg, uint8_t val)
 static void mpu60X0_reg_read_multi(mpu60X0_t *dev, uint8_t reg, uint8_t *buf, int8_t len)
 {
     if (dev->spi) {
-        // spiSelect(dev->spi);
-        // reg |= 0x80;
-        // spiSend(dev->spi, 1, &reg);
-        // spiReceive(dev->spi, len, buf);
-        // spiUnselect(dev->spi);
+        spiSelect(dev->spi);
+        reg |= 0x80;
+        spiSend(dev->spi, 1, &reg);
+        spiReceive(dev->spi, len, buf);
+        spiUnselect(dev->spi);
     } else if (dev->i2c_driver) {
         I2CDriver *driver = dev->i2c_driver;
         uint8_t addr = dev->i2c_address;

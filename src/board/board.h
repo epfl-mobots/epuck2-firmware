@@ -367,7 +367,7 @@
 #define VAL_GPIOB_MODER             (PIN_MODE_OUTPUT(GPIOB_PWM0_PHASE_A) |           \
                                      PIN_MODE_OUTPUT(GPIOB_PWM0_PHASE_B) |           \
                                      PIN_MODE_INPUT(GPIOB_BOOT1) |           \
-                                     PIN_MODE_INPUT(GPIOB_SPI_CLK) |        \
+                                     PIN_MODE_ALTERNATE(GPIOB_SPI_CLK) |        \
                                      PIN_MODE_ALTERNATE(GPIOB_SPI_MISO) |           \
                                      PIN_MODE_ALTERNATE(GPIOB_SPI_MOSI) |           \
                                      PIN_MODE_INPUT(GPIOB_DCMI_D5) |        \
@@ -384,8 +384,8 @@
                                      PIN_OTYPE_PUSHPULL(GPIOB_PWM0_PHASE_B) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_BOOT1) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_SPI_CLK) |        \
-                                     PIN_OTYPE_OPENDRAIN(GPIOB_SPI_MISO) |       \
-                                     PIN_OTYPE_OPENDRAIN(GPIOB_SPI_MOSI) |       \
+                                     PIN_OTYPE_PUSHPULL(GPIOB_SPI_MISO) |       \
+                                     PIN_OTYPE_PUSHPULL(GPIOB_SPI_MOSI) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_DCMI_D5) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_DCMI_VSYNC) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_I2C_SCLK) |       \
@@ -415,9 +415,9 @@
 #define VAL_GPIOB_PUPDR             (PIN_PUPDR_FLOATING(GPIOB_PWM0_PHASE_A) |         \
                                      PIN_PUPDR_FLOATING(GPIOB_PWM0_PHASE_B) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_BOOT1) |         \
-                                     PIN_PUPDR_PULLUP(GPIOB_SPI_CLK) |        \
-                                     PIN_PUPDR_PULLUP(GPIOB_SPI_MISO) |         \
-                                     PIN_PUPDR_PULLUP(GPIOB_SPI_MOSI) |         \
+                                     PIN_PUPDR_FLOATING(GPIOB_SPI_CLK) |        \
+                                     PIN_PUPDR_FLOATING(GPIOB_SPI_MISO) |         \
+                                     PIN_PUPDR_FLOATING(GPIOB_SPI_MOSI) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_DCMI_D5) |        \
                                      PIN_PUPDR_PULLUP(GPIOB_DCMI_VSYNC) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_I2C_SCLK) |         \
@@ -447,7 +447,7 @@
 #define VAL_GPIOB_AFRL              (PIN_AFIO_AF(GPIOB_PWM0_PHASE_A, 0) |           \
                                      PIN_AFIO_AF(GPIOB_PWM0_PHASE_B, 0) |           \
                                      PIN_AFIO_AF(GPIOB_BOOT1, 0) |           \
-                                     PIN_AFIO_AF(GPIOB_SPI_CLK, 0) |            \
+                                     PIN_AFIO_AF(GPIOB_SPI_CLK, 5) |            \
                                      PIN_AFIO_AF(GPIOB_SPI_MISO, 5) |           \
                                      PIN_AFIO_AF(GPIOB_SPI_MOSI, 5) |           \
                                      PIN_AFIO_AF(GPIOB_DCMI_D5, 4) |            \
@@ -891,7 +891,7 @@
                                      PIN_PUPDR_PULLUP(GPIOF_IR_AN5) |       \
                                      PIN_PUPDR_PULLUP(GPIOF_IR_AN6) |       \
                                      PIN_PUPDR_PULLUP(GPIOF_IR_AN7) |      \
-                                     PIN_PUPDR_PULLUP(GPIOF_IMU_INT) |      \
+                                     PIN_PUPDR_FLOATING(GPIOF_IMU_INT) |      \
                                      PIN_PUPDR_PULLUP(GPIOF_MPU_FSYNC) |      \
                                      PIN_PUPDR_PULLUP(GPIOF_MPU_CS) |      \
                                      PIN_PUPDR_PULLUP(GPIOF_POWER_BUTTON) |      \
@@ -907,7 +907,7 @@
                                      PIN_ODR_HIGH(GPIOF_IR_AN5) |             \
                                      PIN_ODR_HIGH(GPIOF_IR_AN6) |             \
                                      PIN_ODR_HIGH(GPIOF_IR_AN7) |            \
-                                     PIN_ODR_HIGH(GPIOF_IMU_INT) |            \
+                                     PIN_ODR_LOW(GPIOF_IMU_INT) |            \
                                      PIN_ODR_HIGH(GPIOF_MPU_FSYNC) |            \
                                      PIN_ODR_HIGH(GPIOF_MPU_CS) |            \
                                      PIN_ODR_HIGH(GPIOF_POWER_BUTTON) |            \

@@ -59,6 +59,7 @@ void imu_start(void)
 {
     exti_setup();
     chEvtObjectInit(&imu_events);
+
     chThdCreateStatic(imu_reader_thd_wa, sizeof(imu_reader_thd_wa), NORMALPRIO, imu_reader_thd, NULL);
 }
 
@@ -70,7 +71,6 @@ void imu_init(void)
         .sspad = GPIOF_MPU_CS,
         .cr1 = SPI_CR1_BR_2 | SPI_CR1_BR_1 | SPI_CR1_CPOL | SPI_CR1_CPHA
     };
-
 
     spiStart(&SPID1, &spi_cfg);
 
