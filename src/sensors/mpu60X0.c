@@ -65,12 +65,12 @@ static void mpu60X0_reg_write_multi(mpu60X0_t *dev, uint8_t reg, const uint8_t *
 }
 #endif
 
-// void mpu60X0_init_using_spi(mpu60X0_t *dev, SPIDriver *spi_dev)
-// {
-//     dev->spi = spi_dev;
-//     dev->i2c_driver = NULL;
-//     dev->config = 0;
-// }
+void mpu60X0_init_using_spi(mpu60X0_t *dev, SPIDriver *spi_dev)
+{
+    dev->spi = spi_dev;
+    dev->i2c_driver = NULL;
+    dev->config = 0;
+}
 
 void mpu60X0_init_using_i2c(mpu60X0_t *dev, I2CDriver *i2c_dev, int ad0_pin_value)
 {

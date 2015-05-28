@@ -62,25 +62,19 @@ void imu_start(void)
     chThdCreateStatic(imu_reader_thd_wa, sizeof(imu_reader_thd_wa), NORMALPRIO, imu_reader_thd, NULL);
 }
 
-
-// PB9: I2C1_SDA (AF4)
-// PB6: I2C1_SCL (AF4)
 void imu_init(void)
 {
-    static const I2CConfig i2c_cfg = {
-        .op_mode = OPMODE_I2C,
-        .clock_speed = 400000,
-        .duty_cycle = FAST_DUTY_CYCLE_2
+    static SPIConfig spi_cfg = {
+        .end_cb = NULL,
+        .ssport = GPIOF,
+        .sspad = GPIOF_MPU_CS,
+        .cr1 = SPI_CR1_BR_2 | SPI_CR1_BR_1 | SPI_CR1_CPOL | SPI_CR1_CPHA
     };
 
-    chSysLock();
-    palSetPadMode(GPIOB, 9, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
-    palSetPadMode(GPIOB, 6, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
-    chSysUnlock();
 
-    i2cStart(&I2CD1, &i2c_cfg);
+    spiStart(&SPID1, &spi_cfg);
 
-    mpu60X0_init_using_i2c(&mpu6050, &I2CD1, 0);
+    mpu60X0_init_using_spi(&mpu6050, &SPID1);
     mpu60X0_setup(&mpu6050, MPU60X0_ACC_FULL_RANGE_2G
                           | MPU60X0_GYRO_FULL_RANGE_250DPS
                           | MPU60X0_SAMPLE_RATE_DIV(100)

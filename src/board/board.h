@@ -368,8 +368,8 @@
                                      PIN_MODE_OUTPUT(GPIOB_PWM0_PHASE_B) |           \
                                      PIN_MODE_INPUT(GPIOB_BOOT1) |           \
                                      PIN_MODE_INPUT(GPIOB_SPI_CLK) |        \
-                                     PIN_MODE_INPUT(GPIOB_SPI_MISO) |           \
-                                     PIN_MODE_INPUT(GPIOB_SPI_MOSI) |           \
+                                     PIN_MODE_ALTERNATE(GPIOB_SPI_MISO) |           \
+                                     PIN_MODE_ALTERNATE(GPIOB_SPI_MOSI) |           \
                                      PIN_MODE_INPUT(GPIOB_DCMI_D5) |        \
                                      PIN_MODE_INPUT(GPIOB_DCMI_VSYNC) |           \
                                      PIN_MODE_INPUT(GPIOB_I2C_SCLK) |           \
@@ -384,8 +384,8 @@
                                      PIN_OTYPE_PUSHPULL(GPIOB_PWM0_PHASE_B) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_BOOT1) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_SPI_CLK) |        \
-                                     PIN_OTYPE_PUSHPULL(GPIOB_SPI_MISO) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOB_SPI_MOSI) |       \
+                                     PIN_OTYPE_OPENDRAIN(GPIOB_SPI_MISO) |       \
+                                     PIN_OTYPE_OPENDRAIN(GPIOB_SPI_MOSI) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_DCMI_D5) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_DCMI_VSYNC) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_I2C_SCLK) |       \
@@ -448,8 +448,8 @@
                                      PIN_AFIO_AF(GPIOB_PWM0_PHASE_B, 0) |           \
                                      PIN_AFIO_AF(GPIOB_BOOT1, 0) |           \
                                      PIN_AFIO_AF(GPIOB_SPI_CLK, 0) |            \
-                                     PIN_AFIO_AF(GPIOB_SPI_MISO, 0) |           \
-                                     PIN_AFIO_AF(GPIOB_SPI_MOSI, 0) |           \
+                                     PIN_AFIO_AF(GPIOB_SPI_MISO, 5) |           \
+                                     PIN_AFIO_AF(GPIOB_SPI_MOSI, 5) |           \
                                      PIN_AFIO_AF(GPIOB_DCMI_D5, 4) |            \
                                      PIN_AFIO_AF(GPIOB_DCMI_VSYNC, 0))
 #define VAL_GPIOB_AFRH              (PIN_AFIO_AF(GPIOB_I2C_SCLK, 0) |           \
