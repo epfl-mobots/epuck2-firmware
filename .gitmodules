@@ -16,3 +16,6 @@
 [submodule "src/crc"]
 	path = src/crc
 	url = https://github.com/epuck2/crc
+[submodule "src/pid"]
+	path = src/pid
+	url = https://github.com/epuck2/pid.git
