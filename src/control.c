@@ -26,20 +26,17 @@ static THD_FUNCTION(ThreadControl, arg) {
     chRegSetThreadName("motor state");
     while (TRUE) {
 
-        /*Setpoints*/
-        setpoints_get(&(left.setpoints), &(right.setpoints));
-
         /*Feedback*/
         feedback_get(&(left.feedback), &(right.feedback));
 
         /*Errors*/
-        left.cascade.position_error = left.setpoints.position - left.feedback.position;
-        left.cascade.velocity_error = left.setpoints.velocity - left.feedback.velocity;
-        left.cascade.current_error = left.setpoints.current - left.feedback.current;
+        left.cascade.position_error = setpoints_error_position(&(left.setpoints), &(left.feedback.position));
+        left.cascade.velocity_error = setpoints_error_velocity(&(left.setpoints), left.feedback.velocity);
+        left.cascade.current_error = setpoints_error_current(&(left.setpoints), left.feedback.current);
 
-        right.cascade.position_error = right.setpoints.position - right.feedback.position;
-        right.cascade.velocity_error = right.setpoints.velocity - right.feedback.velocity;
-        right.cascade.current_error = right.setpoints.current - right.feedback.current;
+        right.cascade.position_error = setpoints_error_position(&(right.setpoints), &(right.feedback.position));
+        right.cascade.velocity_error = setpoints_error_velocity(&(right.setpoints), right.feedback.velocity);
+        right.cascade.current_error = setpoints_error_current(&(right.setpoints), right.feedback.current);
 
         /*Controller*/
         left.pwm_input = cascade_step(&(left.cascade));
@@ -59,8 +56,8 @@ static THD_FUNCTION(ThreadControl, arg) {
 void control_start(void)
 {
     cascade_init(&(left.cascade), &(right.cascade));
+    setpoints_init(&(left.setpoints), &(right.setpoints));
     motor_pwm_start();
-    left.cascade.current_output = 0.;
     
     chThdCreateStatic(waThreadControl, sizeof(waThreadControl), NORMALPRIO, ThreadControl, NULL);
 }
