@@ -27,7 +27,7 @@ static THD_FUNCTION(ThreadControl, arg) {
     while (TRUE) {
 
         /*Setpoints*/
-        setpoints_update(&(left.setpoints), &(right.setpoints), left.feedback.velocity, right.feedback.velocity);
+        setpoints_get(&(left.setpoints), &(right.setpoints));
 
         /*Feedback*/
         feedback_get(&(left.feedback), &(right.feedback));

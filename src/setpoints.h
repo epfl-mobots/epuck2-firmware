@@ -17,7 +17,7 @@ typedef struct setpoints {
 	float max_current;
 }setpoints;
 
-void setpoints_update(setpoints *left, setpoints *right, float encoder_speed_left, float encoder_speed_right);
+void setpoints_update(setpoints *left, setpoints *right);
 
 
 

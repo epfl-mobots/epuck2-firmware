@@ -2,10 +2,10 @@
 #include "hal.h"
 #include "setpoints.h"
 
-void setpoints_update(setpoints *left, setpoints *right, float encoder_speed_left, float encoder_speed_right)
+void setpoints_update(setpoints *left, setpoints *right)
 {
-	left->position += encoder_speed_left;
-	right->position += encoder_speed_right;
+	left->position = 0;
+	right->position = 0;
 
 	left->velocity = 0;
 	right->velocity = 0;
