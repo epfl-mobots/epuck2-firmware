@@ -1,11 +1,12 @@
 #include "feedback.h"
 #include "sensors/encoder.h"
+#include "analogic.h"
 #include "ch.h"
 #include "hal.h"
 
 
 
-void feedback_get (feedback *left, feedback *right)
+void feedback_get(feedback *left, feedback *right)
 {
 	int buff_left = 0;
 	int buff_right = 0;
@@ -19,6 +20,9 @@ void feedback_get (feedback *left, feedback *right)
 	left->position = (float) encoder_get_left();
 	right->position = (float) encoder_get_right();
 
-	left->current = 0;
-	right->current = 0;
+	int motor_current[2];
+
+	analog_get_motor(motor_current);
+	left->current = (float) motor_current[0];
+	right->current = (float) motor_current[1];
 }
