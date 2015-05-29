@@ -26,13 +26,20 @@ static THD_FUNCTION(ThreadControl, arg) {
     chRegSetThreadName("motor state");
     while (TRUE) {
 
+        /*Setpoints*/
+        setpoints_update(&(left.setpoints), &(right.setpoints), left.feedback.velocity, right.feedback.velocity);
+
         /*Feedback*/
         feedback_get(&(left.feedback), &(right.feedback));
 
-        /*Setpoints*/
-        setpoints_update(&(left.setpoints), left.feedback.velocity);
-        setpoints_update(&(right.setpoints), right.feedback.velocity);
-        setpoints_get(&(left.setpoints), &(right.setpoints));
+        /*Errors*/
+        left.cascade.position_error = left.setpoints.position - left.feedback.position;
+        left.cascade.velocity_error = left.setpoints.velocity - left.feedback.velocity;
+        left.cascade.current_error = left.setpoints.current - left.feedback.current;
+
+        right.cascade.position_error = right.setpoints.position - right.feedback.position;
+        right.cascade.velocity_error = right.setpoints.velocity - right.feedback.velocity;
+        right.cascade.current_error = right.setpoints.current - right.feedback.current;
 
         /*Controller*/
         left.pwm_input = cascade_step(&(left.cascade));
@@ -42,7 +49,7 @@ static THD_FUNCTION(ThreadControl, arg) {
         motor_pwm_set(TRUE, left.pwm_input);
 
 
-        chThdSleepMilliseconds(100);
+        chThdSleepMilliseconds(2);
     }
     return 0;
 };

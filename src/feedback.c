@@ -14,13 +14,13 @@ void feedback_get(feedback *left, feedback *right)
 	buff_left = encoder_get_left();
 	buff_right = encoder_get_right();
 
-	left->velocity = (float) encoder_tick_diff(left->position, buff_left);
-	right->velocity = (float) encoder_tick_diff(right->position, buff_right);
+	left->velocity = (float) encoder_tick_diff((int)left->position, buff_left);
+	right->velocity = (float) encoder_tick_diff((int)right->position, buff_right);
 
-	left->position = (float) encoder_get_left();
-	right->position = (float) encoder_get_right();
+	left->position += left->velocity;
+	right->position += right->velocity;
 
-	int motor_current[2];
+	int32_t motor_current[2];
 
 	analog_get_motor(motor_current);
 	left->current = (float) motor_current[0];

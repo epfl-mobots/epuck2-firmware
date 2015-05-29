@@ -8,15 +8,14 @@
 float cascade_step(cascade_controller *ctrl)
 {
     // position control
-    ctrl->position_error = 0.;
     ctrl->position_output = pid_process(&(ctrl->position_pid), ctrl->position_error);
 
     // velocity control
-    ctrl->velocity_error = 0. + ctrl->position_output;
+    ctrl->velocity_error += ctrl->position_output;
     ctrl->velocity_output = pid_process(&(ctrl->velocity_pid), ctrl->velocity_error);
 
     //torque control
-    ctrl->current_error = 0.3 + ctrl->velocity_output;
+    ctrl->current_error += ctrl->velocity_output;
     ctrl->current_output = pid_process(&(ctrl->current_pid), ctrl->current_error);
 
     return ctrl->current_output;

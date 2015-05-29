@@ -2,19 +2,14 @@
 #include "hal.h"
 #include "setpoints.h"
 
-void setpoints_get(setpoints *left, setpoints *right)
+void setpoints_update(setpoints *left, setpoints *right, float encoder_speed_left, float encoder_speed_right)
 {
-	left->position = 0;
-	right->position = 0;
+	left->position += encoder_speed_left;
+	right->position += encoder_speed_right;
 
 	left->velocity = 0;
 	right->velocity = 0;
 
 	left->current = 0;
 	right->current = 0;
-}
-
-void setpoints_update(setpoints *motor, float encoder_speed)
-{
-	motor->position += encoder_speed;
 }
