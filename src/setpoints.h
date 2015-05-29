@@ -18,6 +18,8 @@ typedef struct setpoints {
 }setpoints;
 
 void setpoints_get(setpoints *left, setpoints *right);
+void setpoints_update(setpoints *motor, float encoder_speed);
+
 
 
 #ifdef __cplusplus

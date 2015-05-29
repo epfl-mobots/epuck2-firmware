@@ -26,11 +26,13 @@ static THD_FUNCTION(ThreadControl, arg) {
     chRegSetThreadName("motor state");
     while (TRUE) {
 
-        /*Setpoints*/
-        setpoints_get(&(left.setpoints), &(right.setpoints));
-
         /*Feedback*/
         feedback_get(&(left.feedback), &(right.feedback));
+
+        /*Setpoints*/
+        setpoints_update(&(left.setpoints), left.feedback.velocity);
+        setpoints_update(&(right.setpoints), right.feedback.velocity);
+        setpoints_get(&(left.setpoints), &(right.setpoints));
 
         /*Controller*/
         left.pwm_input = cascade_step(&(left.cascade));

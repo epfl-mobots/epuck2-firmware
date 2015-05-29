@@ -13,3 +13,8 @@ void setpoints_get(setpoints *left, setpoints *right)
 	left->current = 0;
 	right->current = 0;
 }
+
+void setpoints_update(setpoints *motor, float encoder_speed)
+{
+	motor->position += encoder_speed;
+}
