@@ -30,8 +30,8 @@ void cascade_init(cascade_controller *ctrl_left, cascade_controller *ctrl_right)
     pid_init(&(ctrl_left->current_pid));
 
     pid_set_gains(&(ctrl_left->position_pid), 0, 0, 0);
-    pid_set_gains(&(ctrl_left->velocity_pid), 0, 0, 0);
-    pid_set_gains(&(ctrl_left->current_pid), 0, 0, 0);
+    pid_set_gains(&(ctrl_left->velocity_pid), 1, 0.00005, 0);
+    pid_set_gains(&(ctrl_left->current_pid), 0.0001, 0.00005, 0);
 
     pid_set_integral_limit(&(ctrl_left->position_pid), 0);
     pid_set_integral_limit(&(ctrl_left->velocity_pid), 0);
@@ -44,8 +44,8 @@ void cascade_init(cascade_controller *ctrl_left, cascade_controller *ctrl_right)
     pid_init(&(ctrl_right->current_pid));
 
     pid_set_gains(&(ctrl_right->position_pid), 0, 0, 0);
-    pid_set_gains(&(ctrl_right->velocity_pid), 0, 0, 0);
-    pid_set_gains(&(ctrl_right->current_pid), 0, 0, 0);
+    pid_set_gains(&(ctrl_right->velocity_pid), 1, 0.00005, 0);
+    pid_set_gains(&(ctrl_right->current_pid), 0.0001, 0.00005, 0);
 
     pid_set_integral_limit(&(ctrl_right->position_pid), 0);
     pid_set_integral_limit(&(ctrl_right->velocity_pid), 0);

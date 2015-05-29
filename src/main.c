@@ -11,6 +11,11 @@
 #include "cmd.h"
 #include "control.h"
 
+/*Testing includes*/
+#include "analogic.h"
+#include "motor_pwm.h"
+#include "setpoints.h"
+
 
 static THD_WORKING_AREA(waThread1, 128);
 static THD_FUNCTION(Thread1, arg) {
@@ -27,24 +32,10 @@ static THD_FUNCTION(Thread1, arg) {
 
 void test_function(void)
 {
-    imu_init();
-    imu_start();
+    analogic_start(1,0,0);
+    control_start();
+    control_test();
 
-    float gyro[3];
-
-    while(TRUE) {
-
-        imu_get_gyro(gyro);
-
-        if(gyro[0] > 1) {
-            palSetPad(GPIOE, GPIOE_LED_STATUS);
-        }
-        else {
-            palClearPad(GPIOE, GPIOE_LED_STATUS);
-        }
-
-        chThdSleepMilliseconds(200);
-    }
 }
 
 int main(void) {

@@ -8,6 +8,7 @@
 #include "pid_cascade.h"
 #include "feedback.h"
 #include "setpoints.h"
+#include "sensors/encoder.h"
 
 struct motor {
     struct cascade_controller cascade;
@@ -43,7 +44,8 @@ static THD_FUNCTION(ThreadControl, arg) {
         right.pwm_input = cascade_step(&(right.cascade));
 
         /*Output*/
-        motor_pwm_set(TRUE, left.pwm_input);
+        motor_pwm_set(FALSE, left.pwm_input);
+        motor_pwm_set(TRUE, right.pwm_input);
 
 
         chThdSleepMilliseconds(2);
@@ -58,6 +60,18 @@ void control_start(void)
     cascade_init(&(left.cascade), &(right.cascade));
     setpoints_init(&(left.setpoints), &(right.setpoints));
     motor_pwm_start();
+    encoder_init();
     
     chThdCreateStatic(waThreadControl, sizeof(waThreadControl), NORMALPRIO, ThreadControl, NULL);
+}
+
+void control_test(void)
+{
+    setpoints_set_velocity(&(right.setpoints), -3000);
+    setpoints_set_velocity(&(left.setpoints), -3000);
+
+    while(TRUE) {
+
+        chThdSleepMilliseconds(200);
+    }
 }

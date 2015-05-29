@@ -9,6 +9,7 @@ extern "C" {
 #include "pid/pid.h"
 
 void control_start(void);
+void control_test(void);
 
 
 
