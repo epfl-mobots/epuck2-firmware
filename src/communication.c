@@ -4,7 +4,10 @@
 #include "serial-datagram/serial_datagram.h"
 #include "datagram_dispatcher.h"
 #include "sensors/imu.h"
+#include "parameter/parameter.h"
+#include "parameter/parameter_msgpack.h"
 
+parameter_namespace_t parameter_root;
 
 static mutex_t send_lock;
 
@@ -89,11 +92,22 @@ int ping_cb(cmp_ctx_t *cmp, cmp_mem_access_t *mem, void *arg)
 }
 
 
+
+int parameter_set_cb(cmp_ctx_t *cmp, cmp_mem_access_t *mem, void *arg)
+{
+    (void)mem;
+    (void)arg;
+    int ret = parameter_msgpack_read_cmp(&parameter_root, cmp, NULL, NULL);
+    return ret;
+}
+
+
 static THD_WORKING_AREA(comm_rx_wa, 1024);
 static THD_FUNCTION(comm_rx, arg)
 {
     struct dispatcher_entry_s dispatcher_table[] = {
         {"ping", ping_cb, arg},
+        {"parameter_set", parameter_set_cb, NULL},
         {NULL, NULL, NULL}
     };
     static serial_datagram_rcv_handler_t rcv_handler;
