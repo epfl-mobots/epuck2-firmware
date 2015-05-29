@@ -6,7 +6,6 @@ extern "C" {
 #endif
 
 
-void motor_pwm_setup(void);
 
 /*
  * pwm_select : 0 -> motor on PB0 and PB1 // 1 -> motor on PD12 and PD13
