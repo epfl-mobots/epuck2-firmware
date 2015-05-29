@@ -25,7 +25,7 @@ void datagram_dispatcher_cb(const void *dtgrm, size_t len, void *arg)
         int j;
         while (dispatcher_tab.id != NULL) {
             if (strncmp(dispatcher_tab.id, str, id_size) == 0) {
-                if (dispatcher_tab.cb(cmp, mem, dispatcher_tab.arg) != 0) {
+                if (dispatcher_tab.cb(cmp, dispatcher_tab.arg) != 0) {
                     return; // parsing error, stop parsing this datagram
                 }
                 break;

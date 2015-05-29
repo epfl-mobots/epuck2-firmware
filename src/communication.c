@@ -74,10 +74,9 @@ static char reply_buf[100];
 static cmp_mem_access_t reply_mem;
 static cmp_ctx_t reply_cmp;
 
-int ping_cb(cmp_ctx_t *cmp, cmp_mem_access_t *mem, void *arg)
+int ping_cb(cmp_ctx_t *cmp, void *arg)
 {
     (void)cmp;
-    (void)mem;
     if (!cmp_read_nil(cmp)) {
         return -1;
     }
@@ -93,9 +92,8 @@ int ping_cb(cmp_ctx_t *cmp, cmp_mem_access_t *mem, void *arg)
 
 
 
-int parameter_set_cb(cmp_ctx_t *cmp, cmp_mem_access_t *mem, void *arg)
+int parameter_set_cb(cmp_ctx_t *cmp, void *arg)
 {
-    (void)mem;
     (void)arg;
     int ret = parameter_msgpack_read_cmp(&parameter_root, cmp, NULL, NULL);
     return ret;

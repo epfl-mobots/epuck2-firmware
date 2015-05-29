@@ -3,7 +3,6 @@
 
 #include <string.h>
 #include "cmp/cmp.h"
-#include "cmp_mem_access/cmp_mem_access.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -11,7 +10,7 @@ extern "C" {
 
 struct dispatcher_entry_s {
     const char *id;
-    int (*cb)(cmp_ctx_t *cmp, cmp_mem_access_t *mem, void *arg);
+    int (*cb)(cmp_ctx_t *cmp, void *arg);
     void *arg;
 };
 
