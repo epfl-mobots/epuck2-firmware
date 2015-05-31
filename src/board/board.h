@@ -378,7 +378,7 @@
                                      PIN_MODE_INPUT(GPIOB_PIN11) |          \
                                      PIN_MODE_INPUT(GPIOB_PIN12) |          \
                                      PIN_MODE_INPUT(GPIOB_PIN13) |          \
-                                     PIN_MODE_INPUT(GPIOB_IR_PWM) |          \
+                                     PIN_MODE_ALTERNATE(GPIOB_IR_PWM) |          \
                                      PIN_MODE_INPUT(GPIOB_PIN15))
 #define VAL_GPIOB_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOB_PWM0_PHASE_A) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PWM0_PHASE_B) |       \
@@ -426,7 +426,7 @@
                                      PIN_PUPDR_PULLUP(GPIOB_PIN11) |        \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN12) |        \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN13) |        \
-                                     PIN_PUPDR_PULLUP(GPIOB_IR_PWM) |        \
+                                     PIN_PUPDR_FLOATING(GPIOB_IR_PWM) |        \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN15))
 #define VAL_GPIOB_ODR               (PIN_ODR_LOW(GPIOB_PWM0_PHASE_A) |             \
                                      PIN_ODR_LOW(GPIOB_PWM0_PHASE_B) |             \
@@ -442,7 +442,7 @@
                                      PIN_ODR_HIGH(GPIOB_PIN11) |            \
                                      PIN_ODR_HIGH(GPIOB_PIN12) |            \
                                      PIN_ODR_HIGH(GPIOB_PIN13) |            \
-                                     PIN_ODR_HIGH(GPIOB_IR_PWM) |            \
+                                     PIN_ODR_LOW(GPIOB_IR_PWM) |            \
                                      PIN_ODR_HIGH(GPIOB_PIN15))
 #define VAL_GPIOB_AFRL              (PIN_AFIO_AF(GPIOB_PWM0_PHASE_A, 0) |           \
                                      PIN_AFIO_AF(GPIOB_PWM0_PHASE_B, 0) |           \
@@ -458,7 +458,7 @@
                                      PIN_AFIO_AF(GPIOB_PIN11, 0) |          \
                                      PIN_AFIO_AF(GPIOB_PIN12, 0) |          \
                                      PIN_AFIO_AF(GPIOB_PIN13, 0) |          \
-                                     PIN_AFIO_AF(GPIOB_IR_PWM, 0) |          \
+                                     PIN_AFIO_AF(GPIOB_IR_PWM, 3) |          \
                                      PIN_AFIO_AF(GPIOB_PIN15, 0))
 
 /*
@@ -481,11 +481,11 @@
  * PC14 - PIN14                     (input pullup).
  * PC15 - PIN15                     (input pullup).
  */
-#define VAL_GPIOC_MODER             (PIN_MODE_INPUT(GPIOC_IR_AN8) |\
-                                     PIN_MODE_INPUT(GPIOC_IR_AN9) |           \
-                                     PIN_MODE_INPUT(GPIOC_IR_AN10) |           \
-                                     PIN_MODE_INPUT(GPIOC_IR_AN11) |        \
-                                     PIN_MODE_INPUT(GPIOC_IR_AN12) |           \
+#define VAL_GPIOC_MODER             (PIN_MODE_ANALOG(GPIOC_IR_AN8) |\
+                                     PIN_MODE_ANALOG(GPIOC_IR_AN9) |           \
+                                     PIN_MODE_ANALOG(GPIOC_IR_AN10) |           \
+                                     PIN_MODE_ANALOG(GPIOC_IR_AN11) |        \
+                                     PIN_MODE_ANALOG(GPIOC_IR_AN12) |           \
                                      PIN_MODE_INPUT(GPIOC_AUDIO_MIC1) |           \
                                      PIN_MODE_INPUT(GPIOC_DCMI_D0) |           \
                                      PIN_MODE_INPUT(GPIOC_DCMI_D1) |       \
@@ -497,11 +497,11 @@
                                      PIN_MODE_INPUT(GPIOC_CAM_STROBE) |          \
                                      PIN_MODE_INPUT(GPIOC_CAM_RST) |          \
                                      PIN_MODE_INPUT(GPIOC_CAM_PWDN))
-#define VAL_GPIOC_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOC_IR_AN8) |\
-                                     PIN_OTYPE_PUSHPULL(GPIOC_IR_AN9) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOC_IR_AN10) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOC_IR_AN11) |    \
-                                     PIN_OTYPE_PUSHPULL(GPIOC_IR_AN12) |       \
+#define VAL_GPIOC_OTYPER            (PIN_OTYPE_OPENDRAIN(GPIOC_IR_AN8) |\
+                                     PIN_OTYPE_OPENDRAIN(GPIOC_IR_AN9) |       \
+                                     PIN_OTYPE_OPENDRAIN(GPIOC_IR_AN10) |       \
+                                     PIN_OTYPE_OPENDRAIN(GPIOC_IR_AN11) |    \
+                                     PIN_OTYPE_OPENDRAIN(GPIOC_IR_AN12) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOC_AUDIO_MIC1) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOC_DCMI_D0) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOC_DCMI_D1) |       \
@@ -529,11 +529,11 @@
                                      PIN_OSPEED_100M(GPIOC_CAM_STROBE) |         \
                                      PIN_OSPEED_100M(GPIOC_CAM_RST) |         \
                                      PIN_OSPEED_100M(GPIOC_CAM_PWDN))
-#define VAL_GPIOC_PUPDR             (PIN_PUPDR_PULLUP(GPIOC_IR_AN8) |\
-                                     PIN_PUPDR_PULLUP(GPIOC_IR_AN9) |         \
-                                     PIN_PUPDR_PULLUP(GPIOC_IR_AN10) |         \
-                                     PIN_PUPDR_PULLUP(GPIOC_IR_AN11) |      \
-                                     PIN_PUPDR_PULLUP(GPIOC_IR_AN12) |         \
+#define VAL_GPIOC_PUPDR             (PIN_PUPDR_FLOATING(GPIOC_IR_AN8) |\
+                                     PIN_PUPDR_FLOATING(GPIOC_IR_AN9) |         \
+                                     PIN_PUPDR_FLOATING(GPIOC_IR_AN10) |         \
+                                     PIN_PUPDR_FLOATING(GPIOC_IR_AN11) |      \
+                                     PIN_PUPDR_FLOATING(GPIOC_IR_AN12) |         \
                                      PIN_PUPDR_PULLUP(GPIOC_AUDIO_MIC1) |         \
                                      PIN_PUPDR_PULLUP(GPIOC_DCMI_D0) |         \
                                      PIN_PUPDR_PULLUP(GPIOC_DCMI_D1) |       \
@@ -545,11 +545,11 @@
                                      PIN_PUPDR_PULLUP(GPIOC_CAM_STROBE) |        \
                                      PIN_PUPDR_PULLUP(GPIOC_CAM_RST) |        \
                                      PIN_PUPDR_PULLUP(GPIOC_CAM_PWDN))
-#define VAL_GPIOC_ODR               (PIN_ODR_HIGH(GPIOC_IR_AN8) |  \
-                                     PIN_ODR_HIGH(GPIOC_IR_AN9) |             \
-                                     PIN_ODR_HIGH(GPIOC_IR_AN10) |             \
-                                     PIN_ODR_HIGH(GPIOC_IR_AN11) |          \
-                                     PIN_ODR_HIGH(GPIOC_IR_AN12) |             \
+#define VAL_GPIOC_ODR               (PIN_ODR_LOW(GPIOC_IR_AN8) |  \
+                                     PIN_ODR_LOW(GPIOC_IR_AN9) |             \
+                                     PIN_ODR_LOW(GPIOC_IR_AN10) |             \
+                                     PIN_ODR_LOW(GPIOC_IR_AN11) |          \
+                                     PIN_ODR_LOW(GPIOC_IR_AN12) |             \
                                      PIN_ODR_HIGH(GPIOC_AUDIO_MIC1) |             \
                                      PIN_ODR_HIGH(GPIOC_DCMI_D0) |             \
                                      PIN_ODR_HIGH(GPIOC_DCMI_D1) |             \
@@ -835,14 +835,14 @@
 #define VAL_GPIOF_MODER             (PIN_MODE_INPUT(GPIOF_SD_DETECT) |           \
                                      PIN_MODE_OUTPUT(GPIOF_POWERON) |       \
                                      PIN_MODE_INPUT(GPIOF_PIN2) |           \
-                                     PIN_MODE_INPUT(GPIOF_IR_AN0) |           \
-                                     PIN_MODE_INPUT(GPIOF_IR_AN1) |           \
-                                     PIN_MODE_INPUT(GPIOF_IR_AN2) |           \
-                                     PIN_MODE_INPUT(GPIOF_IR_AN3) |           \
-                                     PIN_MODE_INPUT(GPIOF_IR_AN4) |           \
-                                     PIN_MODE_INPUT(GPIOF_IR_AN5) |           \
-                                     PIN_MODE_INPUT(GPIOF_IR_AN6) |           \
-                                     PIN_MODE_INPUT(GPIOF_IR_AN7) |          \
+                                     PIN_MODE_ANALOG(GPIOF_IR_AN0) |           \
+                                     PIN_MODE_ANALOG(GPIOF_IR_AN1) |           \
+                                     PIN_MODE_ANALOG(GPIOF_IR_AN2) |           \
+                                     PIN_MODE_ANALOG(GPIOF_IR_AN3) |           \
+                                     PIN_MODE_ANALOG(GPIOF_IR_AN4) |           \
+                                     PIN_MODE_ANALOG(GPIOF_IR_AN5) |           \
+                                     PIN_MODE_ANALOG(GPIOF_IR_AN6) |           \
+                                     PIN_MODE_ANALOG(GPIOF_IR_AN7) |          \
                                      PIN_MODE_INPUT(GPIOF_IMU_INT) |          \
                                      PIN_MODE_INPUT(GPIOF_MPU_FSYNC) |          \
                                      PIN_MODE_INPUT(GPIOF_MPU_CS) |          \
@@ -851,14 +851,14 @@
 #define VAL_GPIOF_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOF_SD_DETECT) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOF_POWERON) |    \
                                      PIN_OTYPE_PUSHPULL(GPIOF_PIN2) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOF_IR_AN0) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOF_IR_AN1) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOF_IR_AN2) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOF_IR_AN3) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOF_IR_AN4) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOF_IR_AN5) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOF_IR_AN6) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOF_IR_AN7) |      \
+                                     PIN_OTYPE_OPENDRAIN(GPIOF_IR_AN0) |       \
+                                     PIN_OTYPE_OPENDRAIN(GPIOF_IR_AN1) |       \
+                                     PIN_OTYPE_OPENDRAIN(GPIOF_IR_AN2) |       \
+                                     PIN_OTYPE_OPENDRAIN(GPIOF_IR_AN3) |       \
+                                     PIN_OTYPE_OPENDRAIN(GPIOF_IR_AN4) |       \
+                                     PIN_OTYPE_OPENDRAIN(GPIOF_IR_AN5) |       \
+                                     PIN_OTYPE_OPENDRAIN(GPIOF_IR_AN6) |       \
+                                     PIN_OTYPE_OPENDRAIN(GPIOF_IR_AN7) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOF_IMU_INT) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOF_MPU_FSYNC) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOF_MPU_CS) |      \
@@ -883,14 +883,14 @@
 #define VAL_GPIOF_PUPDR             (PIN_PUPDR_PULLUP(GPIOF_SD_DETECT) |       \
                                      PIN_PUPDR_FLOATING(GPIOF_POWERON) |    \
                                      PIN_PUPDR_PULLUP(GPIOF_PIN2) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_IR_AN0) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_IR_AN1) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_IR_AN2) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_IR_AN3) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_IR_AN4) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_IR_AN5) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_IR_AN6) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_IR_AN7) |      \
+                                     PIN_PUPDR_FLOATING(GPIOF_IR_AN0) |       \
+                                     PIN_PUPDR_FLOATING(GPIOF_IR_AN1) |       \
+                                     PIN_PUPDR_FLOATING(GPIOF_IR_AN2) |       \
+                                     PIN_PUPDR_FLOATING(GPIOF_IR_AN3) |       \
+                                     PIN_PUPDR_FLOATING(GPIOF_IR_AN4) |       \
+                                     PIN_PUPDR_FLOATING(GPIOF_IR_AN5) |       \
+                                     PIN_PUPDR_FLOATING(GPIOF_IR_AN6) |       \
+                                     PIN_PUPDR_FLOATING(GPIOF_IR_AN7) |      \
                                      PIN_PUPDR_FLOATING(GPIOF_IMU_INT) |      \
                                      PIN_PUPDR_PULLUP(GPIOF_MPU_FSYNC) |      \
                                      PIN_PUPDR_PULLUP(GPIOF_MPU_CS) |      \
@@ -899,14 +899,14 @@
 #define VAL_GPIOF_ODR               (PIN_ODR_HIGH(GPIOF_SD_DETECT) |             \
                                      PIN_ODR_HIGH(GPIOF_POWERON) |          \
                                      PIN_ODR_HIGH(GPIOF_PIN2) |             \
-                                     PIN_ODR_HIGH(GPIOF_IR_AN0) |             \
-                                     PIN_ODR_HIGH(GPIOF_IR_AN1) |             \
-                                     PIN_ODR_HIGH(GPIOF_IR_AN2) |             \
-                                     PIN_ODR_HIGH(GPIOF_IR_AN3) |             \
-                                     PIN_ODR_HIGH(GPIOF_IR_AN4) |             \
-                                     PIN_ODR_HIGH(GPIOF_IR_AN5) |             \
-                                     PIN_ODR_HIGH(GPIOF_IR_AN6) |             \
-                                     PIN_ODR_HIGH(GPIOF_IR_AN7) |            \
+                                     PIN_ODR_LOW(GPIOF_IR_AN0) |             \
+                                     PIN_ODR_LOW(GPIOF_IR_AN1) |             \
+                                     PIN_ODR_LOW(GPIOF_IR_AN2) |             \
+                                     PIN_ODR_LOW(GPIOF_IR_AN3) |             \
+                                     PIN_ODR_LOW(GPIOF_IR_AN4) |             \
+                                     PIN_ODR_LOW(GPIOF_IR_AN5) |             \
+                                     PIN_ODR_LOW(GPIOF_IR_AN6) |             \
+                                     PIN_ODR_LOW(GPIOF_IR_AN7) |            \
                                      PIN_ODR_LOW(GPIOF_IMU_INT) |            \
                                      PIN_ODR_HIGH(GPIOF_MPU_FSYNC) |            \
                                      PIN_ODR_HIGH(GPIOF_MPU_CS) |            \
