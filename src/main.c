@@ -10,6 +10,7 @@
 #include "sensors/imu.h"
 #include "cmd.h"
 #include "control.h"
+#include "sensors/proximity.h"
 
 /*Testing includes*/
 #include "analogic.h"
@@ -32,10 +33,26 @@ static THD_FUNCTION(Thread1, arg) {
 
 void test_function(void)
 {
-    analogic_start(1,0,0);
-    control_start();
-    control_test();
+    float test[13];
+    float test_old[13];
+    int i;
 
+    proximity_start();
+
+    while(TRUE){
+        for(i = 0; i < 13; i++){
+            test_old[i] = test[i];
+        }
+        proximity_get(test);
+
+        if(test[0] == test_old[0]) {
+            palClearPad(GPIOE, GPIOE_LED_STATUS);
+        }
+
+        else {
+            palSetPad(GPIOE, GPIOE_LED_STATUS);
+        }
+    }
 }
 
 int main(void) {
