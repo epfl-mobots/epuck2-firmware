@@ -961,8 +961,8 @@
                                      PIN_MODE_ALTERNATE(GPIOG_UART_RX) |           \
                                      PIN_MODE_INPUT(GPIOG_PIN10) |          \
                                      PIN_MODE_INPUT(GPIOG_PIN11) |          \
-                                     PIN_MODE_INPUT(GPIOG_UART_RTS) |          \
-                                     PIN_MODE_INPUT(GPIOG_UART_CTS) |          \
+                                     PIN_MODE_ALTERNATE(GPIOG_UART_RTS) |          \
+                                     PIN_MODE_ALTERNATE(GPIOG_UART_CTS) |          \
                                      PIN_MODE_ALTERNATE(GPIOG_UART_TX) |          \
                                      PIN_MODE_INPUT(GPIOG_PIN15))
 #define VAL_GPIOG_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOG_PIN0) |       \
