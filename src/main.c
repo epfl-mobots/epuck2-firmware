@@ -6,10 +6,13 @@
 #include "test.h"
 #include "chprintf.h"
 #include "shell.h"
-#include "usbcfg.h"
+#include "usbconf.h"
 #include "sensors/imu.h"
 #include "cmd.h"
 #include "control.h"
+
+/* Virtual serial port over USB.*/
+//SerialUSBDriver SDU1;
 
 #define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
 
@@ -36,36 +39,34 @@ void test_function(void)
 
 int main(void) {
 
-    thread_t *shelltp = NULL;
-
-
     halInit();
     chSysInit();
 
-    sdStart(&SD6, NULL);
 
-    chprintf((BaseSequentialStream*)&SD6, "boot");
+    /*
+    * Initializes a serial-over-USB CDC driver.
+    */
+    sduObjectInit(&SDU1);
+    sduStart(&SDU1, &serusbcfg);
 
-    static const ShellConfig shell_cfg1 = {
-        (BaseSequentialStream *)&SD6,
-        shell_commands
-    };
+    /*
+    * Activates the USB driver and then the USB bus pull-up on D+.
+    * Note, a delay is inserted in order to not have to disconnect the cable
+    * after a reset.
+    */
+    usbDisconnectBus(serusbcfg.usbp);
+    chThdSleepMilliseconds(1000);
+    usbStart(serusbcfg.usbp, &usbcfg);
+    usbConnectBus(serusbcfg.usbp);
+
+
+    chprintf((BaseSequentialStream*)&SDU1, "boot");
 
     chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
     test_function();
 
     while (TRUE) {
-        if (!shelltp) {
-            palSetPad(GPIOE, GPIOE_LED_STATUS);
-            shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
-        } else {
-            palClearPad(GPIOE, GPIOE_LED_STATUS);
-            if (chThdTerminatedX(shelltp)) {
-                chThdRelease(shelltp);
-                shelltp = NULL;
-            }
-        }
         chThdSleepMilliseconds(500);
     }
 }

@@ -38,6 +38,12 @@
 #define STM32_HSECLK                8000000
 #endif
 
+
+/*
+ *  Define for functional usb without VBUS detection
+ */
+#define BOARD_OTG_NOVBUSSENS 1
+
 /*
  * Board voltages.
  * Required for performance limits calculation.
