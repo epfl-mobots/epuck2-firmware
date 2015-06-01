@@ -260,8 +260,8 @@
                                      PIN_MODE_INPUT(GPIOA_PIN10) |  \
                                      PIN_MODE_ALTERNATE(GPIOA_OTG_FS_DM) |  \
                                      PIN_MODE_ALTERNATE(GPIOA_OTG_FS_DP) |  \
-                                     PIN_MODE_INPUT(GPIOA_SWDIO) |      \
-                                     PIN_MODE_INPUT(GPIOA_SWCLK) |      \
+                                     PIN_MODE_ALTERNATE(GPIOA_SWDIO) |      \
+                                     PIN_MODE_ALTERNATE(GPIOA_SWCLK) |      \
                                      PIN_MODE_INPUT(GPIOA_MOT1_QEB))
 #define VAL_GPIOA_OTYPER            (PIN_OTYPE_OPENDRAIN(GPIOA_MOT0_CURRENT) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOA_MOT1_QEA) |       \
@@ -308,8 +308,8 @@
                                      PIN_PUPDR_PULLUP(GPIOA_PIN10) |  \
                                      PIN_PUPDR_FLOATING(GPIOA_OTG_FS_DM) |  \
                                      PIN_PUPDR_FLOATING(GPIOA_OTG_FS_DP) |  \
-                                     PIN_PUPDR_PULLUP(GPIOA_SWDIO) |      \
-                                     PIN_PUPDR_PULLUP(GPIOA_SWCLK) |      \
+                                     PIN_PUPDR_FLOATING(GPIOA_SWDIO) |      \
+                                     PIN_PUPDR_FLOATING(GPIOA_SWCLK) |      \
                                      PIN_PUPDR_FLOATING(GPIOA_MOT1_QEB))
 #define VAL_GPIOA_ODR               (PIN_ODR_LOW(GPIOA_MOT0_CURRENT) |           \
                                      PIN_ODR_HIGH(GPIOA_MOT1_QEA) |             \
