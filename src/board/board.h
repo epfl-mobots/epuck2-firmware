@@ -958,12 +958,12 @@
                                      PIN_MODE_INPUT(GPIOG_PIN6) |           \
                                      PIN_MODE_INPUT(GPIOG_PIN7) |           \
                                      PIN_MODE_INPUT(GPIOG_PIN8) |           \
-                                     PIN_MODE_INPUT(GPIOG_UART_RX) |           \
+                                     PIN_MODE_ALTERNATE(GPIOG_UART_RX) |           \
                                      PIN_MODE_INPUT(GPIOG_PIN10) |          \
                                      PIN_MODE_INPUT(GPIOG_PIN11) |          \
                                      PIN_MODE_INPUT(GPIOG_UART_RTS) |          \
                                      PIN_MODE_INPUT(GPIOG_UART_CTS) |          \
-                                     PIN_MODE_INPUT(GPIOG_UART_TX) |          \
+                                     PIN_MODE_ALTERNATE(GPIOG_UART_TX) |          \
                                      PIN_MODE_INPUT(GPIOG_PIN15))
 #define VAL_GPIOG_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOG_PIN0) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOG_PIN1) |       \
@@ -1038,12 +1038,12 @@
                                      PIN_AFIO_AF(GPIOG_PIN6, 0) |           \
                                      PIN_AFIO_AF(GPIOG_PIN7, 0))
 #define VAL_GPIOG_AFRH              (PIN_AFIO_AF(GPIOG_PIN8, 0) |           \
-                                     PIN_AFIO_AF(GPIOG_UART_RX, 0) |           \
+                                     PIN_AFIO_AF(GPIOG_UART_RX, 8) |           \
                                      PIN_AFIO_AF(GPIOG_PIN10, 0) |          \
                                      PIN_AFIO_AF(GPIOG_PIN11, 0) |          \
-                                     PIN_AFIO_AF(GPIOG_UART_RTS, 0) |          \
-                                     PIN_AFIO_AF(GPIOG_UART_CTS, 0) |          \
-                                     PIN_AFIO_AF(GPIOG_UART_TX, 0) |          \
+                                     PIN_AFIO_AF(GPIOG_UART_RTS, 8) |          \
+                                     PIN_AFIO_AF(GPIOG_UART_CTS, 8) |          \
+                                     PIN_AFIO_AF(GPIOG_UART_TX, 8) |          \
                                      PIN_AFIO_AF(GPIOG_PIN15, 0))
 
 /*
