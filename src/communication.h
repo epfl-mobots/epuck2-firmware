@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-void communication_start(BaseSequentialStream *out)
+void communication_start(BaseSequentialStream *out);
 
 #ifdef __cplusplus
 }
