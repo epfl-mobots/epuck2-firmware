@@ -10,6 +10,7 @@
 #include "sensors/imu.h"
 #include "cmd.h"
 #include "control.h"
+#include "communication.h"
 
 
 #define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
@@ -58,7 +59,10 @@ int main(void) {
     usbConnectBus(serusbcfg.usbp);
 
 
-    chprintf((BaseSequentialStream*)&SDU1, "boot");
+    sdStart(&SD6, NULL);   
+
+
+    communication_start((BaseSequentialStream *)&SDU1);
 
     chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
