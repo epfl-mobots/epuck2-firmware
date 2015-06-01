@@ -38,6 +38,12 @@
 #define STM32_HSECLK                8000000
 #endif
 
+
+/*
+ *  Define for functional usb without VBUS detection
+ */
+#define BOARD_OTG_NOVBUSSENS 1
+
 /*
  * Board voltages.
  * Required for performance limits calculation.
@@ -258,10 +264,10 @@
                                      PIN_MODE_INPUT(GPIOA_CAM_CLK) |           \
                                      PIN_MODE_INPUT(GPIOA_PIN9) |        \
                                      PIN_MODE_INPUT(GPIOA_PIN10) |  \
-                                     PIN_MODE_INPUT(GPIOA_OTG_FS_DM) |  \
-                                     PIN_MODE_INPUT(GPIOA_OTG_FS_DP) |  \
-                                     PIN_MODE_INPUT(GPIOA_SWDIO) |      \
-                                     PIN_MODE_INPUT(GPIOA_SWCLK) |      \
+                                     PIN_MODE_ALTERNATE(GPIOA_OTG_FS_DM) |  \
+                                     PIN_MODE_ALTERNATE(GPIOA_OTG_FS_DP) |  \
+                                     PIN_MODE_ALTERNATE(GPIOA_SWDIO) |      \
+                                     PIN_MODE_ALTERNATE(GPIOA_SWCLK) |      \
                                      PIN_MODE_INPUT(GPIOA_MOT1_QEB))
 #define VAL_GPIOA_OTYPER            (PIN_OTYPE_OPENDRAIN(GPIOA_MOT0_CURRENT) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOA_MOT1_QEA) |       \
@@ -306,10 +312,10 @@
                                      PIN_PUPDR_PULLUP(GPIOA_CAM_CLK) |         \
                                      PIN_PUPDR_PULLUP(GPIOA_PIN9) |    \
                                      PIN_PUPDR_PULLUP(GPIOA_PIN10) |  \
-                                     PIN_PUPDR_PULLUP(GPIOA_OTG_FS_DM) |  \
-                                     PIN_PUPDR_PULLUP(GPIOA_OTG_FS_DP) |  \
-                                     PIN_PUPDR_PULLUP(GPIOA_SWDIO) |      \
-                                     PIN_PUPDR_PULLUP(GPIOA_SWCLK) |      \
+                                     PIN_PUPDR_FLOATING(GPIOA_OTG_FS_DM) |  \
+                                     PIN_PUPDR_FLOATING(GPIOA_OTG_FS_DP) |  \
+                                     PIN_PUPDR_FLOATING(GPIOA_SWDIO) |      \
+                                     PIN_PUPDR_FLOATING(GPIOA_SWCLK) |      \
                                      PIN_PUPDR_FLOATING(GPIOA_MOT1_QEB))
 #define VAL_GPIOA_ODR               (PIN_ODR_LOW(GPIOA_MOT0_CURRENT) |           \
                                      PIN_ODR_HIGH(GPIOA_MOT1_QEA) |             \
@@ -958,12 +964,12 @@
                                      PIN_MODE_INPUT(GPIOG_PIN6) |           \
                                      PIN_MODE_INPUT(GPIOG_PIN7) |           \
                                      PIN_MODE_INPUT(GPIOG_PIN8) |           \
-                                     PIN_MODE_INPUT(GPIOG_UART_RX) |           \
+                                     PIN_MODE_ALTERNATE(GPIOG_UART_RX) |           \
                                      PIN_MODE_INPUT(GPIOG_PIN10) |          \
                                      PIN_MODE_INPUT(GPIOG_PIN11) |          \
-                                     PIN_MODE_INPUT(GPIOG_UART_RTS) |          \
-                                     PIN_MODE_INPUT(GPIOG_UART_CTS) |          \
-                                     PIN_MODE_INPUT(GPIOG_UART_TX) |          \
+                                     PIN_MODE_ALTERNATE(GPIOG_UART_RTS) |          \
+                                     PIN_MODE_ALTERNATE(GPIOG_UART_CTS) |          \
+                                     PIN_MODE_ALTERNATE(GPIOG_UART_TX) |          \
                                      PIN_MODE_INPUT(GPIOG_PIN15))
 #define VAL_GPIOG_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOG_PIN0) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOG_PIN1) |       \
@@ -1038,12 +1044,12 @@
                                      PIN_AFIO_AF(GPIOG_PIN6, 0) |           \
                                      PIN_AFIO_AF(GPIOG_PIN7, 0))
 #define VAL_GPIOG_AFRH              (PIN_AFIO_AF(GPIOG_PIN8, 0) |           \
-                                     PIN_AFIO_AF(GPIOG_UART_RX, 0) |           \
+                                     PIN_AFIO_AF(GPIOG_UART_RX, 8) |           \
                                      PIN_AFIO_AF(GPIOG_PIN10, 0) |          \
                                      PIN_AFIO_AF(GPIOG_PIN11, 0) |          \
-                                     PIN_AFIO_AF(GPIOG_UART_RTS, 0) |          \
-                                     PIN_AFIO_AF(GPIOG_UART_CTS, 0) |          \
-                                     PIN_AFIO_AF(GPIOG_UART_TX, 0) |          \
+                                     PIN_AFIO_AF(GPIOG_UART_RTS, 8) |          \
+                                     PIN_AFIO_AF(GPIOG_UART_CTS, 8) |          \
+                                     PIN_AFIO_AF(GPIOG_UART_TX, 8) |          \
                                      PIN_AFIO_AF(GPIOG_PIN15, 0))
 
 /*

@@ -1,6 +1,8 @@
 #include "feedback.h"
+#include "sensors/encoder.h"
 #include "ch.h"
 #include "hal.h"
+
 
 
 void feedback_get (feedback *left, feedback *right)

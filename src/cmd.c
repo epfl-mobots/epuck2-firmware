@@ -61,18 +61,6 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[])
     chThdWait(tp);
 }
 
-extern int proximity_main(void);
-
-static void cmd_adctest(BaseSequentialStream *chp, int argc, char *argv[])
-{
-    (void)argc;
-    (void)argv;
-    static int analog_input;
-    analog_input=proximity_main();
-    chprintf(chp, "adctest value: %i", analog_input);
-}
-
-
 static void cmd_mpu6050(BaseSequentialStream *chp, int argc, char *argv[])
 {
     (void)argc;
@@ -97,7 +85,6 @@ const ShellCommand shell_commands[] = {
     {"mem", cmd_mem},
     {"threads", cmd_threads},
     {"test", cmd_test},
-    {"adctest", cmd_adctest},
     {"mpu6050", cmd_mpu6050},
     {"clock", cmd_readclock},
     {NULL, NULL}

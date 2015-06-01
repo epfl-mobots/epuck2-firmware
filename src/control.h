@@ -8,6 +8,9 @@ extern "C" {
 #include <stdbool.h>
 #include "pid/pid.h"
 
+void control_start(void);
+
+
 
 #ifdef __cplusplus
 }
