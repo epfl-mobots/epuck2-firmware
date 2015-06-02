@@ -9,6 +9,8 @@ extern "C" {
 
 void communication_start(BaseSequentialStream *out);
 
+extern parameter_namespace_t parameter_root;
+
 #ifdef __cplusplus
 }
 #endif

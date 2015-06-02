@@ -156,6 +156,7 @@ static THD_FUNCTION(comm_rx, arg)
 
 void communication_start(BaseSequentialStream *out)
 {
+    parameter_namespace_declare(&parameter_root, NULL, NULL);
     chMtxObjectInit(&send_lock);
     chThdCreateStatic(comm_tx_stream_wa, sizeof(comm_tx_stream_wa), LOWPRIO, comm_tx_stream, out);
     chThdCreateStatic(comm_rx_wa, sizeof(comm_rx_wa), LOWPRIO, comm_rx, out);
