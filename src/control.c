@@ -10,16 +10,28 @@
 #include "setpoints.h"
 #include "analogic.h"
 #include "sensors/encoder.h"
+#include "parameter/parameter.h"
 
-struct motor {
+struct motor_s {
+    parameter_namespace_t root;
+    const char id;
+
     struct cascade_controller cascade;
     struct feedback feedback;
     struct setpoints setpoints;
     float pwm_input;
 };
 
-static struct motor left;
-static struct motor right;
+struct pid_parameter_s {
+    parameter_namespace_t root;
+    parameter_t kp;
+    parameter_t ki;
+    parameter_t kd;
+    parameter_t ilimit;
+};
+
+static struct motor_s left;
+static struct motor_s right;
 
 static THD_WORKING_AREA(waThreadControl, 128);
 static THD_FUNCTION(ThreadControl, arg) {
@@ -57,12 +69,30 @@ static THD_FUNCTION(ThreadControl, arg) {
 };
 
 
-void motor_init(struct motor *motor)
+static void pid_register(struct pid_parameter_s *pid,
+                         parameter_namespace_t *parent,
+                         const char *name)
+{
+
+    parameter_namespace_declare(&pid->root, parent, name);
+    parameter_scalar_declare_with_default(&pid->kp, &pid->root, "kp", 0);
+    parameter_scalar_declare_with_default(&pid->ki, &pid->root, "ki", 0);
+    parameter_scalar_declare_with_default(&pid->kd, &pid->root, "kd", 0);
+    parameter_scalar_declare_with_default(&pid->ilimit, &pid->root, "ilimit", 0);
+}
+
+
+void motor_init(struct motor_s *motor, const char *id)
 {
     cascade_init(&(motor->cascade));
     setpoints_init(&(motor->setpoints));
+    motor->id = id;
 
     /*Parameters*/
+    parameter_namespace_declare(&(motor->root), NULL, motor->id);
+    pid_register(&(motor->cascade.position_pid), &(motor->root), "position");
+    pid_register(&(motor->cascade.velocity_pid), &(motor->root), "velocity");
+    pid_register(&(motor->cascade.current_pid), &(motor->root), "current");
 
 
 }
@@ -70,8 +100,8 @@ void motor_init(struct motor *motor)
 
 void control_start(void)
 {
-    motor_init(&left);
-    motor_init(&right);
+    motor_init(&left, "left");
+    motor_init(&right, "right");
 
     motor_pwm_start();
     analogic_start(1,0,0);
