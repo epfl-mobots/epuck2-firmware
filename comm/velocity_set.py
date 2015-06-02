@@ -9,10 +9,10 @@ import time
 from pprint import pprint
 
 
-def parameter_send(serial_port, parameter_file):
+def parameter_send(serial_port):
     parameters = yaml.load(parameter_file)
     pprint(parameters, sys.stderr)
-    msg = msgpack.packb({'velocity_set': [False, 0.]},  use_single_float=True)
+    msg = msgpack.packb({'parameter_set': 90})  # todo pack as float
     dtgrm = serial_datagram.encode(msg)
     serial_port.write(dtgrm)
     serial_port.flush()

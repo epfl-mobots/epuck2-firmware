@@ -6,7 +6,11 @@
 #include "sensors/imu.h"
 #include "parameter/parameter_msgpack.h"
 #include "analogic.h"
+#include "setpoints.h"
+#include "control.h"
 
+
+ 
 parameter_namespace_t parameter_root;
 
 static mutex_t send_lock;
@@ -128,6 +132,26 @@ int parameter_set_cb(cmp_ctx_t *cmp, void *arg)
     return ret;
 }
 
+int velocity_cb(cmp_ctx_t *cmp, void *arg)
+{
+    (void)arg;
+    float velocity;
+    bool motor;
+    if(cmp_read_bool(cmp, &motor) && cmp_read_float(cmp, &velocity)) {
+
+        if(!motor) {
+            setpoints_set_velocity(&(left.setpoints),velocity);
+        }
+        else {
+            setpoints_set_velocity(&(right.setpoints),velocity);
+        }
+        
+        return 0;
+    }
+    return -1;
+
+}
+
 
 static THD_WORKING_AREA(comm_rx_wa, 1024);
 static THD_FUNCTION(comm_rx, arg)
@@ -135,6 +159,7 @@ static THD_FUNCTION(comm_rx, arg)
     struct dispatcher_entry_s dispatcher_table[] = {
         {"ping", ping_cb, arg},
         {"parameter_set", parameter_set_cb, NULL},
+        {"velocity_set", velocity_cb, NULL},
         {NULL, NULL, NULL}
     };
     static serial_datagram_rcv_handler_t rcv_handler;

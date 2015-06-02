@@ -5,41 +5,17 @@
 #include "pid/pid.h"
 #include "motor_csp.h"
 #include "motor_pwm.h"
-#include "pid_cascade.h"
-#include "feedback.h"
-#include "setpoints.h"
 #include "analogic.h"
 #include "sensors/encoder.h"
 #include "parameter/parameter.h"
 #include "communication.h"
 
 
-struct pid_parameter_s {
-    parameter_namespace_t root;
-    parameter_t kp;
-    parameter_t ki;
-    parameter_t kd;
-    parameter_t ilimit;
-};
 
 
-struct motor_s {
-    parameter_namespace_t root;
-    const char *id;
 
-    struct cascade_controller cascade;
-    struct feedback feedback;
-    struct setpoints setpoints;
-    float pwm_input;
-
-    struct pid_parameter_s position_pid;
-    struct pid_parameter_s velocity_pid;
-    struct pid_parameter_s current_pid;
-};
-
-
-static struct motor_s left;
-static struct motor_s right;
+struct motor_s left;
+struct motor_s right;
 
 void update_pid_parameters(pid_ctrl_t *pid, struct pid_parameter_s *pid_parameter)
 {
