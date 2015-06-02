@@ -4,7 +4,6 @@
 #include "serial-datagram/serial_datagram.h"
 #include "datagram_dispatcher.h"
 #include "sensors/imu.h"
-#include "parameter/parameter.h"
 #include "parameter/parameter_msgpack.h"
 #include "analogic.h"
 

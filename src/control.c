@@ -11,16 +11,8 @@
 #include "analogic.h"
 #include "sensors/encoder.h"
 #include "parameter/parameter.h"
+#include "communication.h"
 
-struct motor_s {
-    parameter_namespace_t root;
-    const char id;
-
-    struct cascade_controller cascade;
-    struct feedback feedback;
-    struct setpoints setpoints;
-    float pwm_input;
-};
 
 struct pid_parameter_s {
     parameter_namespace_t root;
@@ -29,6 +21,22 @@ struct pid_parameter_s {
     parameter_t kd;
     parameter_t ilimit;
 };
+
+
+struct motor_s {
+    parameter_namespace_t root;
+    const char *id;
+
+    struct cascade_controller cascade;
+    struct feedback feedback;
+    struct setpoints setpoints;
+    float pwm_input;
+
+    struct pid_parameter_s pid_position;
+    struct pid_parameter_s pid_velocity;
+    struct pid_parameter_s pid_current;
+};
+
 
 static struct motor_s left;
 static struct motor_s right;
@@ -89,10 +97,10 @@ void motor_init(struct motor_s *motor, const char *id)
     motor->id = id;
 
     /*Parameters*/
-    parameter_namespace_declare(&(motor->root), NULL, motor->id);
-    pid_register(&(motor->cascade.position_pid), &(motor->root), "position");
-    pid_register(&(motor->cascade.velocity_pid), &(motor->root), "velocity");
-    pid_register(&(motor->cascade.current_pid), &(motor->root), "current");
+    parameter_namespace_declare(&(motor->root), &parameter_root, motor->id);
+    pid_register(&(motor->pid_position), &(motor->root), "position");
+    pid_register(&(motor->pid_velocity), &(motor->root), "velocity");
+    pid_register(&(motor->pid_current), &(motor->root), "current");
 
 
 }

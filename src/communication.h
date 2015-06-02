@@ -7,6 +7,9 @@
 extern "C" {
 #endif
 
+#include "parameter/parameter.h"
+
+
 void communication_start(BaseSequentialStream *out);
 
 extern parameter_namespace_t parameter_root;
