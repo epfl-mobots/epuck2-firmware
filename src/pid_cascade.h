@@ -24,7 +24,7 @@ typedef struct cascade_controller{
 }cascade_controller;
 
 float cascade_step(cascade_controller *ctrl);
-void cascade_init(cascade_controller *ctrl_left, cascade_controller *ctrl_right);
+void cascade_init(cascade_controller *ctrl);
 
 
 #ifdef __cplusplus

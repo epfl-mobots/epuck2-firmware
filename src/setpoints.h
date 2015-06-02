@@ -17,7 +17,7 @@ typedef struct setpoints {
 	float max_current;
 }setpoints;
 
-void setpoints_init(setpoints *left, setpoints *right);
+void setpoints_init(setpoints *setpoints);
 void setpoints_set_position(setpoints *motor, float position);
 void setpoints_set_velocity(setpoints *motor, float velocity);
 void setpoints_set_current(setpoints *motor, float current);

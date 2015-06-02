@@ -8,6 +8,7 @@
 #include "pid_cascade.h"
 #include "feedback.h"
 #include "setpoints.h"
+#include "analogic.h"
 #include "sensors/encoder.h"
 
 struct motor {
@@ -26,6 +27,8 @@ static THD_FUNCTION(ThreadControl, arg) {
     (void)arg;
     chRegSetThreadName("motor state");
     while (TRUE) {
+
+        /*Parameters*/
 
         /*Feedback*/
         feedback_get(&(left.feedback), &(right.feedback));
@@ -54,24 +57,34 @@ static THD_FUNCTION(ThreadControl, arg) {
 };
 
 
+void motor_init(struct motor *motor)
+{
+    cascade_init(&(motor->cascade));
+    setpoints_init(&(motor->setpoints));
+
+    /*Parameters*/
+
+
+}
+
 
 void control_start(void)
 {
-    cascade_init(&(left.cascade), &(right.cascade));
-    setpoints_init(&(left.setpoints), &(right.setpoints));
+    motor_init(&left);
+    motor_init(&right);
+
     motor_pwm_start();
+    analogic_start(1,0,0);
     encoder_init();
-    
+
+    /*PID gains init*/
+
+
     chThdCreateStatic(waThreadControl, sizeof(waThreadControl), NORMALPRIO, ThreadControl, NULL);
 }
 
+
 void control_test(void)
 {
-    setpoints_set_velocity(&(right.setpoints), -3000);
-    setpoints_set_velocity(&(left.setpoints), -3000);
-
-    while(TRUE) {
-
-        chThdSleepMilliseconds(200);
-    }
+    //setpoints_set_velocity(&(right.setpoints), 3000);
 }

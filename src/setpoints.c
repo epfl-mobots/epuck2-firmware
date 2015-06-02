@@ -2,16 +2,11 @@
 #include "hal.h"
 #include "setpoints.h"
 
-void setpoints_init(setpoints *left, setpoints *right)
+void setpoints_init(setpoints *setpoints)
 {
-	left->position = 0;
-	right->position = 0;
-
-	left->velocity = 0;
-	right->velocity = 0;
-
-	left->current = 0;
-	right->current = 0;
+	setpoints->position = 0;
+	setpoints->velocity = 0;
+	setpoints->current = 0;
 }
 
 void setpoints_set_position(setpoints *setpoint, float position)
