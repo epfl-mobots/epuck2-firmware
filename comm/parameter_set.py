@@ -12,7 +12,7 @@ from pprint import pprint
 def parameter_send(serial_port, parameter_file):
     parameters = yaml.load(parameter_file)
     pprint(parameters, sys.stderr)
-    msg = msgpack.packb({'parameter_set': parameters})  # todo pack as float
+    msg = msgpack.packb({'parameter_set': parameters}, use_single_float=True)  # todo pack as float
     dtgrm = serial_datagram.encode(msg)
     serial_port.write(dtgrm)
     serial_port.flush()
