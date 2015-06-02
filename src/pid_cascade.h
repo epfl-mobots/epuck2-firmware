@@ -9,9 +9,9 @@ extern "C" {
 #include "pid/pid.h"
 
 typedef struct cascade_controller{
-    pid_filter_t current_pid;
-    pid_filter_t velocity_pid;
-    pid_filter_t position_pid;
+    pid_ctrl_t current_pid;
+    pid_ctrl_t velocity_pid;
+    pid_ctrl_t position_pid;
 
     float position_error;
     float position_output;
