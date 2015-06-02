@@ -1,15 +1,33 @@
 left:
     current:
-        kp: 0.0003
-        ki: 0
-        kd: 0
-        ilimit: 0
+        kp: 3
+        ki: 0.2
+        kd: 0.
+        ilimit: 20
     velocity:
-        kp: 1.
-        ki: 0.00005
-        kd: 0
+        kp: 0.006
+        ki: 0.0008
+        kd: 0.005
+        ilimit: 100
     position:
-        kp: 0
-        ki: 0
-        kd: 3
+        kp: 1
+        ki: 0.000
+        kd: 1
+        ilimit: 0
+
+right:
+    current:
+        kp: 2.6
+        ki: 0.2
+        kd: 0.
+        ilimit: 20
+    velocity:
+        kp: 0.031
+        ki: 0.001
+        kd: 0.001
+        ilimit: 100
+    position:
+        kp: 1
+        ki: 0.000
+        kd: 1
         ilimit: 0

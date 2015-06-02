@@ -10,7 +10,7 @@ from pprint import pprint
 
 
 def velocity_set(serial_port, speed):
-    msg = msgpack.packb({'velocity_set': [False, float(speed)]},  use_single_float=True)
+    msg = msgpack.packb({'velocity_set': [True, float(speed)]},  use_single_float=True)
     dtgrm = serial_datagram.encode(msg)
     serial_port.write(dtgrm)
     serial_port.flush()

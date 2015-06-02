@@ -39,13 +39,13 @@ float setpoints_error_position(setpoints *setpoint, float* position)
 float setpoints_error_velocity(setpoints *setpoint, float velocity)
 {
 	float error = 0;
-	error = setpoint->velocity - velocity;
+	error = velocity - setpoint->velocity;
 	return error;
 }
 
 float setpoints_error_current(setpoints *setpoint, float current)
 {
 	float error = 0;
-	error = setpoint->current - current;
+	error = current - setpoint->current;
 	return error;	
 }

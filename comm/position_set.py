@@ -9,8 +9,8 @@ import time
 from pprint import pprint
 
 
-def velocity_set(serial_port, position):
-    msg = msgpack.packb({'position_set': [False, float(position)]},  use_single_float=True)
+def position_set(serial_port, position):
+    msg = msgpack.packb({'position_set': [True, float(position)]},  use_single_float=True)
     dtgrm = serial_datagram.encode(msg)
     serial_port.write(dtgrm)
     serial_port.flush()
