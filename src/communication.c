@@ -1,3 +1,4 @@
+#include <hal.h>
 #include <ch.h>
 #include <string.h>
 #include "cmp_mem_access/cmp_mem_access.h"
@@ -8,6 +9,7 @@
 #include "analogic.h"
 #include "setpoints.h"
 #include "control.h"
+
 
 
  
@@ -135,19 +137,21 @@ int parameter_set_cb(cmp_ctx_t *cmp, void *arg)
 int velocity_cb(cmp_ctx_t *cmp, void *arg)
 {
     (void)arg;
+    uint32_t size;
     float velocity;
     bool motor;
-    if(cmp_read_bool(cmp, &motor) && cmp_read_float(cmp, &velocity)) {
 
+    if(cmp_read_array(cmp, &size) && size == 2 && cmp_read_bool(cmp, &motor) && cmp_read_float(cmp, &velocity)) {
         if(!motor) {
             setpoints_set_velocity(&(left.setpoints),velocity);
+            palSetPad(GPIOE, GPIOE_LED_STATUS);
         }
         else {
             setpoints_set_velocity(&(right.setpoints),velocity);
         }
-        
         return 0;
     }
+
     return -1;
 
 }
