@@ -120,12 +120,12 @@ void control_start(void)
     parameter_scalar_set(&(left.position_pid.ki), 0.);
     parameter_scalar_set(&(left.position_pid.kd), 0.);
 
-    parameter_scalar_set(&(left.velocity_pid.kp), 1.);
-    parameter_scalar_set(&(left.velocity_pid.ki), 0.00005);
+    parameter_scalar_set(&(left.velocity_pid.kp), 0.);
+    parameter_scalar_set(&(left.velocity_pid.ki), 0.);
     parameter_scalar_set(&(left.velocity_pid.kd), 0.);
 
-    parameter_scalar_set(&(left.current_pid.kp), 0.0001);
-    parameter_scalar_set(&(left.current_pid.ki), 0.00005);
+    parameter_scalar_set(&(left.current_pid.kp), 0.);
+    parameter_scalar_set(&(left.current_pid.ki), 0.);
     parameter_scalar_set(&(left.current_pid.kd), 0.);
 
     parameter_scalar_set(&(right.position_pid.kp), 0.);
@@ -136,8 +136,8 @@ void control_start(void)
     parameter_scalar_set(&(right.velocity_pid.ki), 0.);
     parameter_scalar_set(&(right.velocity_pid.kd), 0.);
 
-    parameter_scalar_set(&(right.current_pid.kp), 0.0001);
-    parameter_scalar_set(&(right.current_pid.ki), 0.00005);
+    parameter_scalar_set(&(right.current_pid.kp), 0.);
+    parameter_scalar_set(&(right.current_pid.ki), 0.);
     parameter_scalar_set(&(right.current_pid.kd), 0.);
 
 

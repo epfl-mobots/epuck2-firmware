@@ -49,10 +49,8 @@ static int send_imu(cmp_ctx_t *cmp)
 
 static int send_current(cmp_ctx_t *cmp)
 {
-    int32_t motor_current[2];
     float t = (float)chVTGetSystemTimeX() / CH_CFG_ST_FREQUENCY;
 
-    analog_get_motor(motor_current);
 
     bool err = false;
 
@@ -60,8 +58,8 @@ static int send_current(cmp_ctx_t *cmp)
     const char *current_id = "current";
     err = err || !cmp_write_str(cmp, current_id, strlen(current_id));
     err = err || !cmp_write_array(cmp, 2);
-    err = err || !cmp_write_float(cmp, motor_current[0]);
-    err = err || !cmp_write_float(cmp, motor_current[1]);
+    err = err || !cmp_write_float(cmp, left.feedback.current);
+    err = err || !cmp_write_float(cmp, right.feedback.current);
     const char *time_id = "time";
     err = err || !cmp_write_str(cmp, time_id, strlen(time_id));
     err = err || !cmp_write_float(cmp, t);
@@ -86,6 +84,24 @@ static int send_velocity(cmp_ctx_t *cmp)
     return err;
 }
 
+
+static int send_position(cmp_ctx_t *cmp)
+{
+    float t = (float)chVTGetSystemTimeX() / CH_CFG_ST_FREQUENCY;
+
+    bool err = false;
+
+    err = err || !cmp_write_map(cmp, 2);
+    const char *position_id = "position";
+    err = err || !cmp_write_str(cmp, position_id, strlen(position_id));
+    err = err || !cmp_write_array(cmp, 2);
+    err = err || !cmp_write_float(cmp, left.feedback.position);
+    err = err || !cmp_write_float(cmp, right.feedback.position);
+    const char *time_id = "time";
+    err = err || !cmp_write_str(cmp, time_id, strlen(time_id));
+    err = err || !cmp_write_float(cmp, t);
+    return err;
+}
 
 
 static void _stream_imu_values_sndfn(void *arg, const void *p, size_t len)
@@ -122,6 +138,13 @@ static THD_FUNCTION(comm_tx_stream, arg)
 
         cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
         if (send_velocity(&cmp) == 0) {
+            chMtxLock(&send_lock);
+            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
+            chMtxUnlock(&send_lock);
+        }
+
+        cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
+        if (send_position(&cmp) == 0) {
             chMtxLock(&send_lock);
             serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
             chMtxUnlock(&send_lock);
