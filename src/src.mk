@@ -19,3 +19,5 @@ SRC += src/pid_cascade.c
 SRC += src/feedback.c
 SRC += src/setpoints.c
 SRC += src/pid/pid.c
+SRC += src/sensors/vl6180x-driver/vl6180x.c
+SRC += src/sensors/range.c
