@@ -19,3 +19,6 @@
 [submodule "src/pid"]
 	path = src/pid
 	url = https://github.com/epuck2/pid.git
+[submodule "vl6180x-driver"]
+	path = src/sensors/vl6180x-driver
+	url = https://github.com/epuck2/vl6180x-driver
