@@ -4,12 +4,15 @@
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
+
 #include "chprintf.h"
 #include "shell.h"
 #include "usbconf.h"
-#include "sensors/imu.h"
+
 #include "cmd.h"
 #include "control.h"
+#include "sensors/imu.h"
+#include "sensors/range.h"
 
 #include "aseba_vm/skel.h"
 #include "aseba_vm/aseba_node.h"
@@ -29,12 +32,6 @@ static THD_FUNCTION(Thread1, arg) {
     palClearPad(GPIOE, GPIOE_LED_HEARTBEAT);
     chThdSleepMilliseconds(300);
   }
-}
-
-void test_function(void)
-{
-
-
 }
 
 
@@ -63,6 +60,10 @@ int main(void) {
 
     // Start heartbeat thread
     chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+
+    // Initialise the time of flight range sensor
+    range_init();
+    range_start();
 
     // Initialise Aseba node (CAN and VM)
     aseba_vm_init();
