@@ -59,15 +59,13 @@ static THD_FUNCTION(can_rx_thread, arg) {
 
 void can_init(void)
 {
-#if defined(BOARD_ST_STM32F4_DISCOVERY)
     // CAN1 gpio init
     iomode_t mode = PAL_STM32_MODE_ALTERNATE | PAL_STM32_OTYPE_PUSHPULL
         | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_PUDR_FLOATING
         | PAL_STM32_ALTERNATE(9);
-    palSetPadMode(GPIOD, GPIOD_PIN0, mode); // RX
-    palSetPadMode(GPIOD, GPIOD_PIN1, mode); // TX
+    palSetPadMode(GPIOD, GPIOD_CAN_RX, mode); // RX
+    palSetPadMode(GPIOD, GPIOD_CAN_TX, mode); // TX
     canStart(&CAND1, &can1_config);
-#endif
 }
 
 void aseba_can_rx_dropped(void)

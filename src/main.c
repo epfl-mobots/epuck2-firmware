@@ -38,12 +38,10 @@ void test_function(void)
 }
 
 
-
 int main(void) {
 
     halInit();
     chSysInit();
-
 
     /*
     * Initializes a serial-over-USB CDC driver.
@@ -61,12 +59,12 @@ int main(void) {
     usbStart(serusbcfg.usbp, &usbcfg);
     usbConnectBus(serusbcfg.usbp);
 
-
     chprintf((BaseSequentialStream*)&SDU1, "boot");
 
+    // Start heartbeat thread
     chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
-    // Initialise Aseba CAN and VM
+    // Initialise Aseba node (CAN and VM)
     aseba_vm_init();
     aseba_can_start(&vmState);
     aseba_vm_start();
