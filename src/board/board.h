@@ -607,7 +607,7 @@
 #define VAL_GPIOD_MODER             (PIN_MODE_INPUT(GPIOD_CAN_RX) |           \
                                      PIN_MODE_INPUT(GPIOD_CAN_TX) |           \
                                      PIN_MODE_INPUT(GPIOD_SDIO_CMD) |           \
-                                     PIN_MODE_INPUT(GPIOD_2V8_ON) |           \
+                                     PIN_MODE_OUTPUT(GPIOD_2V8_ON) |           \
                                      PIN_MODE_INPUT(GPIOD_PIN4) |         \
                                      PIN_MODE_INPUT(GPIOD_CAM_GPIO_0) |   \
                                      PIN_MODE_INPUT(GPIOD_CAM_GPIO_1) |           \
@@ -655,7 +655,7 @@
 #define VAL_GPIOD_PUPDR             (PIN_PUPDR_PULLUP(GPIOD_CAN_RX) |         \
                                      PIN_PUPDR_PULLUP(GPIOD_CAN_TX) |         \
                                      PIN_PUPDR_PULLUP(GPIOD_SDIO_CMD) |         \
-                                     PIN_PUPDR_PULLUP(GPIOD_2V8_ON) |         \
+                                     PIN_PUPDR_FLOATING(GPIOD_2V8_ON) |         \
                                      PIN_PUPDR_PULLUP(GPIOD_PIN4) |      \
                                      PIN_PUPDR_PULLUP(GPIOD_CAM_GPIO_0) |\
                                      PIN_PUPDR_PULLUP(GPIOD_CAM_GPIO_1) |         \
@@ -671,7 +671,7 @@
 #define VAL_GPIOD_ODR               (PIN_ODR_HIGH(GPIOD_CAN_RX) |             \
                                      PIN_ODR_HIGH(GPIOD_CAN_TX) |             \
                                      PIN_ODR_HIGH(GPIOD_SDIO_CMD) |             \
-                                     PIN_ODR_HIGH(GPIOD_2V8_ON) |             \
+                                     PIN_ODR_LOW(GPIOD_2V8_ON) |             \
                                      PIN_ODR_HIGH(GPIOD_PIN4) |            \
                                      PIN_ODR_HIGH(GPIOD_CAM_GPIO_0) |     \
                                      PIN_ODR_HIGH(GPIOD_CAM_GPIO_1) |             \

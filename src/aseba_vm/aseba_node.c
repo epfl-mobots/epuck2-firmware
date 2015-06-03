@@ -10,6 +10,8 @@
 #include "aseba_vm/skel_user.h"
 #include "aseba_vm/aseba_node.h"
 
+#include "sensors/range.h"
+
 
 void update_aseba_variables_read(void);
 void update_aseba_variables_write(void);
@@ -48,6 +50,8 @@ void aseba_vm_init(void)
     vmVariables.fwversion[0] = 0;
     vmVariables.fwversion[1] = 1;
 
+    vmVariables.range = 0;
+
     chThdSleepMilliseconds(500);
 
     AsebaVMSetupEvent(&vmState, ASEBA_EVENT_INIT);
@@ -61,7 +65,9 @@ void aseba_vm_start(void)
 // This function must update the variable to match the microcontroller state
 void update_aseba_variables_read(void)
 {
-
+    static float range;
+    range_get_range(&range);
+    vmVariables.range = (int16_t)(range * 1000.0f);
 }
 
 // This function must update the microcontrolleur state to match the variables

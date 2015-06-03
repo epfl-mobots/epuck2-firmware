@@ -42,6 +42,8 @@ struct _vmVariables {
 	sint16 fwversion[2];				// Firmware version
 	sint16 productId;					// Product ID
 
+	sint16 range;
+
 	// Free space
 	sint16 freeSpace[VM_VARIABLES_FREE_SPACE];
 };

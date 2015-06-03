@@ -20,15 +20,18 @@ static THD_FUNCTION(range_reader_thd, arg) {
 
     (void)arg;
 
-    uint8_t temp;
+    static uint8_t temp;
     chRegSetThreadName("Range_reader");
 
     while (TRUE) {
         chSysLock();
         // Read sensor
-        vl6180x_measure_distance(&vl6180x, &(range_sample.raw_mm));
+        vl6180x_measure_distance(&vl6180x, &temp);
+        range_sample.raw_mm = temp;
         range_sample.raw = range_sample.raw_mm * MILLIMETER_TO_METER;
         chSysUnlock();
+
+        chThdSleepMilliseconds(100);
     }
     return 0;
 }
@@ -49,8 +52,11 @@ void range_init(void)
     };
 
     chSysLock();
-    palSetPadMode(GPIOB, 9, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
-    palSetPadMode(GPIOB, 8, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
+    // Power on the time of flight sensor
+    palSetPad(GPIOD, GPIOD_2V8_ON);
+    // Configure the I2C interface
+    palSetPadMode(GPIOB, GPIOB_I2C_SDA, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
+    palSetPadMode(GPIOB, GPIOB_I2C_SCLK, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
     chSysUnlock();
 
     i2cStart(&I2CD1, &i2c_cfg);
