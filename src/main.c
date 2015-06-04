@@ -38,10 +38,8 @@ static THD_FUNCTION(Thread1, arg) {
 
 void test_function(void)
 {
-    //control_start();
-    //control_test();
-    proximity_start();
-    palSetPad(GPIOE, GPIOE_LED_STATUS);
+    control_start();
+    control_test();
 }
 
 
@@ -70,13 +68,11 @@ int main(void) {
 
     sdStart(&SD6, NULL);   
 
-
     communication_start((BaseSequentialStream *)&SDU1);
 
     chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
-
-    //test_function();
+    test_function();
 
     while (TRUE) {
         chThdSleepMilliseconds(500);
