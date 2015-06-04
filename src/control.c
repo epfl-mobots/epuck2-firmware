@@ -2,6 +2,7 @@
 #include "math.h"
 #include "hal.h"
 #include "ch.h"
+#include "evtimer.h"
 #include "pid/pid.h"
 #include "motor_csp.h"
 #include "motor_pwm.h"
@@ -10,9 +11,15 @@
 #include "communication.h"
 
 
+#define CONTROL_LOOP_START_EVT 0
 
 struct motor_s left;
 struct motor_s right;
+
+static event_timer_t evt_control;
+static event_listener_t control_loop_start;
+
+
 
 void update_pid_parameters(pid_ctrl_t *pid, struct pid_parameter_s *pid_parameter)
 {
@@ -44,7 +51,10 @@ static THD_FUNCTION(ThreadControl, arg) {
 
     (void)arg;
     chRegSetThreadName("motor state");
+
     while (TRUE) {
+
+        chEvtWaitAny(CONTROL_LOOP_START_EVT);
 
         /*Parameters*/
         update_motor_parameters(&left);
@@ -140,6 +150,11 @@ void control_start(void)
     parameter_scalar_set(&(right.current_pid.ki), 0.);
     parameter_scalar_set(&(right.current_pid.kd), 0.);
 
+
+    /*Initializing Event Timer for synchrone control*/
+    evtObjectInit(&evt_control, 84000000);                  // Initializes an event timer.
+    evtStart(&evt_control);                       // Starts the event timer.
+    chEvtRegister(&evt_control.et_es, &control_loop_start, CONTROL_LOOP_START_EVT);   // Registers a listener on the source.
 
     chThdCreateStatic(waThreadControl, sizeof(waThreadControl), NORMALPRIO, ThreadControl, NULL);
 }

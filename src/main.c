@@ -75,7 +75,8 @@ int main(void) {
 
     chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
-    test_function();
+
+    //test_function();
 
     while (TRUE) {
         chThdSleepMilliseconds(500);
