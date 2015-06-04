@@ -38,8 +38,10 @@ static THD_FUNCTION(Thread1, arg) {
 
 void test_function(void)
 {
-    control_start();
-    control_test();
+    //control_start();
+    //control_test();
+    proximity_start();
+    palSetPad(GPIOE, GPIOE_LED_STATUS);
 }
 
 

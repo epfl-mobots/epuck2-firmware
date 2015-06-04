@@ -147,5 +147,5 @@ void control_start(void)
 
 void control_test(void)
 {
-    //setpoints_set_velocity(&(right.setpoints), 3000);
+
 }

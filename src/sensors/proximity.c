@@ -13,7 +13,7 @@
 #define WATCHDOG_RELOAD_VALUE 0x0028    //40 in hexadecimal
 #define NUM_IR_SENSORS 13
 
-static void proximity_pwm_cb(PWMDriver *pwmp)
+void proximity_pwm_cb(PWMDriver *pwmp)
 {
     (void)pwmp;
     IWDG->KR = 0xAAAA;      //Resets watchdog counter
@@ -66,7 +66,9 @@ void proximtiy_init(void) {
 
 
 void proximity_start(void) {
+
     pwmStart(&PWMD8, &pwmcfg_proximity);
+    pwmEnablePeriodicNotification(&PWMD8);          //allows callback to happen
 
     /*Watchdog to stop the PWM in case of malfunction*/
     /*Watchdog clock frequency is 32kHz*/

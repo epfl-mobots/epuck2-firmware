@@ -2,7 +2,7 @@
 #include "test.h"
 #include "chprintf.h"
 #include "shell.h"
-#include "usbcfg.h"
+#include "usbconf.h"
 #include "sensors/imu.h"
 
 #define TEST_WA_SIZE        THD_WORKING_AREA_SIZE(256)
