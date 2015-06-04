@@ -113,11 +113,8 @@ static THD_FUNCTION(adc_motor_current, arg)
         ADC_SQR1_NUM_CH(MOTOR_NB_CHANNELS),     		    // SQR1
         0,                      							// SQR2
         ADC_SQR3_SQ1_N(0) | ADC_SQR3_SQ2_N(2)       		// SQR3 
-        //PC1 (IN11) and PC2(IN12)
     };
 
-
-    palSetGroupMode(GPIOA, 0 | 2, 0, PAL_MODE_INPUT_ANALOG);
 
     adcStart(&ADCD1, NULL);
 
@@ -154,9 +151,6 @@ static THD_FUNCTION(adc2_proximity_current, arg)
     };
 
 
-    palSetGroupMode(GPIOC, 4,
-                  0, PAL_MODE_INPUT_ANALOG);
-
     adcStart(&ADCD2, NULL);
 
     adcStartConversion(&ADCD2, &adcgrpcfg2, adc2_proximity_samples, DMA_BUFFER_SIZE); // should never return
@@ -173,8 +167,8 @@ static THD_FUNCTION(adc3_proximity_current, arg)
     static adcsample_t adc3_proximity_samples[PROXIMITY_NB_CHANNELS_ADC3 * DMA_BUFFER_SIZE];
     static const ADCConversionGroup adcgrpcfg3 = {
         TRUE,                                               // circular
-        PROXIMITY_NB_CHANNELS_ADC3,                                  // nb channels
-        adc3_proximity_cb,                                       // callback fn
+        PROXIMITY_NB_CHANNELS_ADC3,                         // nb channels
+        adc3_proximity_cb,                                  // callback fn
         NULL,                                               // error callback fn
         0,                                                  // CR1
         0,                                                  // CR2 -> doesn't start and doesn't activate continuous
@@ -204,11 +198,6 @@ static THD_FUNCTION(adc3_proximity_current, arg)
         ADC_SQR3_SQ5_N(5) | ADC_SQR3_SQ6_N(6),              
     };
 
-
-    palSetGroupMode(GPIOF, 3 | 4 | 5 | 6 | 7 | 8 | 9| 10,
-                  0, PAL_MODE_INPUT_ANALOG);
-    palSetGroupMode(GPIOC, 0 | 1 | 2 | 3,
-                  0, PAL_MODE_INPUT_ANALOG);
 
     adcStart(&ADCD3, NULL);
 
