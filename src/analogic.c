@@ -59,12 +59,10 @@ static void adc2_proximity_cb(ADCDriver *adcp, adcsample_t *adc2_proximity_sampl
     (void)adcp;
     uint32_t accumulator = 0;
     int i;
-    if(proximity_change_adc_trigger()) {
 
-        for (i = 0; i < (int)(n); i += PROXIMITY_NB_CHANNELS_ADC2) {
-            accumulator += adc2_proximity_samples[i];
-        }
-
+    for (i = 0; i < (int)(n); i += PROXIMITY_NB_CHANNELS_ADC2) {
+        accumulator += adc2_proximity_samples[i];
+        
         chSysLockFromISR();
         for (i = 0; i < PROXIMITY_NB_CHANNELS_ADC2; i++) {
             proximity_value2 = (accumulator / DMA_BUFFER_SIZE);
@@ -79,9 +77,11 @@ static void adc3_proximity_cb(ADCDriver *adcp, adcsample_t *adc3_proximity_sampl
     uint32_t accumulator[PROXIMITY_NB_CHANNELS_ADC3] = {0};
 
     int i, j;
-    for (i = 0; i < (int)(n); i += PROXIMITY_NB_CHANNELS_ADC3) {
-        for (j = 0; j < PROXIMITY_NB_CHANNELS_ADC3; i++) {
-            accumulator[j] += adc3_proximity_samples[i+j];
+    if(proximity_change_adc_trigger()) {
+        for (i = 0; i < (int)(n); i += PROXIMITY_NB_CHANNELS_ADC3) {
+            for (j = 0; j < PROXIMITY_NB_CHANNELS_ADC3; i++) {
+                accumulator[j] += adc3_proximity_samples[i+j];
+            }
         }
     }
 
@@ -170,7 +170,8 @@ static THD_FUNCTION(adc3_proximity_current, arg)
         PROXIMITY_NB_CHANNELS_ADC3,                         // nb channels
         adc3_proximity_cb,                                  // callback fn
         NULL,                                               // error callback fn
-        0,                                                  // CR1
+        ADC_CR1_DISCEN | ADC_CR1_DISCNUM_0 |
+        ADC_CR1_DISCNUM_1 | ADC_CR1_DISCNUM_2,              // CR1 -> disontinuous mode with one conversion per trigger
         0,                                                  // CR2 -> doesn't start and doesn't activate continuous
         /*SMPR1*/
         ADC_SMPR1_SMP_AN10(ADC_SAMPLE_112) |  //PC0 - IR_AN8
