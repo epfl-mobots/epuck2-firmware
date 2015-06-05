@@ -159,8 +159,3 @@ void control_start(void)
     chThdCreateStatic(waThreadControl, sizeof(waThreadControl), NORMALPRIO, ThreadControl, NULL);
 }
 
-
-void control_test(void)
-{
-
-}

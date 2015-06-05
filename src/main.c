@@ -39,7 +39,6 @@ static THD_FUNCTION(Thread1, arg) {
 void test_function(void)
 {
     control_start();
-    control_test();
 }
 
 

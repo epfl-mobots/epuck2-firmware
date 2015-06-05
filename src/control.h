@@ -41,8 +41,6 @@ extern struct motor_s left;
 extern struct motor_s right;
 
 void control_start(void);
-void control_test(void);
-
 
 
 #ifdef __cplusplus
