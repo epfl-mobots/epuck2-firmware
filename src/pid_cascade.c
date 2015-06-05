@@ -22,7 +22,6 @@ float cascade_step(cascade_controller *ctrl)
 
 void cascade_init(cascade_controller *ctrl)
 {
-    /*Left motor controller init*/
 
     pid_init(&(ctrl->position_pid));
     pid_init(&(ctrl->velocity_pid));
@@ -36,11 +35,4 @@ void cascade_init(cascade_controller *ctrl)
     pid_set_gains(&(ctrl->velocity_pid), 0., 0., 0);
     pid_set_gains(&(ctrl->current_pid), 0., 0., 0.);
 
-    //pid_set_gains(&(ctrl_left->position_pid), 0, 0, 0);
-    //pid_set_gains(&(ctrl_left->velocity_pid), 1, 0.00005, 0);
-    //pid_set_gains(&(ctrl_left->current_pid), 0.0001, 0.00005, 0);
-
-    //pid_set_gains(&(ctrl_right->position_pid), 0, 0, 0);
-    //pid_set_gains(&(ctrl_right->velocity_pid), 1, 0.00005, 0);
-    //pid_set_gains(&(ctrl_right->current_pid), 0.0001, 0.00005, 0);
 }
