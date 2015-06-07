@@ -5,10 +5,10 @@
 #include "analogic.h"
 
 #define PWM_CLK_FREQ 42000000
-#define PWM_CYCLE 4200
-#define TCRT1000_DC 0.071               //Duty cycle for IR sensors
-#define COUNTER_HIGH_STATE 0x0096       //150 CLK cycle
-#define COUNTER_LOW_STATE  0x0FA0       //4000 CLK cycle
+#define PWM_CYCLE 42000
+#define TCRT1000_DC 0.071               //Duty cycle for IR sensors -> 71 microseconds high time
+#define COUNTER_HIGH_STATE 0x05DC       //1500 CLK cycle -> ~17microseconds
+#define COUNTER_LOW_STATE  0x9C40       //40000 CLK cycle
 #define WATCHDOG_RELOAD_VALUE 0x0028    //40 in hexadecimal
 #define NUM_IR_SENSORS 13
 
@@ -20,7 +20,7 @@ void proximity_pwm_cb(PWMDriver *pwmp)
 
 static const PWMConfig pwmcfg_proximity = {
     PWM_CLK_FREQ,                                   /* 42MHz PWM clock frequency.  */
-    PWM_CYCLE,                                      /* PWM cycle is 10kHz.   */
+    PWM_CYCLE,                                      /* PWM cycle is 1kHz.   */
     proximity_pwm_cb,
     {
     {PWM_OUTPUT_DISABLED, NULL},
