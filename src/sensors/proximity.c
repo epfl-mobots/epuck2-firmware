@@ -2,7 +2,6 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "tcrt1000.h"
 #include "analogic.h"
 
 #define PWM_CLK_FREQ 42000000
@@ -37,36 +36,31 @@ static const PWMConfig pwmcfg_proximity = {
 int proximity_change_adc_trigger(void) {
     if (STM32_TIM8->CCR[0] == COUNTER_HIGH_STATE) {
         STM32_TIM8->CCR[0] = COUNTER_LOW_STATE;
-        return FALSE;
+        return TRUE;
     }
     else {
         STM32_TIM8->CCR[0] = COUNTER_HIGH_STATE;
-        return TRUE;
+        return FALSE;
     }
 }
 
 void proximity_get(float* proximity)
 {
-    int32_t value[NUM_IR_SENSORS];
+    int32_t value_low[NUM_IR_SENSORS];
+    int32_t value_high[NUM_IR_SENSORS];
+
     int i;
-    analog_get_proximity(value);
+    analog_get_proximity(value_low, value_high);
 
     for (i = 0; i < NUM_IR_SENSORS; i++){
-        proximity[i] = (float) value[i];
+        proximity[i] = (float) (value_high[i]-value_low[i]) ;
     }
-}
-
-void proximtiy_init(void) {
-    STM32_TIM8->CCR[0] = COUNTER_HIGH_STATE;        //Compare value
-    STM32_TIM8->CCMR1 |= TIM_CCMR1_OC1M_0;          //Output compare mode, sets output to high on match
-    STM32_TIM8->CCMR1 &= ~(TIM_CCMR1_OC1PE);        //Disables preload
-    STM32_TIM8->CCER &= ~(TIM_CCER_CC1P);           //active high polarity
-    STM32_TIM8->CCER |= TIM_CCER_CC1E;              //enable output
 }
 
 
 void proximity_start(void) {
 
+    /*Init PWM*/    
     pwmStart(&PWMD8, &pwmcfg_proximity);
     pwmEnablePeriodicNotification(&PWMD8);          //allows callback to happen
 
@@ -75,7 +69,16 @@ void proximity_start(void) {
     IWDG->RLR = (IWDG_RLR_RL | WATCHDOG_RELOAD_VALUE);
     IWDG->KR |= 0xCCCC;             //Starts Watchdog countdown
 
+    /*Start PWM*/
     pwmEnableChannel(&PWMD8, 0, (pwmcnt_t) (PWM_CYCLE * TCRT1000_DC));
 
+    /*Capture/compare configuration*/
+    STM32_TIM8->CCR[0] = COUNTER_HIGH_STATE;        //Compare value
+    STM32_TIM8->CCMR1 |= TIM_CCMR1_OC1M_0;          //Output compare mode, sets output to high on match
+    STM32_TIM8->CCMR1 &= ~(TIM_CCMR1_OC1PE);        //Disables preload
+    STM32_TIM8->CCER &= ~(TIM_CCER_CC1P);           //active high polarity
+    STM32_TIM8->CCER |= TIM_CCER_CC1E;              //enable output
+
+    /*Start ADC for proximity sensors*/
     analogic_start(0,0,1);
 }

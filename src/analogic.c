@@ -13,7 +13,9 @@
 #define PROXIMITY_CB 1
 
 static int32_t motor_value[MOTOR_NB_CHANNELS];
-static int32_t proximity_value3[PROXIMITY_NB_CHANNELS_ADC3];
+static int32_t proximity_value3_high[PROXIMITY_NB_CHANNELS_ADC3];
+static int32_t proximity_value3_low_high[PROXIMITY_NB_CHANNELS_ADC3];
+
 static int32_t proximity_value2;
 
 event_source_t analogic_events;
@@ -27,12 +29,17 @@ void analog_get_motor(int32_t *value)
     chSysUnlock();
 }
 
-void analog_get_proximity(int32_t *value)
+void analog_get_proximity(int32_t *value_low, int32_t *value_high)
 {
     int i;
 	chSysLock();
     for (i = 0; i < PROXIMITY_NB_CHANNELS_ADC3; i++) {
-        value[i] = proximity_value3[i];
+        value_low[i] = proximity_value3_low[i];
+    }
+    value[PROXIMITY_NB_CHANNELS_ADC3] = proximity_value2;
+
+    for (i = 0; i < PROXIMITY_NB_CHANNELS_ADC3; i++) {
+        value_high[i] = proximity_value3_high[i];
     }
     value[PROXIMITY_NB_CHANNELS_ADC3] = proximity_value2;
 	chSysUnlock();
@@ -83,13 +90,24 @@ static void adc3_proximity_cb(ADCDriver *adcp, adcsample_t *adc3_proximity_sampl
                 accumulator[j] += adc3_proximity_samples[i+j];
             }
         }
+        chSysLockFromISR();
+        for (i = 0; i < PROXIMITY_NB_CHANNELS_ADC3; i++) {
+            proximity_value3_high[i] = (accumulator[i] / DMA_BUFFER_SIZE);
+        }
+        chSysUnlockFromISR();
     }
-
-    chSysLockFromISR();
-    for (i = 0; i < PROXIMITY_NB_CHANNELS_ADC3; i++) {
-        proximity_value3[i] = (accumulator[i] / DMA_BUFFER_SIZE);
+    else {
+        for (i = 0; i < (int)(n); i += PROXIMITY_NB_CHANNELS_ADC3) {
+            for (j = 0; j < PROXIMITY_NB_CHANNELS_ADC3; i++) {
+                accumulator[j] += adc3_proximity_samples[i+j];
+            }
+        }
+        chSysLockFromISR();
+        for (i = 0; i < PROXIMITY_NB_CHANNELS_ADC3; i++) {
+            proximity_value3_low[i] = (accumulator[i] / DMA_BUFFER_SIZE);
+        }
+        chSysUnlockFromISR();
     }
-    chSysUnlockFromISR();
     chEvtBroadcastFlags(&analogic_events, PROXIMITY_CB);
 }
 
