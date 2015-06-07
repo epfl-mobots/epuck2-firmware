@@ -14,7 +14,7 @@
 
 static int32_t motor_value[MOTOR_NB_CHANNELS];
 static int32_t proximity_value3_high[PROXIMITY_NB_CHANNELS_ADC3];
-static int32_t proximity_value3_low_high[PROXIMITY_NB_CHANNELS_ADC3];
+static int32_t proximity_value3_low[PROXIMITY_NB_CHANNELS_ADC3];
 
 static int32_t proximity_value2;
 
@@ -36,12 +36,12 @@ void analog_get_proximity(int32_t *value_low, int32_t *value_high)
     for (i = 0; i < PROXIMITY_NB_CHANNELS_ADC3; i++) {
         value_low[i] = proximity_value3_low[i];
     }
-    value[PROXIMITY_NB_CHANNELS_ADC3] = proximity_value2;
+    value_low[PROXIMITY_NB_CHANNELS_ADC3] = proximity_value2;
 
     for (i = 0; i < PROXIMITY_NB_CHANNELS_ADC3; i++) {
         value_high[i] = proximity_value3_high[i];
     }
-    value[PROXIMITY_NB_CHANNELS_ADC3] = proximity_value2;
+    value_high[PROXIMITY_NB_CHANNELS_ADC3] = proximity_value2;
 	chSysUnlock();
 }
 
