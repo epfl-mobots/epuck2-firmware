@@ -850,8 +850,8 @@
                                      PIN_MODE_ANALOG(GPIOF_IR_AN6) |           \
                                      PIN_MODE_ANALOG(GPIOF_IR_AN7) |          \
                                      PIN_MODE_INPUT(GPIOF_IMU_INT) |          \
-                                     PIN_MODE_INPUT(GPIOF_MPU_FSYNC) |          \
-                                     PIN_MODE_INPUT(GPIOF_MPU_CS) |          \
+                                     PIN_MODE_OUTPUT(GPIOF_MPU_FSYNC) |          \
+                                     PIN_MODE_OUTPUT(GPIOF_MPU_CS) |          \
                                      PIN_MODE_INPUT(GPIOF_POWER_BUTTON) |          \
                                      PIN_MODE_INPUT(GPIOF_PIN15))
 #define VAL_GPIOF_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOF_SD_DETECT) |       \
@@ -898,8 +898,8 @@
                                      PIN_PUPDR_FLOATING(GPIOF_IR_AN6) |       \
                                      PIN_PUPDR_FLOATING(GPIOF_IR_AN7) |      \
                                      PIN_PUPDR_FLOATING(GPIOF_IMU_INT) |      \
-                                     PIN_PUPDR_PULLUP(GPIOF_MPU_FSYNC) |      \
-                                     PIN_PUPDR_PULLUP(GPIOF_MPU_CS) |      \
+                                     PIN_PUPDR_FLOATING(GPIOF_MPU_FSYNC) |      \
+                                     PIN_PUPDR_FLOATING(GPIOF_MPU_CS) |      \
                                      PIN_PUPDR_PULLUP(GPIOF_POWER_BUTTON) |      \
                                      PIN_PUPDR_PULLUP(GPIOF_PIN15))
 #define VAL_GPIOF_ODR               (PIN_ODR_HIGH(GPIOF_SD_DETECT) |             \
@@ -914,7 +914,7 @@
                                      PIN_ODR_LOW(GPIOF_IR_AN6) |             \
                                      PIN_ODR_LOW(GPIOF_IR_AN7) |            \
                                      PIN_ODR_LOW(GPIOF_IMU_INT) |            \
-                                     PIN_ODR_HIGH(GPIOF_MPU_FSYNC) |            \
+                                     PIN_ODR_LOW(GPIOF_MPU_FSYNC) |            \
                                      PIN_ODR_HIGH(GPIOF_MPU_CS) |            \
                                      PIN_ODR_HIGH(GPIOF_POWER_BUTTON) |            \
                                      PIN_ODR_HIGH(GPIOF_PIN15))

@@ -89,11 +89,11 @@ void imu_init(void)
 
     spiStart(&SPID1, &spi_cfg);
 
-while(!mpu60X0_ping(&mpu6050)) {
-
-}
-
     mpu60X0_init_using_spi(&mpu6050, &SPID1);
+        palSetPad(GPIOE, GPIOE_LED_STATUS);
+
+    while(!mpu60X0_ping(&mpu6050)) {}
+
     mpu60X0_setup(&mpu6050, MPU60X0_ACC_FULL_RANGE_2G
                           | MPU60X0_GYRO_FULL_RANGE_250DPS
                           | MPU60X0_SAMPLE_RATE_DIV(100)
