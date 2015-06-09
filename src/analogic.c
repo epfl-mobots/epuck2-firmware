@@ -157,7 +157,7 @@ static THD_FUNCTION(adc2_proximity_current, arg)
         ADC_CR1_DISCEN | ADC_CR1_DISCNUM_0,                 // CR1 -> disontinuous mode with one conversion per trigger
         0,                                                  // CR2 -> doesn't start and doesn't activate continuous
         /*SMPR1*/
-        ADC_SMPR1_SMP_AN14(ADC_SAMPLE_112),                 //PC4 - IR_AN12
+        ADC_SMPR1_SMP_AN14(ADC_SAMPLE_3),                 //PC4 - IR_AN12
         /*SMPR2*/         
         0,            
         /*SQR1*/
@@ -192,19 +192,19 @@ static THD_FUNCTION(adc3_proximity_current, arg)
         ADC_CR1_DISCNUM_1 | ADC_CR1_DISCNUM_2,              // CR1 -> disontinuous mode with one conversion per trigger
         0,                                                  // CR2 -> doesn't start and doesn't activate continuous
         /*SMPR1*/
-        ADC_SMPR1_SMP_AN10(ADC_SAMPLE_112) |  //PC0 - IR_AN8
-        ADC_SMPR1_SMP_AN11(ADC_SAMPLE_112) |  //PC1 - IR_AN9
-        ADC_SMPR1_SMP_AN12(ADC_SAMPLE_112) |  //PC2 - IR_AN10
-        ADC_SMPR1_SMP_AN13(ADC_SAMPLE_112) |  //PC3 - IR_AN11
-        ADC_SMPR1_SMP_AN14(ADC_SAMPLE_112) |  //PF4 - IR_AN1
-        ADC_SMPR1_SMP_AN15(ADC_SAMPLE_112),   //PF5 - IR_AN2
+        ADC_SMPR1_SMP_AN10(ADC_SAMPLE_3) |  //PC0 - IR_AN8
+        ADC_SMPR1_SMP_AN11(ADC_SAMPLE_3) |  //PC1 - IR_AN9
+        ADC_SMPR1_SMP_AN12(ADC_SAMPLE_3) |  //PC2 - IR_AN10
+        ADC_SMPR1_SMP_AN13(ADC_SAMPLE_3) |  //PC3 - IR_AN11
+        ADC_SMPR1_SMP_AN14(ADC_SAMPLE_3) |  //PF4 - IR_AN1
+        ADC_SMPR1_SMP_AN15(ADC_SAMPLE_3),   //PF5 - IR_AN2
         /*SMPR2*/         
-        ADC_SMPR2_SMP_AN4(ADC_SAMPLE_112) |   //PF6 - IR_AN3
-        ADC_SMPR2_SMP_AN5(ADC_SAMPLE_112) |   //PF7 - IR_AN4
-        ADC_SMPR2_SMP_AN6(ADC_SAMPLE_112) |   //PF8 - IR_AN5
-        ADC_SMPR2_SMP_AN7(ADC_SAMPLE_112) |   //PF9 - IR_AN6
-        ADC_SMPR2_SMP_AN8(ADC_SAMPLE_112) |   //PF10 - IR_AN7
-        ADC_SMPR2_SMP_AN9(ADC_SAMPLE_112),    //PF3 - IR_AN0              
+        ADC_SMPR2_SMP_AN4(ADC_SAMPLE_3) |   //PF6 - IR_AN3
+        ADC_SMPR2_SMP_AN5(ADC_SAMPLE_3) |   //PF7 - IR_AN4
+        ADC_SMPR2_SMP_AN6(ADC_SAMPLE_3) |   //PF8 - IR_AN5
+        ADC_SMPR2_SMP_AN7(ADC_SAMPLE_3) |   //PF9 - IR_AN6
+        ADC_SMPR2_SMP_AN8(ADC_SAMPLE_3) |   //PF10 - IR_AN7
+        ADC_SMPR2_SMP_AN9(ADC_SAMPLE_3),    //PF3 - IR_AN0              
         /*SQR1*/
         ADC_SQR1_NUM_CH(PROXIMITY_NB_CHANNELS_ADC3),
         /*SQR2*/
