@@ -74,6 +74,12 @@ void imu_start(void)
 
 void imu_init(void)
 {
+
+    /*
+     * SPI1 configuration structure for MPU6000.
+     * SPI1 is on APB2 @ 84MHz / 128 = 656.25kHz
+     * CPHA=1, CPOL=1, 8bits frames, MSb transmitted first.
+     */
     static SPIConfig spi_cfg = {
         .end_cb = NULL,
         .ssport = GPIOF,
@@ -83,9 +89,14 @@ void imu_init(void)
 
     spiStart(&SPID1, &spi_cfg);
 
+while(!mpu60X0_ping(&mpu6050)) {
+
+}
+
     mpu60X0_init_using_spi(&mpu6050, &SPID1);
     mpu60X0_setup(&mpu6050, MPU60X0_ACC_FULL_RANGE_2G
                           | MPU60X0_GYRO_FULL_RANGE_250DPS
                           | MPU60X0_SAMPLE_RATE_DIV(100)
                           | MPU60X0_LOW_PASS_FILTER_6);
+
 }

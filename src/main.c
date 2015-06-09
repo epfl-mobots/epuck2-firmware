@@ -17,6 +17,7 @@
 #include "motor_pwm.h"
 #include "setpoints.h"
 #include "sensors/proximity.h"
+#include "sensors/imu.h"
 
 
 
@@ -38,7 +39,9 @@ static THD_FUNCTION(Thread1, arg) {
 
 void test_function(void)
 {
-    control_start();
+
+    imu_init();
+    imu_start();
 }
 
 
