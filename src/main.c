@@ -64,12 +64,14 @@ int main(void)
     chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
     control_start();
-    chThdSleepMilliseconds(2000);
+    chThdSleepMilliseconds(1000);
 
     while (TRUE) {
-        setpoints_set_current(&(right.setpoints), 0.2);
+        setpoints_set_position(&(right.setpoints), 1);
+        setpoints_set_position(&(left.setpoints), 1);
         chThdSleepMilliseconds(1000);
-        setpoints_set_current(&(right.setpoints), -0.2);
+        setpoints_set_position(&(right.setpoints), -1);
+        setpoints_set_position(&(left.setpoints), -1);
         chThdSleepMilliseconds(1000);
     }
 }
