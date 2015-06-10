@@ -130,7 +130,7 @@ def main():
                     data = msgpack.unpackb(dtgrm)
                     for idx, var in enumerate(self.variables):
                         val = variable_path_extract_value(var, data)
-                        if val:
+                        if val is not None:
                             plot.lines[idx].updateData(val)
                 except (serial_datagram.CRCMismatchError, serial_datagram.FrameError):
                     print("CRC error")
