@@ -80,12 +80,13 @@ int main(void)
     //chThdSleepMilliseconds(1000);
     range_start();
 
+    // Start control loops
+    control_start();
+
     // Initialise Aseba node (CAN and VM)
     aseba_vm_init();
     aseba_can_start(&vmState);
     aseba_vm_start();
-
-    control_start();
 
     while (TRUE) {
         chThdSleepMilliseconds(1000);
