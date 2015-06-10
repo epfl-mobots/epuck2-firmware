@@ -11,8 +11,18 @@
 
 #include "cmd.h"
 #include "control.h"
+
 #include "sensors/imu.h"
 #include "sensors/range.h"
+
+#include "communication.h"
+
+/*Testing includes*/
+#include "analogic.h"
+#include "motor_pwm.h"
+#include "setpoints.h"
+#include "sensors/proximity.h"
+#include "sensors/imu.h"
 
 #include "aseba_vm/skel.h"
 #include "aseba_vm/aseba_node.h"
@@ -35,8 +45,8 @@ static THD_FUNCTION(Thread1, arg) {
 }
 
 
-int main(void) {
-
+int main(void)
+{
     halInit();
     chSysInit();
 
@@ -58,6 +68,10 @@ int main(void) {
 
     chprintf((BaseSequentialStream*)&SDU1, "boot");
 
+    sdStart(&SD6, NULL);
+
+    communication_start((BaseSequentialStream *)&SDU1);
+
     // Start heartbeat thread
     chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
@@ -71,7 +85,9 @@ int main(void) {
     aseba_can_start(&vmState);
     aseba_vm_start();
 
+    control_start();
+
     while (TRUE) {
-        chThdSleepMilliseconds(500);
+        chThdSleepMilliseconds(1000);
     }
 }

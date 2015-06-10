@@ -1,0 +1,33 @@
+left:
+    current:
+        kp: 0.05
+        ki: 0.15
+        kd: 0.
+        ilimit: 5
+    velocity:
+        kp: 0.05
+        ki: 0.03
+        kd: 0.02
+        ilimit: 10
+    position:
+        kp: 5.
+        ki: 0.
+        kd: 1.
+        ilimit: 0
+
+right:
+    current:
+        kp: 0.05
+        ki: 0.15
+        kd: 0.
+        ilimit: 5
+    velocity:
+        kp: 0.05
+        ki: 0.03
+        kd: 0.02
+        ilimit: 10
+    position:
+        kp: 5.
+        ki: 0.
+        kd: 1.
+        ilimit: 0

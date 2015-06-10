@@ -21,3 +21,7 @@ SRC += src/setpoints.c
 SRC += src/pid/pid.c
 SRC += src/sensors/vl6180x-driver/vl6180x.c
 SRC += src/sensors/range.c
+SRC += src/communication.c
+SRC += src/parameter/parameter.c
+SRC += src/parameter/parameter_msgpack.c
+SRC += src/datagram_dispatcher.c

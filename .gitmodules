@@ -22,3 +22,6 @@
 [submodule "vl6180x-driver"]
 	path = src/sensors/vl6180x-driver
 	url = https://github.com/epuck2/vl6180x-driver
+[submodule "src/parameter"]
+	path = src/parameter
+	url = https://github.com/stapelzeiger/parameter.git

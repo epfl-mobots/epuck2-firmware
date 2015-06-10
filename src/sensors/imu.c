@@ -7,6 +7,15 @@
 #define IMU_INTERRUPT_EVENT		1
 
 
+typedef struct {
+    float rate[3];
+} gyrometer_sample_t;
+
+typedef struct {
+    float acceleration[3];
+} accelerometer_sample_t;
+
+
 static mpu60X0_t 		mpu6050;
 gyrometer_sample_t 		imu_gyro_sample;
 accelerometer_sample_t 	imu_acc_sample;
@@ -59,30 +68,35 @@ void imu_start(void)
 {
     exti_setup();
     chEvtObjectInit(&imu_events);
+
     chThdCreateStatic(imu_reader_thd_wa, sizeof(imu_reader_thd_wa), NORMALPRIO, imu_reader_thd, NULL);
 }
 
-
-// PB9: I2C1_SDA (AF4)
-// PB6: I2C1_SCL (AF4)
 void imu_init(void)
 {
-    static const I2CConfig i2c_cfg = {
-        .op_mode = OPMODE_I2C,
-        .clock_speed = 400000,
-        .duty_cycle = FAST_DUTY_CYCLE_2
+
+    /*
+     * SPI1 configuration structure for MPU6000.
+     * SPI1 is on APB2 @ 84MHz / 128 = 656.25kHz
+     * CPHA=1, CPOL=1, 8bits frames, MSb transmitted first.
+     */
+    static SPIConfig spi_cfg = {
+        .end_cb = NULL,
+        .ssport = GPIOF,
+        .sspad = GPIOF_MPU_CS,
+        .cr1 = SPI_CR1_BR_2 | SPI_CR1_BR_1 | SPI_CR1_CPOL | SPI_CR1_CPHA
     };
 
-    chSysLock();
-    palSetPadMode(GPIOB, 9, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
-    palSetPadMode(GPIOB, 6, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
-    chSysUnlock();
+    spiStart(&SPID1, &spi_cfg);
 
-    i2cStart(&I2CD1, &i2c_cfg);
+    mpu60X0_init_using_spi(&mpu6050, &SPID1);
+        palSetPad(GPIOE, GPIOE_LED_STATUS);
 
-    mpu60X0_init_using_i2c(&mpu6050, &I2CD1, 0);
+    while(!mpu60X0_ping(&mpu6050)) {}
+
     mpu60X0_setup(&mpu6050, MPU60X0_ACC_FULL_RANGE_2G
                           | MPU60X0_GYRO_FULL_RANGE_250DPS
                           | MPU60X0_SAMPLE_RATE_DIV(100)
                           | MPU60X0_LOW_PASS_FILTER_6);
+
 }
