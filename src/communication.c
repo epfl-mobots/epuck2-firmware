@@ -10,7 +10,7 @@
 #include "setpoints.h"
 #include "control.h"
 #include "sensors/encoder.h"
-
+#include "sensors/range.h"
 
 
 
@@ -119,6 +119,20 @@ static int send_position(cmp_ctx_t *cmp)
 }
 
 
+
+static int send_distance(cmp_ctx_t *cmp)
+{
+    bool err = false;
+    float dist;
+    range_get_range(&dist);
+
+    err = err || !cmp_write_map(cmp, 1);
+    const char *distance_id = "distance";
+    err = err || !cmp_write_str(cmp, distance_id, strlen(distance_id));
+    err = err || !cmp_write_float(cmp, dist);
+    return err;
+}
+
 static void _stream_imu_values_sndfn(void *arg, const void *p, size_t len)
 {
     if (len > 0) {
@@ -159,6 +173,13 @@ static THD_FUNCTION(comm_tx_stream, arg)
 
         cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
         if (send_position(&cmp) == 0) {
+            chMtxLock(&send_lock);
+            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
+            chMtxUnlock(&send_lock);
+        }
+
+        cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
+        if (send_distance(&cmp) == 0) {
             chMtxLock(&send_lock);
             serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
             chMtxUnlock(&send_lock);
