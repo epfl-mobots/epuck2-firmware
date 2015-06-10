@@ -263,8 +263,11 @@ static THD_FUNCTION(comm_rx, arg)
     chRegSetThreadName("comm rx");
 
     BaseSequentialStream *in = (BaseSequentialStream*)arg;
-    serial_datagram_rcv_handler_init(&rcv_handler,rcv_buffer,
-            sizeof(rcv_buffer), datagram_dispatcher_cb, dispatcher_table);
+    serial_datagram_rcv_handler_init(&rcv_handler,
+                                     rcv_buffer,
+                                     sizeof(rcv_buffer),
+                                     datagram_dispatcher_cb,
+                                     dispatcher_table);
     while (1) {
         char c = chSequentialStreamGet(in);
         serial_datagram_receive(&rcv_handler, &c, 1);

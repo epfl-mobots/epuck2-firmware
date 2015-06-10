@@ -20,8 +20,6 @@
 #include "sensors/imu.h"
 
 
-
-
 #define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
 
 static THD_WORKING_AREA(waThread1, 128);
@@ -30,26 +28,18 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("Heartbeat");
   while (TRUE) {
-    palSetPad(GPIOE, GPIOE_LED_HEARTBEAT);       
+    palSetPad(GPIOE, GPIOE_LED_HEARTBEAT);
     chThdSleepMilliseconds(300);
     palClearPad(GPIOE, GPIOE_LED_HEARTBEAT);
     chThdSleepMilliseconds(300);
   }
 }
 
-void test_function(void)
+
+int main(void)
 {
-
-    imu_init();
-    imu_start();
-}
-
-
-int main(void) {
-
     halInit();
     chSysInit();
-
 
     /*
     * Initializes a serial-over-USB CDC driver.
@@ -67,18 +57,19 @@ int main(void) {
     usbStart(serusbcfg.usbp, &usbcfg);
     usbConnectBus(serusbcfg.usbp);
 
-
-    sdStart(&SD6, NULL);   
+    sdStart(&SD6, NULL);
 
     communication_start((BaseSequentialStream *)&SDU1);
 
     chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
-    test_function();
+    control_start();
+    chThdSleepMilliseconds(2000);
 
     while (TRUE) {
-        chThdSleepMilliseconds(500);
+        setpoints_set_current(&(right.setpoints), 0.2);
+        chThdSleepMilliseconds(1000);
+        setpoints_set_current(&(right.setpoints), -0.2);
+        chThdSleepMilliseconds(1000);
     }
 }
-
-
