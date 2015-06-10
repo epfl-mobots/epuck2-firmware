@@ -63,8 +63,8 @@ int main(void) {
 
     // Initialise the time of flight range sensor
     range_init();
-    chThdSleepMilliseconds(1000);
-    //range_start();
+    //chThdSleepMilliseconds(1000);
+    range_start();
 
     // Initialise Aseba node (CAN and VM)
     aseba_vm_init();
