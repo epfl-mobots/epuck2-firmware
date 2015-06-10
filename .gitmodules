@@ -19,3 +19,6 @@
 [submodule "src/pid"]
 	path = src/pid
 	url = https://github.com/epuck2/pid.git
+[submodule "src/parameter"]
+	path = src/parameter
+	url = https://github.com/stapelzeiger/parameter.git
