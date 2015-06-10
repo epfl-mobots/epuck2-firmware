@@ -77,12 +77,17 @@ static int send_velocity(cmp_ctx_t *cmp)
 
     bool err = false;
 
-    err = err || !cmp_write_map(cmp, 2);
+    err = err || !cmp_write_map(cmp, 3);
     const char *velocity_id = "velocity";
     err = err || !cmp_write_str(cmp, velocity_id, strlen(velocity_id));
     err = err || !cmp_write_array(cmp, 2);
     err = err || !cmp_write_float(cmp, left.feedback.velocity);
     err = err || !cmp_write_float(cmp, right.feedback.velocity);
+    const char *velocity_id_setpoints = "velocity_setpoint";
+    err = err || !cmp_write_str(cmp, velocity_id_setpoints, strlen(velocity_id_setpoints));
+    err = err || !cmp_write_array(cmp, 2);
+    err = err || !cmp_write_float(cmp, left.setpoints.velocity);
+    err = err || !cmp_write_float(cmp, right.setpoints.velocity);
     const char *time_id = "time";
     err = err || !cmp_write_str(cmp, time_id, strlen(time_id));
     err = err || !cmp_write_float(cmp, t);
@@ -96,12 +101,17 @@ static int send_position(cmp_ctx_t *cmp)
 
     bool err = false;
 
-    err = err || !cmp_write_map(cmp, 2);
+    err = err || !cmp_write_map(cmp, 3);
     const char *position_id = "position";
     err = err || !cmp_write_str(cmp, position_id, strlen(position_id));
     err = err || !cmp_write_array(cmp, 2);
     err = err || !cmp_write_float(cmp, left.feedback.position);
     err = err || !cmp_write_float(cmp, right.feedback.position);
+    const char *position_id_setpoints = "position_setpoint";
+    err = err || !cmp_write_str(cmp, position_id_setpoints, strlen(position_id_setpoints));
+    err = err || !cmp_write_array(cmp, 2);
+    err = err || !cmp_write_float(cmp, left.setpoints.position);
+    err = err || !cmp_write_float(cmp, right.setpoints.position);
     const char *time_id = "time";
     err = err || !cmp_write_str(cmp, time_id, strlen(time_id));
     err = err || !cmp_write_float(cmp, t);
