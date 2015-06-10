@@ -76,14 +76,8 @@ int main(void)
     aseba_vm_start();
 
     control_start();
-    chThdSleepMilliseconds(1000);
 
     while (TRUE) {
-        setpoints_set_position(&(right.setpoints), 1);
-        setpoints_set_position(&(left.setpoints), 1);
-        chThdSleepMilliseconds(1000);
-        setpoints_set_position(&(right.setpoints), -1);
-        setpoints_set_position(&(left.setpoints), -1);
         chThdSleepMilliseconds(1000);
     }
 }
