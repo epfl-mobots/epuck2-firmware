@@ -29,7 +29,7 @@ static THD_FUNCTION(range_reader_thd, arg) {
         range_sample.raw_mm = temp;
         range_sample.raw = range_sample.raw_mm * MILLIMETER_TO_METER;
 
-        chThdSleepMilliseconds(100);
+        // chThdSleepMilliseconds(100);
     }
     return 0;
 }
