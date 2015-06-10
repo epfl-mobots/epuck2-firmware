@@ -13,7 +13,7 @@
 
 
 
- 
+
 parameter_namespace_t parameter_root;
 
 static mutex_t send_lock;
@@ -54,12 +54,17 @@ static int send_current(cmp_ctx_t *cmp)
 
     bool err = false;
 
-    err = err || !cmp_write_map(cmp, 2);
+    err = err || !cmp_write_map(cmp, 3);
     const char *current_id = "current";
     err = err || !cmp_write_str(cmp, current_id, strlen(current_id));
     err = err || !cmp_write_array(cmp, 2);
     err = err || !cmp_write_float(cmp, left.feedback.current);
     err = err || !cmp_write_float(cmp, right.feedback.current);
+    const char *current_id_setpoints = "current_setpoint";
+    err = err || !cmp_write_str(cmp, current_id_setpoints, strlen(current_id_setpoints));
+    err = err || !cmp_write_array(cmp, 2);
+    err = err || !cmp_write_float(cmp, left.setpoints.current);
+    err = err || !cmp_write_float(cmp, right.setpoints.current);
     const char *time_id = "time";
     err = err || !cmp_write_str(cmp, time_id, strlen(time_id));
     err = err || !cmp_write_float(cmp, t);
@@ -121,7 +126,6 @@ static THD_FUNCTION(comm_tx_stream, arg)
     static cmp_mem_access_t mem;
     static cmp_ctx_t cmp;
     while (1) {
-
         cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
         if (send_imu(&cmp) == 0) {
             chMtxLock(&send_lock);
