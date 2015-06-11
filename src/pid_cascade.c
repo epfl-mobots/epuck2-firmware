@@ -61,7 +61,7 @@ void cascade_mode_vel_ctrl(cascade_controller *ctrl)
     ctrl->vel_ctrl_en = true;
 }
 
-void cascade_mode_torque_ctrl(cascade_controller *ctrl)
+void cascade_mode_cur_ctrl(cascade_controller *ctrl)
 {
     ctrl->pos_ctrl_en = false;
     ctrl->vel_ctrl_en = false;

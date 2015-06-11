@@ -30,7 +30,7 @@ float cascade_step(cascade_controller *ctrl);
 void cascade_init(cascade_controller *ctrl);
 void cascade_mode_pos_ctrl(cascade_controller *ctrl);
 void cascade_mode_vel_ctrl(cascade_controller *ctrl);
-void cascade_mode_torque_ctrl(cascade_controller *ctrl);
+void cascade_mode_cur_ctrl(cascade_controller *ctrl);
 
 #ifdef __cplusplus
 }

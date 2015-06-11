@@ -56,13 +56,38 @@ static THD_FUNCTION(ThreadControl, arg) {
         feedback_get(&(left.feedback), &(right.feedback));
 
         /*Errors*/
-        left.cascade.position_error = setpoints_error_position(&(left.setpoints), &(left.feedback.position));
+        left.cascade.position_error = setpoints_error_position(&(left.setpoints), (left.feedback.position));
         left.cascade.velocity_error = setpoints_error_velocity(&(left.setpoints), left.feedback.velocity);
         left.cascade.current_error = setpoints_error_current(&(left.setpoints), left.feedback.current);
 
-        right.cascade.position_error = setpoints_error_position(&(right.setpoints), &(right.feedback.position));
+        right.cascade.position_error = setpoints_error_position(&(right.setpoints), (right.feedback.position));
         right.cascade.velocity_error = setpoints_error_velocity(&(right.setpoints), right.feedback.velocity);
         right.cascade.current_error = setpoints_error_current(&(right.setpoints), right.feedback.current);
+
+        switch (setpoint_get_mode(&left.setpoints)) {
+            case SETPT_MODE_POS:
+                cascade_mode_pos_ctrl(&left.cascade);
+                break;
+            case SETPT_MODE_VEL:
+                cascade_mode_vel_ctrl(&left.cascade);
+                break;
+            case SETPT_MODE_CUR:
+                cascade_mode_cur_ctrl(&left.cascade);
+                break;
+        }
+
+        switch (setpoint_get_mode(&right.setpoints)) {
+            case SETPT_MODE_POS:
+                cascade_mode_pos_ctrl(&right.cascade);
+                break;
+            case SETPT_MODE_VEL:
+                cascade_mode_vel_ctrl(&right.cascade);
+                break;
+            case SETPT_MODE_CUR:
+                cascade_mode_cur_ctrl(&right.cascade);
+                break;
+        }
+
 
         /*Controller*/
         left.pwm_input = cascade_step(&(left.cascade));
