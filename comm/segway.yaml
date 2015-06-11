@@ -1,0 +1,2 @@
+segway:
+    compl_gain: 0.99  # time constant 1s
