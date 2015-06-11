@@ -13,6 +13,7 @@
 #define GYRO_AXIS 1
 
 #define SEGWAY_CONTROL_FREQ 100
+#define CENTER_OF_MASS_POS  0.035f
 
 static parameter_namespace_t segway_ns;
 att_estim_t segway_att_estim;
@@ -33,6 +34,7 @@ static THD_FUNCTION(segway_thd, arg)
     static uint32_t enc_left;
     float delta_t = 1.f/SEGWAY_CONTROL_FREQ;
 
+    static float prev_attitude_meas = 0.f;
     float wheel_speed_fwd = 0;
 
     while (1) {
@@ -49,11 +51,13 @@ static THD_FUNCTION(segway_thd, arg)
         update_pid_parameters(&attitude_ctrl, &attitude_ctrl_param);
 
         float speed_setpt = 0; // todo
+
+        float attitude_meas = att_estim_get_theta(&segway_att_estim);
         float speed_meas = pose_estim_get_forward_speed(&segway_pose_estim)
-                           + 0.035f * gyro[GYRO_AXIS];
+                           + (CENTER_OF_MASS_POS / delta_t) * (attitude_meas - prev_attitude_meas);
+        prev_attitude_meas = attitude_meas;
 
         float attitude_setpt = pid_process(&advance_ctrl, speed_meas - speed_setpt);
-        float attitude_meas = att_estim_get_theta(&segway_att_estim);
 
         wheel_speed_fwd = -1 * pid_process(&attitude_ctrl, attitude_meas - attitude_setpt);
 
