@@ -1,2 +1,12 @@
-segway:
+segway:  # segway control runs at 100Hz
     compl_gain: 0.99  # time constant 1s
+    advance_pid:
+        kp: 0.
+        ki: 0.
+        kd: 0.
+        ilimit: 0.
+    attitude_pid:
+        kp: 0.
+        ki: 0.
+        kd: 0.
+        ilimit: 0.
