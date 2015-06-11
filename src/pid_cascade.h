@@ -1,5 +1,5 @@
-#ifndef CONTROLLER_H
-#define CPNTROLLER_H
+#ifndef PID_CASCADE_H
+#define PID_CASCADE_H
 
 #ifdef __cplusplus
 extern "C" {
