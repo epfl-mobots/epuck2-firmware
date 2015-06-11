@@ -11,7 +11,7 @@
 #define SEGWAY_CONTROL_FREQ 100
 
 static parameter_namespace_t segway_ns;
-static att_estim_t att_estim;
+att_estim_t segway_att_estim;
 
 
 static THD_WORKING_AREA(segway_thd_wa, 512);
@@ -26,7 +26,7 @@ static THD_FUNCTION(segway_thd, arg)
         imu_get_gyro(gyro);
         imu_get_acc(acc);
 
-        att_estim_update(&att_estim, gyro[GYRO_AXIS], acc[ACC_AXIS], delta_t);
+        att_estim_update(&segway_att_estim, gyro[GYRO_AXIS], acc[ACC_AXIS], delta_t);
 
         chThdSleepMilliseconds(1000/SEGWAY_CONTROL_FREQ);
     }
@@ -37,7 +37,7 @@ static THD_FUNCTION(segway_thd, arg)
 void segway_control_init(void)
 {
     parameter_namespace_declare(&segway_ns, &parameter_root, "segway");
-    att_estim_init(&att_estim, &segway_ns);
+    att_estim_init(&segway_att_estim, &segway_ns);
 }
 
 

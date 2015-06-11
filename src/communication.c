@@ -11,8 +11,8 @@
 #include "control.h"
 #include "sensors/encoder.h"
 #include "sensors/range.h"
-
-
+#include "attitude_estimation.h"
+#include "segway.h"
 
 parameter_namespace_t parameter_root;
 
@@ -46,6 +46,18 @@ static int send_imu(cmp_ctx_t *cmp)
     err = err || !cmp_write_float(cmp, t);
     return err;
 }
+
+static int send_attitude(cmp_ctx_t *cmp)
+{
+    bool err = false;
+
+    err = err || !cmp_write_map(cmp, 1);
+    const char *att_id = "theta";
+    err = err || !cmp_write_str(cmp, att_id, strlen(att_id));
+    err = err || !cmp_write_float(cmp, att_estim_get_theta(&segway_att_estim));
+    return err;
+}
+
 
 static int send_current(cmp_ctx_t *cmp)
 {
@@ -157,29 +169,36 @@ static THD_FUNCTION(comm_tx_stream, arg)
             chMtxUnlock(&send_lock);
         }
 
-        cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
-        if (send_current(&cmp) == 0) {
-            chMtxLock(&send_lock);
-            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
-            chMtxUnlock(&send_lock);
-        }
+        // cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
+        // if (send_current(&cmp) == 0) {
+        //     chMtxLock(&send_lock);
+        //     serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
+        //     chMtxUnlock(&send_lock);
+        // }
 
-        cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
-        if (send_velocity(&cmp) == 0) {
-            chMtxLock(&send_lock);
-            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
-            chMtxUnlock(&send_lock);
-        }
+        // cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
+        // if (send_velocity(&cmp) == 0) {
+        //     chMtxLock(&send_lock);
+        //     serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
+        //     chMtxUnlock(&send_lock);
+        // }
 
-        cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
-        if (send_position(&cmp) == 0) {
-            chMtxLock(&send_lock);
-            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
-            chMtxUnlock(&send_lock);
-        }
+        // cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
+        // if (send_position(&cmp) == 0) {
+        //     chMtxLock(&send_lock);
+        //     serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
+        //     chMtxUnlock(&send_lock);
+        // }
 
         cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
         if (send_distance(&cmp) == 0) {
+            chMtxLock(&send_lock);
+            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
+            chMtxUnlock(&send_lock);
+        }
+
+        cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
+        if (send_attitude(&cmp) == 0) {
             chMtxLock(&send_lock);
             serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
             chMtxUnlock(&send_lock);
