@@ -26,6 +26,8 @@
 #include "aseba_vm/aseba_node.h"
 #include "aseba_vm/aseba_can_interface.h"
 
+#include "segway.h"
+
 
 #define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
 
