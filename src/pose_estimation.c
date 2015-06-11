@@ -2,8 +2,8 @@
 #include "pose_estimation.h"
 #include "sensors/encoder.h"
 
-#define WHEEL_RADIUS_RIGHT  0.075f
-#define WHEEL_RADIUS_LEFT   0.075f
+#define WHEEL_RADIUS_RIGHT  0.035f
+#define WHEEL_RADIUS_LEFT   0.035f
 #define WHEELBASE           0.0725f
 #define TICKS_PER_TURN      2630
 
