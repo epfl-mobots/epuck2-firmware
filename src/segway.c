@@ -1,6 +1,8 @@
 #include "parameter/parameter.h"
 #include "communication.h"
 #include "attitude_estimation.h"
+#include "pose_estimation.h"
+#include "sensors/encoder.h"
 #include "sensors/imu.h"
 #include "control.h"
 #include "setpoints.h"
@@ -14,6 +16,7 @@
 
 static parameter_namespace_t segway_ns;
 att_estim_t segway_att_estim;
+pose_estim_base_t segway_pose_estim;
 pid_ctrl_t advance_ctrl;  // controls the advance (forward/reverse) speed of the segway
 pid_ctrl_t attitude_ctrl; // controls the attitude of the segway
 struct pid_parameter_s advance_ctrl_param;
@@ -26,6 +29,8 @@ static THD_FUNCTION(segway_thd, arg)
     (void)arg;
     static float acc[3];
     static float gyro[3];
+    static uint32_t enc_right;
+    static uint32_t enc_left;
     float delta_t = 1.f/SEGWAY_CONTROL_FREQ;
 
     float wheel_speed_fwd = 0;
@@ -36,11 +41,15 @@ static THD_FUNCTION(segway_thd, arg)
 
         att_estim_update(&segway_att_estim, gyro[GYRO_AXIS], acc[ACC_AXIS], delta_t);
 
+        enc_right = encoder_get_right();
+        enc_left = encoder_get_left();
+        pose_estim_update(&segway_pose_estim, enc_right, enc_left, delta_t);
+
         update_pid_parameters(&advance_ctrl, &advance_ctrl_param);
         update_pid_parameters(&attitude_ctrl, &attitude_ctrl_param);
 
         float speed_setpt = 0; // todo
-        float speed_meas = wheel_speed_fwd; // todo
+        float speed_meas = pose_estim_get_forward_speed(&segway_pose_estim);
 
         float attitude_setpt = pid_process(&advance_ctrl, speed_meas - speed_setpt);
         float attitude_meas = att_estim_get_theta(&segway_att_estim);
@@ -64,6 +73,7 @@ void segway_control_init(void)
     pid_register(&advance_ctrl_param, &segway_ns, "advance_pid");
     pid_register(&attitude_ctrl_param, &segway_ns, "attitude_pid");
     att_estim_init(&segway_att_estim, &segway_ns);
+    pose_estim_init(&segway_pose_estim);
 }
 
 
