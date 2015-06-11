@@ -53,14 +53,14 @@ static THD_FUNCTION(imu_reader_thd, arg) {
     chRegSetThreadName("IMU_reader");
 
 
-    i2cAcquireBus(dev);
+    i2cAcquireBus(mpu6050.i2c);
     while(!mpu60X0_ping(&mpu6050));
 
     mpu60X0_setup(&mpu6050, MPU60X0_ACC_FULL_RANGE_2G
                           | MPU60X0_GYRO_FULL_RANGE_250DPS
                           | MPU60X0_SAMPLE_RATE_DIV(100)
                           | MPU60X0_LOW_PASS_FILTER_6);
-    i2cReleaseBus(dev);
+    i2cReleaseBus(mpu6050.i2c);
 
 
     static float gyro[3];
