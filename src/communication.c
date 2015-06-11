@@ -12,6 +12,7 @@
 #include "sensors/encoder.h"
 #include "sensors/range.h"
 #include "attitude_estimation.h"
+#include "pose_estimation.h"
 #include "segway.h"
 
 parameter_namespace_t parameter_root;
@@ -55,6 +56,17 @@ static int send_attitude(cmp_ctx_t *cmp)
     const char *att_id = "theta";
     err = err || !cmp_write_str(cmp, att_id, strlen(att_id));
     err = err || !cmp_write_float(cmp, att_estim_get_theta(&segway_att_estim));
+    return err;
+}
+
+static int send_forward_velocity(cmp_ctx_t *cmp)
+{
+    bool err = false;
+
+    err = err || !cmp_write_map(cmp, 1);
+    const char *fwd_id = "velocity_fwd";
+    err = err || !cmp_write_str(cmp, fwd_id, strlen(fwd_id));
+    err = err || !cmp_write_float(cmp, pose_estim_get_forward_speed(&segway_pose_estim));
     return err;
 }
 
@@ -199,6 +211,13 @@ static THD_FUNCTION(comm_tx_stream, arg)
 
         cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
         if (send_attitude(&cmp) == 0) {
+            chMtxLock(&send_lock);
+            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
+            chMtxUnlock(&send_lock);
+        }
+
+        cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
+        if (send_forward_velocity(&cmp) == 0) {
             chMtxLock(&send_lock);
             serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
             chMtxUnlock(&send_lock);
