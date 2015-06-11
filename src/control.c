@@ -79,7 +79,7 @@ static THD_FUNCTION(ThreadControl, arg) {
 };
 
 
-static void pid_register(struct pid_parameter_s *pid,
+void pid_register(struct pid_parameter_s *pid,
                          parameter_namespace_t *parent,
                          const char *name)
 {

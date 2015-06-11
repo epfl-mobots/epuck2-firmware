@@ -42,6 +42,10 @@ extern struct motor_s right;
 
 void control_start(void);
 
+void update_pid_parameters(pid_ctrl_t *pid, struct pid_parameter_s *pid_parameter);
+void pid_register(struct pid_parameter_s *pid,
+                         parameter_namespace_t *parent,
+                         const char *name);
 
 #ifdef __cplusplus
 }
