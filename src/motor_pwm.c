@@ -4,12 +4,12 @@
 #define PWM_CLK_FREQ 42000000
 #define PWM_CYCLE 2000
 
+#define PWM_LIMIT 0.99f
+
 #define MOT0_PHASE_A 2
 #define MOT0_PHASE_B 3
 #define MOT1_PHASE_A 0
 #define MOT1_PHASE_B 1
-
-
 
 static const PWMConfig pwmcfg1 = {
     PWM_CLK_FREQ,                                   /* 42MHz PWM clock frequency.  */
@@ -64,8 +64,8 @@ void motor_pwm_set(int pwm_select, float pwm_command)
 {
     pwm_command = -pwm_command;
     if(pwm_command >= 0) {
-        if (pwm_command > 0.75) {
-            pwm_command = 0.75;
+        if (pwm_command > PWM_LIMIT) {
+            pwm_command = PWM_LIMIT;
         }
         if(!pwm_select) {
             pwmEnableChannel(&PWMD3, MOT0_PHASE_A, (pwmcnt_t) (PWM_CYCLE * pwm_command));
@@ -77,8 +77,8 @@ void motor_pwm_set(int pwm_select, float pwm_command)
         }
     }
     else {
-        if(pwm_command < -0.75) {
-            pwm_command = -0.75;
+        if(pwm_command < -PWM_LIMIT) {
+            pwm_command = -PWM_LIMIT;
         }
         pwm_command = -pwm_command;
         if(!pwm_select) {
