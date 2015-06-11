@@ -5,7 +5,7 @@
 #define WHEEL_RADIUS_RIGHT  0.075f
 #define WHEEL_RADIUS_LEFT   0.075f
 #define WHEELBASE           0.0725f
-#define TICKS_PER_TURN      16384
+#define TICKS_PER_TURN      2630
 
 static uint32_t enc_right[2];
 static uint32_t enc_left[2];
