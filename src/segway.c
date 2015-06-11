@@ -3,6 +3,7 @@
 #include "attitude_estimation.h"
 #include "sensors/imu.h"
 #include "control.h"
+#include "setpoints.h"
 
 #include "segway.h"
 
@@ -43,6 +44,9 @@ static THD_FUNCTION(segway_thd, arg)
         float attitude_meas = att_estim_get_theta(&segway_att_estim);
 
         float wheel_speed_fwd = pid_process(&attitude_ctrl, attitude_meas - attitude_setpt);
+
+        setpoints_set_velocity(&(left.setpoints), wheel_speed_fwd);
+        setpoints_set_velocity(&(right.setpoints), wheel_speed_fwd);
 
         chThdSleepMilliseconds(1000/SEGWAY_CONTROL_FREQ);
     }
