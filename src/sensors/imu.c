@@ -40,7 +40,7 @@ void imu_get_acc(float *acc)
     chSysUnlock();
 }
 
-static THD_WORKING_AREA(imu_reader_thd_wa, 128);
+static THD_WORKING_AREA(imu_reader_thd_wa, 512);
 static THD_FUNCTION(imu_reader_thd, arg) {
 
     (void)arg;
