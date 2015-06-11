@@ -42,6 +42,27 @@ static THD_FUNCTION(Thread1, arg) {
   }
 }
 
+void i2c_init(void)
+{
+    /*
+     * I2C configuration structure for MPU6000 & VL6180x.
+     * Set it to 400kHz fast mode
+     */
+    static const I2CConfig i2c_cfg = {
+        .op_mode = OPMODE_I2C,
+        .clock_speed = 400000,
+        .duty_cycle = FAST_DUTY_CYCLE_2
+    };
+
+    // Configure the I2C interface
+    palSetPadMode(GPIOB, GPIOB_I2C_SDA, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
+    palSetPadMode(GPIOB, GPIOB_I2C_SCLK, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
+
+    chThdSleepMilliseconds(100);
+
+    i2cStart(&I2CD1, &i2c_cfg);
+}
+
 
 int main(void)
 {
@@ -73,9 +94,15 @@ int main(void)
     // Start heartbeat thread
     chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
+    // Initialise i2c
+    i2c_init();
+
     // Initialise the time of flight range sensor
-    range_init();
+    range_init(&I2CD1);
     range_start();
+
+    // Initialise the IMU
+
 
     // Start control loops
     control_start();

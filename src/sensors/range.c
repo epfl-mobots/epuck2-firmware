@@ -41,27 +41,14 @@ void range_start(void)
 
 // PB9: I2C1_SDA (AF4)
 // PB8: I2C1_SCL (AF4)
-void range_init(void)
+void range_init(I2CDriver *dev)
 {
-    static const I2CConfig i2c_cfg = {
-        .op_mode = OPMODE_I2C,
-        .clock_speed = 400000,
-        .duty_cycle = FAST_DUTY_CYCLE_2
-    };
-
     // Power on the time of flight sensor
     palSetPad(GPIOD, GPIOD_2V8_ON);
     palSetPad(GPIOE, GPIOE_RF_GPIO0_1);
-    // Configure the I2C interface
-    palSetPadMode(GPIOB, GPIOB_I2C_SDA, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
-    palSetPadMode(GPIOB, GPIOB_I2C_SCLK, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
 
     chThdSleepMilliseconds(100);
 
-    i2cStart(&I2CD1, &i2c_cfg);
-
-    vl6180x_init(&vl6180x, &I2CD1, VL6180X_DEFAULT_ADDRESS);
+    vl6180x_init(&vl6180x, dev, VL6180X_DEFAULT_ADDRESS);
     vl6180x_configure(&vl6180x);
-            chThdSleepMilliseconds(100);
-
 }
