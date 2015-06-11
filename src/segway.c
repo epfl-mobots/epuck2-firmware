@@ -28,6 +28,8 @@ static THD_FUNCTION(segway_thd, arg)
     static float gyro[3];
     float delta_t = 1.f/SEGWAY_CONTROL_FREQ;
 
+    float wheel_speed_fwd = 0;
+
     while (1) {
         imu_get_gyro(gyro);
         imu_get_acc(acc);
@@ -38,12 +40,12 @@ static THD_FUNCTION(segway_thd, arg)
         update_pid_parameters(&attitude_ctrl, &attitude_ctrl_param);
 
         float speed_setpt = 0; // todo
-        float speed_meas = 0; // todo
+        float speed_meas = wheel_speed_fwd; // todo
 
         float attitude_setpt = pid_process(&advance_ctrl, speed_meas - speed_setpt);
         float attitude_meas = att_estim_get_theta(&segway_att_estim);
 
-        float wheel_speed_fwd = - pid_process(&attitude_ctrl, attitude_meas - attitude_setpt);
+        wheel_speed_fwd = -1 * pid_process(&attitude_ctrl, attitude_meas - attitude_setpt);
 
         setpoints_set_velocity(&(left.setpoints), wheel_speed_fwd);
         setpoints_set_velocity(&(right.setpoints), wheel_speed_fwd);
