@@ -169,26 +169,26 @@ static THD_FUNCTION(comm_tx_stream, arg)
             chMtxUnlock(&send_lock);
         }
 
-        // cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
-        // if (send_current(&cmp) == 0) {
-        //     chMtxLock(&send_lock);
-        //     serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
-        //     chMtxUnlock(&send_lock);
-        // }
+        cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
+        if (send_current(&cmp) == 0) {
+            chMtxLock(&send_lock);
+            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
+            chMtxUnlock(&send_lock);
+        }
 
-        // cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
-        // if (send_velocity(&cmp) == 0) {
-        //     chMtxLock(&send_lock);
-        //     serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
-        //     chMtxUnlock(&send_lock);
-        // }
+        cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
+        if (send_velocity(&cmp) == 0) {
+            chMtxLock(&send_lock);
+            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
+            chMtxUnlock(&send_lock);
+        }
 
-        // cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
-        // if (send_position(&cmp) == 0) {
-        //     chMtxLock(&send_lock);
-        //     serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
-        //     chMtxUnlock(&send_lock);
-        // }
+        cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
+        if (send_position(&cmp) == 0) {
+            chMtxLock(&send_lock);
+            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
+            chMtxUnlock(&send_lock);
+        }
 
         cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
         if (send_distance(&cmp) == 0) {
