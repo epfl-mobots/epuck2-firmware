@@ -20,12 +20,17 @@ typedef struct cascade_controller{
     float current_error;
     float current_output;
 
+    bool pos_ctrl_en;
+    bool vel_ctrl_en;
+
     float* output;
 }cascade_controller;
 
 float cascade_step(cascade_controller *ctrl);
 void cascade_init(cascade_controller *ctrl);
-
+void cascade_mode_pos_ctrl(cascade_controller *ctrl);
+void cascade_mode_vel_ctrl(cascade_controller *ctrl);
+void cascade_mode_torque_ctrl(cascade_controller *ctrl);
 
 #ifdef __cplusplus
 }
