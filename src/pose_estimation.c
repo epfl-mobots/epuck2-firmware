@@ -22,9 +22,8 @@ void pose_estim_init(pose_estim_base_t *est)
     est->x = 0.f;
     est->y = 0.f;
     est->heading = 0.f;
-    est->vel_x = 0.f;
-    est->vel_y = 0.f;
-    est->vel_heading = 0.f;
+    est->speed_forward = 0.f;
+    est->speed_rotation = 0.f;
 
     // Set
     est->right_wheel_tick_to_meter = (2 * M_PI * WHEEL_RADIUS_RIGHT / TICKS_PER_TURN);
@@ -53,11 +52,15 @@ void pose_estim_update(pose_estim_base_t *est,
     float cos_theta = cosf(est->heading + 0.5f * delta_rot);
     float sin_theta = sinf(est->heading + 0.5f * delta_rot);
 
-    est->vel_x = delta_fwd * cos_theta / delta_t;
-    est->vel_y = delta_fwd * sin_theta / delta_t;
-    est->vel_heading = delta_rot / delta_t;
+    est->speed_forward = delta_fwd / delta_t;
+    est->speed_rotation = delta_rot / delta_t;
 
     est->x += delta_fwd * cos_theta;
     est->y += delta_fwd * sin_theta;
     est->heading += delta_rot;
+}
+
+float pose_estim_get_forward_speed(pose_estim_base_t *est)
+{
+    return est->speed_forward;
 }
