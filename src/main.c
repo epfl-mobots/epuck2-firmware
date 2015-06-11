@@ -11,19 +11,17 @@
 
 #include "cmd.h"
 #include "control.h"
-
-#include "sensors/imu.h"
-#include "sensors/range.h"
-
 #include "communication.h"
 
-/*Testing includes*/
+/* Testing includes */
 #include "analogic.h"
 #include "motor_pwm.h"
 #include "setpoints.h"
 #include "sensors/proximity.h"
 #include "sensors/imu.h"
+#include "sensors/range.h"
 
+/* Aseba includes */
 #include "aseba_vm/skel.h"
 #include "aseba_vm/aseba_node.h"
 #include "aseba_vm/aseba_can_interface.h"
@@ -77,7 +75,6 @@ int main(void)
 
     // Initialise the time of flight range sensor
     range_init();
-    //chThdSleepMilliseconds(1000);
     range_start();
 
     // Start control loops

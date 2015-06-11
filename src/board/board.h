@@ -341,9 +341,9 @@
 #define VAL_GPIOB_MODER             (PIN_MODE_OUTPUT(GPIOB_PWM0_PHASE_A) |           \
                                      PIN_MODE_OUTPUT(GPIOB_PWM0_PHASE_B) |           \
                                      PIN_MODE_INPUT(GPIOB_BOOT1) |           \
-                                     PIN_MODE_ALTERNATE(GPIOB_SPI_CLK) |        \
-                                     PIN_MODE_ALTERNATE(GPIOB_SPI_MISO) |           \
-                                     PIN_MODE_ALTERNATE(GPIOB_SPI_MOSI) |           \
+                                     PIN_MODE_INPUT(GPIOB_SPI_CLK) |        \
+                                     PIN_MODE_INPUT(GPIOB_SPI_MISO) |           \
+                                     PIN_MODE_INPUT(GPIOB_SPI_MOSI) |           \
                                      PIN_MODE_INPUT(GPIOB_DCMI_D5) |        \
                                      PIN_MODE_INPUT(GPIOB_DCMI_VSYNC) |           \
                                      PIN_MODE_INPUT(GPIOB_I2C_SCLK) |           \
