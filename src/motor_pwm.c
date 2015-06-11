@@ -62,6 +62,7 @@ void motor_pwm_stop(void)
 
 void motor_pwm_set(int pwm_select, float pwm_command)
 {
+    pwm_command = -pwm_command;
     if(pwm_command >= 0) {
         if (pwm_command > 0.75) {
             pwm_command = 0.75;

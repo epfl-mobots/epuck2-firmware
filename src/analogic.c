@@ -24,8 +24,8 @@ event_source_t analogic_events;
 void analog_get_motor(int32_t *value)
 {
     chSysLock();
-    value[0] = motor_value[0] - MOTOR_CURRENT_OFFSET;
-    value[1] = -(motor_value[1] - MOTOR_CURRENT_OFFSET);
+    value[0] = -(motor_value[0] - MOTOR_CURRENT_OFFSET);
+    value[1] = motor_value[1] - MOTOR_CURRENT_OFFSET;
     chSysUnlock();
 }
 

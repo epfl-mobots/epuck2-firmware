@@ -15,7 +15,7 @@ float cascade_step(cascade_controller *ctrl)
     }
 
     // velocity control
-    ctrl->velocity_error += ctrl->position_output;
+    ctrl->velocity_error -= ctrl->position_output;
     if (ctrl->vel_ctrl_en) {
         ctrl->velocity_output = pid_process(&(ctrl->velocity_pid), ctrl->velocity_error);
     } else {
@@ -24,7 +24,7 @@ float cascade_step(cascade_controller *ctrl)
     }
 
     //torque control
-    ctrl->current_error += ctrl->velocity_output;
+    ctrl->current_error -= ctrl->velocity_output;
     ctrl->current_output = pid_process(&(ctrl->current_pid), ctrl->current_error);
 
     return ctrl->current_output;
