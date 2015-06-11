@@ -1,6 +1,9 @@
 #ifndef IMU_H
 #define IMU_H
 
+#include <ch.h>
+#include <hal.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
