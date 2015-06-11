@@ -15,6 +15,7 @@ typedef struct {
 
 void att_estim_init(att_estim_t *est, parameter_namespace_t *ns);
 void att_estim_update(att_estim_t *est, float gyro, float acc, float delta_t);
+float att_estim_get_theta(att_estim_t *est);
 
 #ifdef __cplusplus
 }
