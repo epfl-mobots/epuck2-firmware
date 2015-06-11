@@ -57,8 +57,9 @@ static THD_FUNCTION(imu_reader_thd, arg) {
 
     while (TRUE) {
         //MPU reading
-        chEvtWaitAny(IMU_INTERRUPT_EVENT);
-        chEvtGetAndClearFlags(&imu_int);
+        // chEvtWaitAny(IMU_INTERRUPT_EVENT);
+        // chEvtGetAndClearFlags(&imu_int);
+        chThdSleepMilliseconds(1);
 
         i2cAcquireBus(mpu6050.i2c);
         mpu60X0_read(&mpu6050, gyro, acc, &temp);
@@ -90,7 +91,6 @@ void imu_init(I2CDriver *dev)
 {
     mpu60X0_init_using_i2c(&mpu6050, dev, 0);
     palClearPad(GPIOB, GPIOB_SPI_MISO);
-    palSetPad(GPIOE, GPIOE_LED_STATUS);
 
     i2cAcquireBus(dev);
     while(!mpu60X0_ping(&mpu6050)) {

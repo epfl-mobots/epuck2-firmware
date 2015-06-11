@@ -105,7 +105,6 @@ int main(void)
     imu_init(&I2CD1);
     imu_start();
 
-
     // Start control loops
     control_start();
 
