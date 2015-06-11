@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 void imu_start(void);
-void imu_init(void);
+void imu_init(I2CDriver *dev);
 
 void imu_get_gyro(float *gyro);
 void imu_get_acc(float *acc);

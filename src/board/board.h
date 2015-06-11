@@ -390,7 +390,7 @@
                                      PIN_PUPDR_FLOATING(GPIOB_PWM0_PHASE_B) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_BOOT1) |         \
                                      PIN_PUPDR_FLOATING(GPIOB_SPI_CLK) |        \
-                                     PIN_PUPDR_FLOATING(GPIOB_SPI_MISO) |         \
+                                     PIN_PUPDR_PULLDOWN(GPIOB_SPI_MISO) |         \
                                      PIN_PUPDR_FLOATING(GPIOB_SPI_MOSI) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_DCMI_D5) |        \
                                      PIN_PUPDR_PULLUP(GPIOB_DCMI_VSYNC) |         \

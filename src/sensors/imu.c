@@ -72,31 +72,17 @@ void imu_start(void)
     chThdCreateStatic(imu_reader_thd_wa, sizeof(imu_reader_thd_wa), NORMALPRIO, imu_reader_thd, NULL);
 }
 
-void imu_init(void)
+void imu_init(I2CDriver *dev)
 {
+    mpu60X0_init_using_i2c(&mpu6050, dev, 0);
+    palClearPad(GPIOB, GPIOB_SPI_MISO);
+    palSetPad(GPIOE, GPIOE_LED_STATUS);
 
-    /*
-     * SPI1 configuration structure for MPU6000.
-     * SPI1 is on APB2 @ 84MHz / 128 = 656.25kHz
-     * CPHA=1, CPOL=1, 8bits frames, MSb transmitted first.
-     */
-    static SPIConfig spi_cfg = {
-        .end_cb = NULL,
-        .ssport = GPIOF,
-        .sspad = GPIOF_MPU_CS,
-        .cr1 = SPI_CR1_BR_2 | SPI_CR1_BR_1 | SPI_CR1_CPOL | SPI_CR1_CPHA
-    };
-
-    spiStart(&SPID1, &spi_cfg);
-
-    mpu60X0_init_using_spi(&mpu6050, &SPID1);
-        palSetPad(GPIOE, GPIOE_LED_STATUS);
-
-    while(!mpu60X0_ping(&mpu6050)) {}
+    while(!mpu60X0_ping(&mpu6050)) {
+    }
 
     mpu60X0_setup(&mpu6050, MPU60X0_ACC_FULL_RANGE_2G
                           | MPU60X0_GYRO_FULL_RANGE_250DPS
                           | MPU60X0_SAMPLE_RATE_DIV(100)
                           | MPU60X0_LOW_PASS_FILTER_6);
-
 }
