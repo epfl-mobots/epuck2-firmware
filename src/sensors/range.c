@@ -25,11 +25,14 @@ static THD_FUNCTION(range_reader_thd, arg) {
 
     while (TRUE) {
         // Read sensor
+        i2cAcquireBus(vl6180x.i2c);
         vl6180x_measure_distance(&vl6180x, &temp);
+        i2cReleaseBus(vl6180x.i2c);
+
+        chSysLock();
         range_sample.raw_mm = temp;
         range_sample.raw = range_sample.raw_mm * MILLIMETER_TO_METER;
-
-        // chThdSleepMilliseconds(100);
+        chSysUnlock();
     }
     return 0;
 }
@@ -50,5 +53,8 @@ void range_init(I2CDriver *dev)
     chThdSleepMilliseconds(100);
 
     vl6180x_init(&vl6180x, dev, VL6180X_DEFAULT_ADDRESS);
+
+    i2cAcquireBus(dev);
     vl6180x_configure(&vl6180x);
+    i2cReleaseBus(dev);
 }

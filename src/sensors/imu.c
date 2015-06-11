@@ -52,13 +52,27 @@ static THD_FUNCTION(imu_reader_thd, arg) {
 
     chRegSetThreadName("IMU_reader");
 
+    static float gyro[3];
+    static float acc[3];
+
     while (TRUE) {
         //MPU reading
         chEvtWaitAny(IMU_INTERRUPT_EVENT);
         chEvtGetAndClearFlags(&imu_int);
+
+        i2cAcquireBus(mpu6050.i2c);
+        mpu60X0_read(&mpu6050, gyro, acc, &temp);
+        i2cReleaseBus(mpu6050.i2c);
+
         chSysLock();
-        mpu60X0_read(&mpu6050, imu_gyro_sample.rate, imu_acc_sample.acceleration, &temp);
+        imu_gyro_sample.rate[0] = gyro[0];
+        imu_gyro_sample.rate[1] = gyro[1];
+        imu_gyro_sample.rate[2] = gyro[2];
+        imu_acc_sample.acceleration[0] = acc[0];
+        imu_acc_sample.acceleration[1] = acc[1];
+        imu_acc_sample.acceleration[2] = acc[2];
         chSysUnlock();
+
         chEvtBroadcastFlags(&imu_events, IMU_EVENT_READING);
     }
     return 0;
@@ -78,6 +92,7 @@ void imu_init(I2CDriver *dev)
     palClearPad(GPIOB, GPIOB_SPI_MISO);
     palSetPad(GPIOE, GPIOE_LED_STATUS);
 
+    i2cAcquireBus(dev);
     while(!mpu60X0_ping(&mpu6050)) {
     }
 
@@ -85,4 +100,5 @@ void imu_init(I2CDriver *dev)
                           | MPU60X0_GYRO_FULL_RANGE_250DPS
                           | MPU60X0_SAMPLE_RATE_DIV(100)
                           | MPU60X0_LOW_PASS_FILTER_6);
+    i2cReleaseBus(dev);
 }

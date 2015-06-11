@@ -99,13 +99,12 @@ int main(void)
 
     // Initialise the time of flight range sensor
     range_init(&I2CD1);
+    range_start();
 
     // Initialise the IMU
     imu_init(&I2CD1);
-
-    // Start sensors on i2c
-    range_start();
     imu_start();
+
 
     // Start control loops
     control_start();
