@@ -25,3 +25,4 @@ SRC += src/communication.c
 SRC += src/parameter/parameter.c
 SRC += src/parameter/parameter_msgpack.c
 SRC += src/datagram_dispatcher.c
+SRC += src/pose_estimation.c
