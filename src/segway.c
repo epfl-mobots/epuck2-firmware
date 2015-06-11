@@ -6,7 +6,7 @@
 #include "segway.h"
 
 #define ACC_AXIS 0
-#define GYRO_AXIS 0
+#define GYRO_AXIS 1
 
 #define SEGWAY_CONTROL_FREQ 100
 
