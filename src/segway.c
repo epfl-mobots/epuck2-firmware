@@ -50,7 +50,7 @@ static THD_FUNCTION(segway_thd, arg)
 
         float speed_setpt = 0; // todo
         float speed_meas = pose_estim_get_forward_speed(&segway_pose_estim)
-                           + 0.035f * att_estim_get_theta(&segway_att_estim);
+                           + 0.035f * gyro[GYRO_AXIS];
 
         float attitude_setpt = pid_process(&advance_ctrl, speed_meas - speed_setpt);
         float attitude_meas = att_estim_get_theta(&segway_att_estim);
