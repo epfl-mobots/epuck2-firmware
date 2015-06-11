@@ -13,12 +13,15 @@ void setpoints_init(setpoints *setpoints)
 void setpoints_set_position(setpoints *setpoint, float position)
 {
 	setpoint->position = position;
+	setpoint->velocity = 0;
+	setpoint->current = 0;
 	setpoint->setpt_mode = SETPT_MODE_POS;
 }
 
 void setpoints_set_velocity(setpoints *setpoint, float velocity)
 {
 	setpoint->velocity = velocity;
+	setpoint->current = 0;
 	setpoint->setpt_mode = SETPT_MODE_VEL;
 }
 
