@@ -108,6 +108,9 @@ int main(void)
     // Start control loops
     control_start();
 
+    segway_control_init();
+    segway_control_start();
+
     // Initialise Aseba node (CAN and VM)
     aseba_vm_init();
     aseba_can_start(&vmState);

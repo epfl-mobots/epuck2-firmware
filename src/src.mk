@@ -25,3 +25,5 @@ SRC += src/communication.c
 SRC += src/parameter/parameter.c
 SRC += src/parameter/parameter_msgpack.c
 SRC += src/datagram_dispatcher.c
+SRC += src/attitude_estimation.c
+SRC += src/segway.c
