@@ -203,6 +203,8 @@ static THD_FUNCTION(comm_tx_stream, arg)
             serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
             chMtxUnlock(&send_lock);
         }
+
+        chThdSleepMilliseconds(10);
     }
     return 0;
 }
