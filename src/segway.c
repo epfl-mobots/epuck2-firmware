@@ -43,7 +43,7 @@ static THD_FUNCTION(segway_thd, arg)
         float attitude_setpt = pid_process(&advance_ctrl, speed_meas - speed_setpt);
         float attitude_meas = att_estim_get_theta(&segway_att_estim);
 
-        float wheel_speed_fwd = pid_process(&attitude_ctrl, attitude_meas - attitude_setpt);
+        float wheel_speed_fwd = - pid_process(&attitude_ctrl, attitude_meas - attitude_setpt);
 
         setpoints_set_velocity(&(left.setpoints), wheel_speed_fwd);
         setpoints_set_velocity(&(right.setpoints), wheel_speed_fwd);
