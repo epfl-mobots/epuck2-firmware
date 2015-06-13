@@ -103,15 +103,8 @@ int main(void)
     range_init(&I2CD1);
     range_start();
 
-    // Initialise the IMU
-    imu_init(&I2CD1);
-    imu_start();
-
     // Start control loops
     control_start();
-
-    segway_control_init();
-    segway_control_start();
 
     // Initialise Aseba node (CAN and VM)
     aseba_vm_init();
