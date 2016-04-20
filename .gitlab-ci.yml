@@ -2,6 +2,7 @@ firmware:
   image: antoinealb/gcc-arm-embedded
   script:
     - git submodule update --init
+    - apt-get update && apt-get install python3-setuptools
     - python3 packager/setup.py
     - packager
     - make
