@@ -1,0 +1,12 @@
+dependency-dir: src
+
+depends:
+    - cmp_mem_access
+    - pid
+    - crc
+    - parameter
+    - serial-datagram
+
+source:
+    - src/cmp/cmp.c
+

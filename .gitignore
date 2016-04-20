@@ -9,3 +9,5 @@ debug/
 CMakeLists.txt
 
 .tags*
+
+env
