@@ -50,8 +50,8 @@ static void adc_motor_cb(ADCDriver *adcp, adcsample_t *adc_motor_samples, size_t
     (void)adcp;
     uint32_t accumulator[2] = {0};
 
-    int i;
-    for (i = 0; i < (int)(n); i += MOTOR_NB_CHANNELS) {
+    size_t i;
+    for (i = 0; i < n; i += MOTOR_NB_CHANNELS) {
     	accumulator[0] += adc_motor_samples[i];
         accumulator[1] += adc_motor_samples[i+1];
     }
@@ -65,9 +65,9 @@ static void adc2_proximity_cb(ADCDriver *adcp, adcsample_t *adc2_proximity_sampl
 {
     (void)adcp;
     uint32_t accumulator = 0;
-    int i;
+    size_t i;
 
-    for (i = 0; i < (int)(n); i += PROXIMITY_NB_CHANNELS_ADC2) {
+    for (i = 0; i < n; i += PROXIMITY_NB_CHANNELS_ADC2) {
         accumulator += adc2_proximity_samples[i];
 
         chSysLockFromISR();
@@ -83,9 +83,9 @@ static void adc3_proximity_cb(ADCDriver *adcp, adcsample_t *adc3_proximity_sampl
     (void)adcp;
     uint32_t accumulator[PROXIMITY_NB_CHANNELS_ADC3] = {0};
 
-    int i, j;
+    size_t i, j;
     if(proximity_change_adc_trigger()) {
-        for (i = 0; i < (int)(n); i += PROXIMITY_NB_CHANNELS_ADC3) {
+        for (i = 0; i < n; i += PROXIMITY_NB_CHANNELS_ADC3) {
             for (j = 0; j < PROXIMITY_NB_CHANNELS_ADC3; i++) {
                 accumulator[j] += adc3_proximity_samples[i+j];
             }
@@ -97,7 +97,7 @@ static void adc3_proximity_cb(ADCDriver *adcp, adcsample_t *adc3_proximity_sampl
         chSysUnlockFromISR();
     }
     else {
-        for (i = 0; i < (int)(n); i += PROXIMITY_NB_CHANNELS_ADC3) {
+        for (i = 0; i < n; i += PROXIMITY_NB_CHANNELS_ADC3) {
             for (j = 0; j < PROXIMITY_NB_CHANNELS_ADC3; i++) {
                 accumulator[j] += adc3_proximity_samples[i+j];
             }
