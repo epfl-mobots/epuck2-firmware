@@ -36,4 +36,16 @@ sudo python -m serial.tools.miniterm /dev/ttyACM0
 ```
  assuming `/dev/ttyACM0` is where the epuck is connected
 
+### Running unit tests
+To run the automated tests you will need CMake and a host C/C++ compiler (tests are written in C++).
+
+```bash
+packager
+mkdir build
+cd build
+cmake ..
+make check
+```
+
+
 [virtualenv]: http://docs.python-guide.org/en/latest/dev/virtualenvs/
