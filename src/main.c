@@ -42,6 +42,7 @@ static THD_FUNCTION(Thread1, arg) {
     palClearPad(GPIOE, GPIOE_LED_HEARTBEAT);
     chThdSleepMilliseconds(300);
   }
+  return MSG_OK;
 }
 
 void i2c_init(void)

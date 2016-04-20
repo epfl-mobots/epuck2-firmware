@@ -39,6 +39,7 @@ static AsebaNativeFunctionDescription AsebaNativeDescription__system_reboot =
 
 void AsebaNative__system_reboot(AsebaVMState *vm)
 {
+    (void) vm;
     NVIC_SystemReset();
 }
 

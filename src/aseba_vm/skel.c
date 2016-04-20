@@ -47,11 +47,13 @@ void AsebaIdle(void)
 
 void AsebaPutVmToSleep(AsebaVMState *vm)
 {
+    (void) vm;
     chThdSleepMilliseconds(1000);
 }
 
 void AsebaResetIntoBootloader(AsebaVMState *vm)
 {
+    (void) vm;
     NVIC_SystemReset();
 }
 
@@ -62,17 +64,20 @@ void AsebaNativeFunction(AsebaVMState *vm, uint16 id)
 
 const AsebaNativeFunctionDescription * const * AsebaGetNativeFunctionsDescriptions(AsebaVMState *vm)
 {
+    (void) vm;
     return nativeFunctionsDescription;
 }
 
 
 const AsebaVMDescription* AsebaGetVMDescription(AsebaVMState *vm)
 {
+    (void) vm;
     return &vmDescription;
 }
 
 const AsebaLocalEventDescription * AsebaGetLocalEventsDescriptions(AsebaVMState *vm)
 {
+    (void) vm;
     return localEvents;
 }
 
@@ -84,5 +89,5 @@ uint16 AsebaShouldDropPacket(uint16 source, const uint8* data)
 // Used to write bytecode in the flash, not implemented yet
 void AsebaWriteBytecode(AsebaVMState *vm)
 {
-
+    (void) vm;
 }
