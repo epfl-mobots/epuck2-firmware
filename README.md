@@ -27,6 +27,8 @@ make
 make flash
 ```
 
+If you get messages like `Fatal error: can't create build/obj/chcoreasm_v7m.o: No such file or directory`, run `make -B` instead of simply `make`.
+
 To start the shell, open a terminal emulator and run
 
 ```bash
