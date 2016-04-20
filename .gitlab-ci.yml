@@ -1,0 +1,5 @@
+firmware:
+  image: antoinealb/gcc-arm-embedded
+  script:
+    - git submodule update --init
+    - make
