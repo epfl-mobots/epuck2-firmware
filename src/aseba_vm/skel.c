@@ -24,16 +24,18 @@ static uint16 vmBytecode[VM_BYTECODE_SIZE];
 static sint16 vmStack[VM_STACK_SIZE];
 
 AsebaVMState vmState = {
-    0,
+    .nodeId=0, /* changed by aseba_vm_init() */
 
-    VM_BYTECODE_SIZE,
-    vmBytecode,
+    .bytecodeSize=VM_BYTECODE_SIZE,
+    .bytecode=vmBytecode,
 
-    sizeof(vmVariables) / sizeof(sint16),
-    (sint16*)&vmVariables,
+    .variablesSize=sizeof(vmVariables) / sizeof(sint16),
+    .variables=(sint16*)&vmVariables,
 
-    VM_STACK_SIZE,
-    vmStack
+    .stackSize=VM_STACK_SIZE,
+    .stack=vmStack,
+    .flags=0, .pc=0, .sp=0,
+    .breakpoints={0}, .breakpointsCount=0,
 };
 
 
