@@ -2,6 +2,7 @@
 #include "hal.h"
 
 #include "vm/natives.h"
+#include "skel_user.h"
 
 /*
  * Descriptors
@@ -23,7 +24,7 @@ const AsebaVMDescription vmDescription = {
 };
 
 // Event descriptions
-static const AsebaLocalEventDescription localEvents[] = {
+const AsebaLocalEventDescription localEvents[] = {
     {NULL, NULL}
 };
 
@@ -44,14 +45,14 @@ void AsebaNative__system_reboot(AsebaVMState *vm)
 }
 
 // Native function descriptions
-static const AsebaNativeFunctionDescription* nativeFunctionsDescription[] = {
+const AsebaNativeFunctionDescription* nativeFunctionsDescription[] = {
 	&AsebaNativeDescription__system_reboot,
     ASEBA_NATIVES_STD_DESCRIPTIONS,
     0
 };
 
 // Native function pointers
-static AsebaNativeFunctionPointer nativeFunctions[] = {
+const AsebaNativeFunctionPointer nativeFunctions[] = {
     AsebaNative__system_reboot,
 	ASEBA_NATIVES_STD_FUNCTIONS,
 };

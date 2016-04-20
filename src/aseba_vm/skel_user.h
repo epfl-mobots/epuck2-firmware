@@ -64,6 +64,10 @@ struct private_settings {
 	int settings[95];
 };
 
+extern const AsebaNativeFunctionPointer nativeFunctions[];
+extern const AsebaNativeFunctionDescription* nativeFunctionsDescription[];
+extern const AsebaVMDescription vmDescription;
+extern const AsebaLocalEventDescription localEvents[];
 
 #ifdef __cplusplus
 }
