@@ -5,6 +5,7 @@
 #include "hal.h"
 #include "test.h"
 #include "malloc_lock.h"
+#include "memory_protection.h"
 
 #include "chprintf.h"
 #include "shell.h"
@@ -70,6 +71,8 @@ void i2c_init(void)
 /** Late init hook, called before c++ static constructors. */
 void __late_init(void)
 {
+    mpu_init();
+
     /* C++ Static initializer requires working chibios. */
     halInit();
     chSysInit();

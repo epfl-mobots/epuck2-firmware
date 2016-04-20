@@ -193,7 +193,7 @@ CPPWARN = -Wall -Wextra
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DARM_MATH_CM4
+UDEFS = -DARM_MATH_CM4 -DMPU_DETAILED_MSG
 
 # Define ASM defines here
 UADEFS =
