@@ -1,0 +1,12 @@
+include_directories:
+    - ../../aseba
+
+target.arm:
+    - ../../aseba/transport/buffer/vm-buffer.c
+    - ../../aseba/transport/can/can-buffer.c
+    - ../../aseba/transport/can/can-net.c
+    - ../../aseba/vm/natives.c
+    - ../../aseba/vm/vm.c
+    - aseba_vm/aseba_can_interface.c
+    - aseba_node.c
+    - skel.c

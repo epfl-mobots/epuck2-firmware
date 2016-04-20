@@ -9,6 +9,7 @@ depends:
     - crc
     - parameter
     - serial-datagram
+    - aseba_vm
 
 source:
     - src/cmp/cmp.c
