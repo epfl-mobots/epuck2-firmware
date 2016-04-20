@@ -3,7 +3,7 @@
 	url = https://github.com/epuck2/ChibiOS.git
 [submodule "aseba"]
 	path = aseba
-	url = https://git.wise-robotics.com/epuck2/aseba
+	url = https://git.wise-robotics.com/epuck2/aseba.git
 [submodule "src/cmp_mem_access"]
 	path = src/cmp_mem_access
 	url = https://github.com/epuck2/cmp_mem_access.git
