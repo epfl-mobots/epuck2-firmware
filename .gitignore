@@ -3,10 +3,13 @@
 build/
 debug/
 
+
 # Vim swap
 *.swp
 
+# Packager files
 CMakeLists.txt
+src/src.mk
 
 .tags*
 

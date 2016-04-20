@@ -1,0 +1,7 @@
+{% for dir in include_directories %}
+PACKAGER_INCDIR += {{ dir }}
+{% endfor %}
+
+{% for file in target.arm + source %}
+SRC += {{ file }}
+{% endfor %}

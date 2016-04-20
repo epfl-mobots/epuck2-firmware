@@ -1,5 +1,8 @@
 dependency-dir: src
 
+include_directories:
+    - src/board
+
 depends:
     - cmp_mem_access
     - pid
@@ -10,3 +13,30 @@ depends:
 source:
     - src/cmp/cmp.c
 
+target.arm:
+    - src/panic.c
+    - src/cmd.c
+    - src/main.c
+    - src/sensors/mpu60X0.c
+    - src/sensors/proximity.c
+    - src/sensors/imu.c
+    - src/usbconf.c
+    - src/exti.c
+    - src/encoder.c
+    - src/motor_pwm.c
+    - src/board/board.c
+    - src/analogic.c
+    - src/control.c
+    - src/pid_cascade.c
+    - src/feedback.c
+    - src/setpoints.c
+    - src/sensors/vl6180x-driver/vl6180x.c
+    - src/sensors/range.c
+    - src/communication.c
+    - src/datagram_dispatcher.c
+    - src/attitude_estimation.c
+    - src/segway.c
+    - src/pose_estimation.c
+
+templates:
+    src/src.mk.jinja: 'src/src.mk'

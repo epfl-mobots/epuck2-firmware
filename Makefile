@@ -143,8 +143,7 @@ INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(CHIBIOS)/os/various \
          $(CHIBIOS)/os/hal/lib/streams \
          $(ASEBAINC) \
-         src/ \
-         src/board/
+		 $(PACKAGER_INCDIR) \
 
 #
 # Project, sources and paths
