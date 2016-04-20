@@ -10,21 +10,6 @@
 #define ASEBA_CAN_RECEIVE_QUEUE_SIZE    1024
 
 
-static const CANConfig can1_config = {
-    .mcr = (1 << 6)  /* Automatic bus-off management enabled. */
-         | (1 << 2), /* Message are prioritized by order of arrival. */
-
-    /* APB Clock is 42 Mhz
-       42MHz / 2 / (1tq + 12tq + 8tq) = 1MHz => 1Mbit */
-    .btr = (1 << 0)  /* Baudrate prescaler (10 bits) */
-         | (11 << 16)/* Time segment 1 (3 bits) */
-         | (7 << 20) /* Time segment 2 (3 bits) */
-         | (0 << 24) /* Resync jump width (2 bits) */
-
-#if 0
-         | (1 << 30) /* Loopback mode enabled */
-#endif
-};
 
 CanFrame aseba_can_send_queue[ASEBA_CAN_SEND_QUEUE_SIZE];
 CanFrame aseba_can_receive_queue[ASEBA_CAN_RECEIVE_QUEUE_SIZE];
@@ -59,12 +44,17 @@ static THD_FUNCTION(can_rx_thread, arg) {
 
 void can_init(void)
 {
-    // CAN1 gpio init
-    iomode_t mode = PAL_STM32_MODE_ALTERNATE | PAL_STM32_OTYPE_PUSHPULL
-        | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_PUDR_FLOATING
-        | PAL_STM32_ALTERNATE(9);
-    palSetPadMode(GPIOD, GPIOD_CAN_RX, mode); // RX
-    palSetPadMode(GPIOD, GPIOD_CAN_TX, mode); // TX
+    static const CANConfig can1_config = {
+        .mcr = (1 << 6)  /* Automatic bus-off management enabled. */
+            | (1 << 2), /* Message are prioritized by order of arrival. */
+
+        /* APB Clock is 42 Mhz
+           42MHz / 2 / (1tq + 12tq + 8tq) = 1MHz => 1Mbit */
+        .btr = (1 << 0)  /* Baudrate prescaler (10 bits) */
+            | (11 << 16)/* Time segment 1 (3 bits) */
+            | (7 << 20) /* Time segment 2 (3 bits) */
+            | (0 << 24) /* Resync jump width (2 bits) */
+    };
     canStart(&CAND1, &can1_config);
 }
 

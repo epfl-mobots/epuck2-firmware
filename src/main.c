@@ -59,12 +59,6 @@ void i2c_init(void)
         .duty_cycle = FAST_DUTY_CYCLE_2
     };
 
-    // Configure the I2C interface
-    palSetPadMode(GPIOB, GPIOB_I2C_SDA, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
-    palSetPadMode(GPIOB, GPIOB_I2C_SCLK, PAL_MODE_ALTERNATE(4) | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_OTYPE_OPENDRAIN);
-
-    chThdSleepMilliseconds(100);
-
     i2cStart(&I2CD1, &i2c_cfg);
 }
 

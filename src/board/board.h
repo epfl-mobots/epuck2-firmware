@@ -346,8 +346,8 @@
                                      PIN_MODE_INPUT(GPIOB_SPI_MOSI) |           \
                                      PIN_MODE_INPUT(GPIOB_DCMI_D5) |        \
                                      PIN_MODE_INPUT(GPIOB_DCMI_VSYNC) |           \
-                                     PIN_MODE_INPUT(GPIOB_I2C_SCLK) |           \
-                                     PIN_MODE_INPUT(GPIOB_I2C_SDA) |        \
+                                     PIN_MODE_ALTERNATE(GPIOB_I2C_SCLK) | \
+                                     PIN_MODE_ALTERNATE(GPIOB_I2C_SDA) |  \
                                      PIN_MODE_INPUT(GPIOB_PIN10) |         \
                                      PIN_MODE_INPUT(GPIOB_PIN11) |          \
                                      PIN_MODE_INPUT(GPIOB_PIN12) |          \
@@ -362,8 +362,8 @@
                                      PIN_OTYPE_PUSHPULL(GPIOB_SPI_MOSI) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_DCMI_D5) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_DCMI_VSYNC) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOB_I2C_SCLK) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOB_I2C_SDA) |       \
+                                     PIN_OTYPE_PUSHPULL(GPIOB_I2C_SCLK) | \
+                                     PIN_OTYPE_PUSHPULL(GPIOB_I2C_SDA) | \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN10) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN11) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN12) |      \
@@ -426,7 +426,7 @@
                                      PIN_AFIO_AF(GPIOB_SPI_MOSI, 5) |           \
                                      PIN_AFIO_AF(GPIOB_DCMI_D5, 4) |            \
                                      PIN_AFIO_AF(GPIOB_DCMI_VSYNC, 0))
-#define VAL_GPIOB_AFRH              (PIN_AFIO_AF(GPIOB_I2C_SCLK, 0) |           \
+#define VAL_GPIOB_AFRH              (PIN_AFIO_AF(GPIOB_I2C_SCLK, 4) |           \
                                      PIN_AFIO_AF(GPIOB_I2C_SDA, 4) |            \
                                      PIN_AFIO_AF(GPIOB_PIN10, 0) |         \
                                      PIN_AFIO_AF(GPIOB_PIN11, 0) |          \
@@ -540,8 +540,8 @@
  * GPIOD setup:
  *
  */
-#define VAL_GPIOD_MODER             (PIN_MODE_INPUT(GPIOD_CAN_RX) |           \
-                                     PIN_MODE_INPUT(GPIOD_CAN_TX) |           \
+#define VAL_GPIOD_MODER             (PIN_MODE_ALTERNATE(GPIOD_CAN_RX) | \
+                                     PIN_MODE_ALTERNATE(GPIOD_CAN_TX) | \
                                      PIN_MODE_INPUT(GPIOD_SDIO_CMD) |           \
                                      PIN_MODE_OUTPUT(GPIOD_2V8_ON) |           \
                                      PIN_MODE_INPUT(GPIOD_PIN4) |         \
@@ -620,8 +620,8 @@
                                      PIN_ODR_LOW(GPIOD_PWM1_PHASE_B) |              \
                                      PIN_ODR_LOW(GPIOD_LED_DRIVER_RST) |              \
                                      PIN_ODR_LOW(GPIOD_LED_ERROR))
-#define VAL_GPIOD_AFRL              (PIN_AFIO_AF(GPIOD_CAN_RX, 0) |           \
-                                     PIN_AFIO_AF(GPIOD_CAN_TX, 0) |           \
+#define VAL_GPIOD_AFRL              (PIN_AFIO_AF(GPIOD_CAN_RX, 9) |           \
+                                     PIN_AFIO_AF(GPIOD_CAN_TX, 9) |           \
                                      PIN_AFIO_AF(GPIOD_SDIO_CMD, 0) |           \
                                      PIN_AFIO_AF(GPIOD_2V8_ON, 0) |           \
                                      PIN_AFIO_AF(GPIOD_PIN4, 0) |          \
