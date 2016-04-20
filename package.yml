@@ -37,6 +37,7 @@ target.arm:
     - src/attitude_estimation.c
     - src/segway.c
     - src/pose_estimation.c
+    - src/malloc_lock.c
 
 templates:
     src/src.mk.jinja: 'src/src.mk'

@@ -4,6 +4,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
+#include "malloc_lock.h"
 
 #include "chprintf.h"
 #include "shell.h"
@@ -66,12 +67,18 @@ void i2c_init(void)
     i2cStart(&I2CD1, &i2c_cfg);
 }
 
+/** Late init hook, called before c++ static constructors. */
+void __late_init(void)
+{
+    /* C++ Static initializer requires working chibios. */
+    halInit();
+    chSysInit();
+    malloc_lock_init();
+}
+
 
 int main(void)
 {
-    halInit();
-    chSysInit();
-
     /*
     * Initializes a serial-over-USB CDC driver.
     */
