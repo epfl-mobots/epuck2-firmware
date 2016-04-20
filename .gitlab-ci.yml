@@ -3,6 +3,6 @@ firmware:
   script:
     - git submodule update --init
     - apt-get update && apt-get install -y python3-setuptools
-    - python3 packager/setup.py install
+    - pushd packager && python3 setup.py install && popd
     - packager
     - make
