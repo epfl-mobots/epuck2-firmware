@@ -69,7 +69,7 @@ static void adc2_proximity_cb(ADCDriver *adcp, adcsample_t *adc2_proximity_sampl
 
     for (i = 0; i < (int)(n); i += PROXIMITY_NB_CHANNELS_ADC2) {
         accumulator += adc2_proximity_samples[i];
-        
+
         chSysLockFromISR();
         for (i = 0; i < PROXIMITY_NB_CHANNELS_ADC2; i++) {
             proximity_value2 = (accumulator / DMA_BUFFER_SIZE);
@@ -130,7 +130,7 @@ static THD_FUNCTION(adc_motor_current, arg)
         ADC_SMPR2_SMP_AN2(ADC_SAMPLE_112),   				// SMPR2
         ADC_SQR1_NUM_CH(MOTOR_NB_CHANNELS),     		    // SQR1
         0,                      							// SQR2
-        ADC_SQR3_SQ1_N(0) | ADC_SQR3_SQ2_N(2)       		// SQR3 
+        ADC_SQR3_SQ1_N(0) | ADC_SQR3_SQ2_N(2)       		// SQR3
     };
 
 
@@ -158,14 +158,14 @@ static THD_FUNCTION(adc2_proximity_current, arg)
         0,                                                  // CR2 -> doesn't start and doesn't activate continuous
         /*SMPR1*/
         ADC_SMPR1_SMP_AN14(ADC_SAMPLE_3),                 //PC4 - IR_AN12
-        /*SMPR2*/         
-        0,            
+        /*SMPR2*/
+        0,
         /*SQR1*/
         ADC_SQR1_NUM_CH(PROXIMITY_NB_CHANNELS_ADC2),
         /*SQR2*/
-        0,        
+        0,
         /*SQR3*/
-        ADC_SQR3_SQ1_N(14),              
+        ADC_SQR3_SQ1_N(14),
     };
 
 
@@ -198,23 +198,23 @@ static THD_FUNCTION(adc3_proximity_current, arg)
         ADC_SMPR1_SMP_AN13(ADC_SAMPLE_3) |  //PC3 - IR_AN11
         ADC_SMPR1_SMP_AN14(ADC_SAMPLE_3) |  //PF4 - IR_AN1
         ADC_SMPR1_SMP_AN15(ADC_SAMPLE_3),   //PF5 - IR_AN2
-        /*SMPR2*/         
+        /*SMPR2*/
         ADC_SMPR2_SMP_AN4(ADC_SAMPLE_3) |   //PF6 - IR_AN3
         ADC_SMPR2_SMP_AN5(ADC_SAMPLE_3) |   //PF7 - IR_AN4
         ADC_SMPR2_SMP_AN6(ADC_SAMPLE_3) |   //PF8 - IR_AN5
         ADC_SMPR2_SMP_AN7(ADC_SAMPLE_3) |   //PF9 - IR_AN6
         ADC_SMPR2_SMP_AN8(ADC_SAMPLE_3) |   //PF10 - IR_AN7
-        ADC_SMPR2_SMP_AN9(ADC_SAMPLE_3),    //PF3 - IR_AN0              
+        ADC_SMPR2_SMP_AN9(ADC_SAMPLE_3),    //PF3 - IR_AN0
         /*SQR1*/
         ADC_SQR1_NUM_CH(PROXIMITY_NB_CHANNELS_ADC3),
         /*SQR2*/
         ADC_SQR2_SQ7_N(7) | ADC_SQR2_SQ8_N(8) |
         ADC_SQR2_SQ9_N(10) | ADC_SQR2_SQ10_N(11) |
-        ADC_SQR2_SQ11_N(12) | ADC_SQR2_SQ12_N(13),        
+        ADC_SQR2_SQ11_N(12) | ADC_SQR2_SQ12_N(13),
         /*SQR3*/
         ADC_SQR3_SQ1_N(9) | ADC_SQR3_SQ2_N(14) |
         ADC_SQR3_SQ3_N(15) | ADC_SQR3_SQ4_N(4) |
-        ADC_SQR3_SQ5_N(5) | ADC_SQR3_SQ6_N(6),              
+        ADC_SQR3_SQ5_N(5) | ADC_SQR3_SQ6_N(6),
     };
 
 

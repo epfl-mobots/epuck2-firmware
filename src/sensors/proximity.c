@@ -60,7 +60,7 @@ void proximity_get(float* proximity)
 
 void proximity_start(void) {
 
-    /*Init PWM*/    
+    /*Init PWM*/
     pwmStart(&PWMD8, &pwmcfg_proximity);
     pwmEnablePeriodicNotification(&PWMD8);          //allows callback to happen
 

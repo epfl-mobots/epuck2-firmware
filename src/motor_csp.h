@@ -25,7 +25,7 @@
 #ifndef _MOLOLE_MOTOR_CSP_H
 #define _MOLOLE_MOTOR_CSP_H
 
-/** \addtogroup motor_csp */ 
+/** \addtogroup motor_csp */
 /*@{*/
 
 /** \file
@@ -36,7 +36,7 @@
 typedef void (*motor_csp_enc_cb)(void);
 
 #define MOTOR_CSP_OVERCURRENT_ACTIVE 0
-#define MOTOR_CSP_OVERCURRENT_CLEARED 1	
+#define MOTOR_CSP_OVERCURRENT_CLEARED 1
 /** External callback to be called when overcurrent status change */
 typedef void (*motor_csp_overcurrent) (int status);
 
@@ -59,10 +59,10 @@ typedef struct {
 	unsigned long iir_sum;			//! Sum for the mean
 	unsigned char _iir_counter;		//! IIR counter for mean
 	unsigned char _over_status;		//! overcurrent internal status
-	
+
 	unsigned int prescaler_period;	//! Prescaler value for speed and position controller
 	unsigned int prescaler_c;		//! Counter for prescaler, internal use only.
-	
+
 // 	Speed PID part
 	int *speed_m;					//! Speed mesure
 	int speed_t;					//! Speed target, automatically set if enable_p is true
@@ -73,7 +73,7 @@ typedef struct {
 	long integral_s;				//! Integral value for speed, internal use only
 	bool enable_s;					//! Enable speed PID
 	int last_error_s;				//! Last speed error (for D term)
-	
+
 //	Position part
 	void *position_m;				//! Position mesure
 	void *position_t;				//! Position target
@@ -85,10 +85,10 @@ typedef struct {
 	int speed_min;					//! Minimum speed for position PD output
 	long last_error_p;				//! Last position error (for D term)
 	bool is_32bits;					//! True if the position is 32bits, false if it's 16bits
-	
+
 	motor_csp_enc_cb enc_up;		//! Encoder update callback pointer
 	motor_csp_overcurrent ov_up;	//! Motor overcurrent callback pointer
-	
+
 	int sat_status;					//! 2bit-field of current controller saturation status, internal use only
 } motor_csp_data;
 
@@ -135,8 +135,8 @@ long div32by16s(long a, int b);
 							{ 1, #name ".pid.target_speed"}, \
 							{ 1, #name ".pid.target_position"}, \
 							{ 1, #name "._raw_current"},
-							 
-							
+
+
 #define MOTOR_VMVAR(name)		sint16 name##_pid_period; \
 								sint16 name##_kp_i; \
 								sint16 name##_ki_i; \
@@ -167,10 +167,10 @@ long div32by16s(long a, int b);
 								sint16 name##_current_t; \
 								sint16 name##_target_speed_ext; \
 								sint16 name##_target_position_ext; \
-								sint16 name##_raw_current; 
-								
-								
-							
+								sint16 name##_raw_current;
+
+
+
 #define MOTOR_PRIVSET(name)		int name##_kp_i;					/* 0 */ \
 								int name##_ki_i;					/* 1 */ \
 								int name##_scaler_i;				/* 2 */ \
@@ -189,8 +189,8 @@ long div32by16s(long a, int b);
 								int name##_pid_period;				/* 15 */ \
 								int name##_raw_current_offset;		/* 16 */ \
 								int name##_position_max;			/* 17 */ \
-								int name##_position_min;			/* 18 */ 
-								
+								int name##_position_min;			/* 18 */
+
 #define MOTOR_ASEBA_WRITE(name) 	static int name##_old_period; static int name##_old_enable; 							\
 		if(vmVariables.name##_pid_period != name##_old_period || name##_old_enable != vmVariables.name##_pid_enable) { 	\
 		name##_old_period = vmVariables.name##_pid_period; 																\
@@ -254,8 +254,8 @@ long div32by16s(long a, int b);
 	}																													\
 	*((long *) vmVariables.name##_position_target) = name##_position_to_pulse(vmVariables.name##_target_position_ext);	\
 	if(vmVariables.name##_pid_period <= 0)																				\
-		pwm_set_duty(name##_PWM, vmVariables.name##_pwm_output);		
-		
+		pwm_set_duty(name##_PWM, vmVariables.name##_pwm_output);
+
 #define MOTOR_ASEBA_READ(name)	 if(vmVariables.name##_pid_period > 0	 && vmVariables.name##_pid_enable) 				\
 			vmVariables.name##_pwm_output = name##_pid.pwm_output;														\
 		if(name##_pid.enable_s)																								\
@@ -265,11 +265,11 @@ long div32by16s(long a, int b);
 			vmVariables.name##_target_speed_ext = name##_pulse_to_speed(vmVariables.name##_speed_target);				\
 		}																												\
 		vmVariables.name##_speed_ext = name##_pulse_to_speed(vmVariables.name##_speed_read);							\
-		vmVariables.name##_position_ext = name##_pulse_to_position((long *) vmVariables.name##_position);						
-					
-		
+		vmVariables.name##_position_ext = name##_pulse_to_position((long *) vmVariables.name##_position);
 
-		
+
+
+
 #define MOTOR_LOAD_CONF(name) 	name##_pid.kp_s = vmVariables.name##_kp_s = settings.name##_kp_s;						\
 		name##_pid.kd_s = vmVariables.name##_kd_s = settings.name##_kd_s;												\
 		name##_pid.ki_s = vmVariables.name##_ki_s = settings.name##_ki_s;												\
@@ -296,7 +296,7 @@ long div32by16s(long a, int b);
 			vmVariables.name##_pid_enable = 0;																			\
 			/*timer_enable(name##_PID_TIMER);*/																					\
 		}
-		
+
 #define MOTOR_INIT(name) motor_csp_init_32(&name##_pid); 				\
 		name##_pid.current_m = (int *) &vmVariables.name##_raw_current; \
 		name##_pid.pwm_min = -1401;										\
@@ -306,7 +306,7 @@ long div32by16s(long a, int b);
 		name##_pid.position_t = vmVariables.name##_position_target;		\
 		name##_pid.enc_up = name##_update_cb;							\
 		name##_pid.ov_up = name##_overcurrent_cb;
-		
+
 #define MOTOR_ONE_STEP(name) motor_csp_step(&name##_pid);														\
          pwm_set_duty(name##_PWM, name##_pid.pwm_output);														\
          if((settings.name##_position_max != settings.name##_position_min) && !vmVariables.name##_override) {	\
