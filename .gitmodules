@@ -12,7 +12,7 @@
 	url = https://github.com/epuck2/cmp
 [submodule "src/serial-datagram"]
 	path = src/serial-datagram
-	url = https://github.com/epuck2/serial-datagram.git
+	url = https://git.wise-robotics.com/epuck2/serial-datagram.git
 [submodule "src/crc"]
 	path = src/crc
 	url = https://github.com/epuck2/crc
