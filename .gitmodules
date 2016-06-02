@@ -1,6 +1,6 @@
 [submodule "ChibiOS"]
 	path = ChibiOS
-	url = https://github.com/epuck2/ChibiOS.git
+	url = https://git.wise-robotics.com/epuck2/ChibiOS.git 
 [submodule "aseba"]
 	path = aseba
 	url = https://git.wise-robotics.com/epuck2/aseba.git
