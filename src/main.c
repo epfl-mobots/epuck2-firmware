@@ -96,7 +96,11 @@ int main(void)
 
     sdStart(&SD6, NULL);
 
+#if 0
     communication_start((BaseSequentialStream *)&SDU1);
+#else
+    shell_start();
+#endif
 
     // Start heartbeat thread
     chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
