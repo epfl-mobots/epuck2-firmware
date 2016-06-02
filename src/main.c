@@ -124,3 +124,10 @@ int main(void)
         chThdSleepMilliseconds(1000);
     }
 }
+
+uintptr_t __stack_chk_guard = 0xdeadbeef;
+
+void __stack_chk_fail(void)
+{
+    chSysHalt("Stack smashing detected");
+}

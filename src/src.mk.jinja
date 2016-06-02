@@ -1,7 +1,9 @@
 {% for dir in include_directories %}
-PACKAGER_INCDIR += {{ dir }}
+INCDIR += {{ dir }}
 {% endfor %}
 
-{% for file in target.arm + source %}
-SRC += {{ file }}
-{% endfor %}
+{% for file in target.arm + source -%}
+{% if file.endswith('.c') %}CSRC += {{ file }}
+{% elif file.endswith('.s') %}ASMSRC += {{ file }}
+{% elif file.endswith('.cpp') %}CPPSRC += {{ file }}
+{% endif %}{% endfor %}

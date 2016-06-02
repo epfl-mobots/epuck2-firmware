@@ -44,6 +44,8 @@
 #define HAL_USE_ADC                 TRUE
 #endif
 
+#define HAL_USE_DAC                 FALSE
+
 /**
  * @brief   Enables the CAN subsystem.
  */
