@@ -1,8 +1,20 @@
 firmware:
   image: antoinealb/gcc-arm-embedded
   script:
+    - apt-get update && apt-get install -y python3-pip
+    - pip3 install cvra-packager
     - git submodule update --init
-    - apt-get update && apt-get install -y python3-setuptools
-    - pushd packager && python3 setup.py install && popd
     - packager
     - make
+
+tests:
+  image: antoinealb/cpputest
+  script:
+    - git submodule update --init
+    - apt-get update && apt-get install -y cmake python3-pip
+    - pip3 install cvra-packager
+    - packager
+    - mkdir build && pushd build
+    - cmake ..
+    - make check
+    - popd
