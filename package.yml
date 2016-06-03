@@ -10,6 +10,7 @@ depends:
     - parameter
     - serial-datagram
     - aseba_vm
+    - chibios-syscalls
 
 source:
     - src/cmp/cmp.c
@@ -38,7 +39,6 @@ target.arm:
     - src/attitude_estimation.c
     - src/segway.c
     - src/pose_estimation.c
-    - src/malloc_lock.c
     - src/memory_protection.c
 
 templates:

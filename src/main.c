@@ -4,7 +4,6 @@
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
-#include "malloc_lock.h"
 #include "memory_protection.h"
 
 #include "chprintf.h"
@@ -70,7 +69,6 @@ void __late_init(void)
     /* C++ Static initializer requires working chibios. */
     halInit();
     chSysInit();
-    malloc_lock_init();
 }
 
 
