@@ -190,6 +190,7 @@ AS   = $(TRGT)gcc -x assembler-with-cpp
 AR   = $(TRGT)ar
 OD   = $(TRGT)objdump
 SZ   = $(TRGT)size
+NM   = $(TRGT)nm
 HEX  = $(CP) -O ihex
 BIN  = $(CP) -O binary
 
@@ -247,3 +248,10 @@ flash: build/$(PROJECT).elf
 format:
 	uncrustify -c uncrustify.cfg --replace --no-backup `find src -name "*.c"`
 	uncrustify -c uncrustify.cfg --replace --no-backup `find src -name "*.h"`
+
+.PHONY: mem_info
+mem_info: $(PROJECT).elf
+	@$(NM) --size-sort --print-size $(PROJECT).elf > $(BUILDDIR)/$(PROJECT).mem_size.txt
+	@$(NM) --numeric-sort --print-size $(PROJECT).elf > $(BUILDDIR)/$(PROJECT).mem_layout.txt
+
+
