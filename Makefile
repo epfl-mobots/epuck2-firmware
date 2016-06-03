@@ -243,3 +243,7 @@ include $(RULESPATH)/rules.mk
 
 flash: build/$(PROJECT).elf
 	openocd -f oocd.cfg -c "program build/$(PROJECT).elf verify reset exit"
+
+format:
+	uncrustify -c uncrustify.cfg --replace --no-backup `find src -name "*.c"`
+	uncrustify -c uncrustify.cfg --replace --no-backup `find src -name "*.h"`

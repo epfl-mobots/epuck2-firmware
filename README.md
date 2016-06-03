@@ -47,5 +47,9 @@ cmake ..
 make check
 ```
 
+## Automated code formatting
+Running `make format` will reformat the code to follow the coding style more accurately.
+Please do it before committing.
+
 
 [virtualenv]: http://docs.python-guide.org/en/latest/dev/virtualenvs/
