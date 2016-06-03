@@ -1,2 +1,2 @@
 pyserial
--e packager/
+cvra-packager

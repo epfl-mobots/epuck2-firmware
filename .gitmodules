@@ -25,9 +25,6 @@
 [submodule "src/parameter"]
 	path = src/parameter
 	url = https://github.com/stapelzeiger/parameter.git
-[submodule "packager"]
-	path = packager
-	url = https://github.com/cvra/packager
 [submodule "src/test-runner"]
 	path = src/test-runner
 	url = https://github.com/cvra/test-runner
