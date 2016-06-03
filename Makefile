@@ -215,7 +215,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = -DMPU_DETAILED_MSG
 
 UDEFS += -DSTDOUT_SD=SDU1 -DSTDIN_SD=SDU1
 

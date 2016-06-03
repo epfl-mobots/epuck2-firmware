@@ -62,13 +62,9 @@ void mpu_configure_region(int region, void *addr, size_t len,
     rasr += ((len - 1) << MPU_RASR_SIZE_Pos);
     rasr += MPU_RASR_ENABLE_Msk;
 
-    chSysLock();
-
     /* Update the MPU settings. */
     MPU->RBAR = (uintptr_t)addr + region + MPU_RBAR_VALID_Msk;
     MPU->RASR = rasr;
-
-    chSysUnlock();
 
     /* Make sure the memory barriers are correct. */
     __ISB();
@@ -102,6 +98,14 @@ void MemManage_Handler(void)
 {
     static char msg[128];
 
+    const char *thd_name;
+
+    if (chRegGetThreadNameX(ch.rlist.r_current)) {
+        thd_name = chRegGetThreadNameX(ch.rlist.r_current);
+    } else {
+        thd_name = "<unknown>";
+    }
+
     /* Setup default error message. */
     strcpy(msg, __FUNCTION__);
 
@@ -117,14 +121,14 @@ void MemManage_Handler(void)
     /* Data access violation */
     if (MMFSR & (1 << 1)) {
         snprintf(msg, sizeof(msg),
-                 "Invalid access to %p (pc=%p)", (void *)SCB->MMFAR, ctx.pc);
+                 "Invalid access to %p (pc=%p), current_thread=\"%s\"", (void *)SCB->MMFAR, ctx.pc, thd_name);
     }
 
     /* Instruction address violation. */
     if (MMFSR & (1 << 0)) {
         snprintf(msg, sizeof(msg),
-                 "Jumped to XN region %p (lr_thd=%p)",
-                 (void *)SCB->MMFAR, ctx.lr_thd);
+                 "Jumped to XN region %p (lr_thd=%p) current thread:\"%s\"",
+                 (void *)SCB->MMFAR, ctx.lr_thd, thd_name);
     }
 #endif
 

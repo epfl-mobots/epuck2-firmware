@@ -439,8 +439,18 @@
  * @brief   Context switch hook.
  * @details This hook is invoked just before switching between threads.
  */
+#if !defined(_FROM_ASM_)
+#ifdef __cplusplus
+extern "C" {
+#endif
+void context_switch_hook(void *ntp, void *otp);
+#ifdef __cplusplus
+}
+#endif
+#endif /* _FROM_ASM_ */
+
 #define CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
-        /* Context switch code here.*/                                            \
+    context_switch_hook(ntp, otp); \
 }
 
 /**
