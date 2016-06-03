@@ -242,6 +242,12 @@ ULIBS =
 RULESPATH = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC
 include $(RULESPATH)/rules.mk
 
+# Generates a ctags file containing the correct definition for the build
+.PHONY: ctags
+ctags:
+	@echo "Generating ctags file..."
+	@cat .dep/*.d | grep ":$$" | sed "s/://" | sort | uniq | xargs ctags  --extra=+q $(CSRC) $(CPPSRC)
+
 flash: build/$(PROJECT).elf
 	openocd -f oocd.cfg -c "program build/$(PROJECT).elf verify reset exit"
 
