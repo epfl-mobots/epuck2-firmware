@@ -93,6 +93,7 @@ int main(void)
 
     sdStart(&SD6, NULL);
 
+
 #if 0
     communication_start((BaseSequentialStream *)&SDU1);
 #else

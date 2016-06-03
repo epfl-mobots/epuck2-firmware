@@ -4,6 +4,7 @@
 #include "shell.h"
 #include "usbconf.h"
 #include "sensors/imu.h"
+#include "ff.h"
 
 #define TEST_WA_SIZE        THD_WORKING_AREA_SIZE(256)
 #define SHELL_WA_SIZE       THD_WORKING_AREA_SIZE(2048)
@@ -81,11 +82,19 @@ static void cmd_readclock(BaseSequentialStream *chp, int argc, char *argv[])
         STM32_SYSCLK, STM32_HCLK, STM32_PCLK1, STM32_PCLK2);
 }
 
+static void cmd_reboot(BaseSequentialStream *chp, int argc, char **argv)
+{
+    (void) chp;
+    (void) argc;
+    (void) argv;
+    NVIC_SystemReset();
+}
 
 const ShellCommand shell_commands[] = {
     {"mem", cmd_mem},
     {"threads", cmd_threads},
     {"test", cmd_test},
+    {"sdcard", cmd_sdcard},
     {"mpu6050", cmd_mpu6050},
     {"clock", cmd_readclock},
     {NULL, NULL}

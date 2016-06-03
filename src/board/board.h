@@ -447,11 +447,11 @@
                                      PIN_MODE_INPUT(GPIOC_AUDIO_MIC1) |           \
                                      PIN_MODE_INPUT(GPIOC_DCMI_D0) |           \
                                      PIN_MODE_INPUT(GPIOC_DCMI_D1) |       \
-                                     PIN_MODE_INPUT(GPIOC_SDIO_D0) |           \
-                                     PIN_MODE_INPUT(GPIOC_SDIO_D1) |           \
-                                     PIN_MODE_INPUT(GPIOC_SDIO_D2) |       \
-                                     PIN_MODE_INPUT(GPIOC_SDIO_D3) |          \
-                                     PIN_MODE_INPUT(GPIOC_SDIO_CLK) |       \
+                                     PIN_MODE_ALTERNATE(GPIOC_SDIO_D0) |      \
+                                     PIN_MODE_ALTERNATE(GPIOC_SDIO_D1) |      \
+                                     PIN_MODE_ALTERNATE(GPIOC_SDIO_D2) |      \
+                                     PIN_MODE_ALTERNATE(GPIOC_SDIO_D3) |      \
+                                     PIN_MODE_ALTERNATE(GPIOC_SDIO_CLK) |     \
                                      PIN_MODE_INPUT(GPIOC_CAM_STROBE) |          \
                                      PIN_MODE_INPUT(GPIOC_CAM_RST) |          \
                                      PIN_MODE_INPUT(GPIOC_CAM_PWDN))
@@ -527,11 +527,11 @@
                                      PIN_AFIO_AF(GPIOC_AUDIO_MIC1, 0) |           \
                                      PIN_AFIO_AF(GPIOC_DCMI_D0, 0) |           \
                                      PIN_AFIO_AF(GPIOC_DCMI_D1, 6))
-#define VAL_GPIOC_AFRH              (PIN_AFIO_AF(GPIOC_SDIO_D0, 0) |           \
-                                     PIN_AFIO_AF(GPIOC_SDIO_D1, 0) |           \
-                                     PIN_AFIO_AF(GPIOC_SDIO_D2, 6) |           \
-                                     PIN_AFIO_AF(GPIOC_SDIO_D3, 0) |          \
-                                     PIN_AFIO_AF(GPIOC_SDIO_CLK, 6) |           \
+#define VAL_GPIOC_AFRH              (PIN_AFIO_AF(GPIOC_SDIO_D0, 12) |           \
+                                     PIN_AFIO_AF(GPIOC_SDIO_D1, 12) |           \
+                                     PIN_AFIO_AF(GPIOC_SDIO_D2, 12) |           \
+                                     PIN_AFIO_AF(GPIOC_SDIO_D3, 12) |          \
+                                     PIN_AFIO_AF(GPIOC_SDIO_CLK, 12) |           \
                                      PIN_AFIO_AF(GPIOC_CAM_STROBE, 0) |          \
                                      PIN_AFIO_AF(GPIOC_CAM_RST, 0) |          \
                                      PIN_AFIO_AF(GPIOC_CAM_PWDN, 0))

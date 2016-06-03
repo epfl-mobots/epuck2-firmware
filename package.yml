@@ -2,6 +2,7 @@ dependency-dir: src
 
 include_directories:
     - src/board
+    - fatfs/src/
 
 depends:
     - cmp_mem_access
@@ -14,6 +15,7 @@ depends:
 
 source:
     - src/cmp/cmp.c
+    - fatfs/src/ff.c
 
 target.arm:
     - src/panic.c
