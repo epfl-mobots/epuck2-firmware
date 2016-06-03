@@ -8,19 +8,19 @@
  * Descriptors
  */
 const AsebaVMDescription vmDescription = {
-	"Epuck2",
-	{
-		// {Number of element in array, Name displayed in aseba studio}
-		{1, "_id"},
-		{1, "event.source"},
-		{VM_VARIABLES_ARG_SIZE, "event.args"},
-		{2, "_fwversion"},
-		{1, "_productId"},
+    "Epuck2",
+    {
+        // {Number of element in array, Name displayed in aseba studio}
+        {1, "_id"},
+        {1, "event.source"},
+        {VM_VARIABLES_ARG_SIZE, "event.args"},
+        {2, "_fwversion"},
+        {1, "_productId"},
 
         {1, "range"},
 
-		{0, NULL}
-	}
+        {0, NULL}
+    }
 };
 
 // Event descriptions
@@ -46,7 +46,7 @@ void AsebaNative__system_reboot(AsebaVMState *vm)
 
 // Native function descriptions
 const AsebaNativeFunctionDescription* nativeFunctionsDescription[] = {
-	&AsebaNativeDescription__system_reboot,
+    &AsebaNativeDescription__system_reboot,
     ASEBA_NATIVES_STD_DESCRIPTIONS,
     0
 };
@@ -54,5 +54,5 @@ const AsebaNativeFunctionDescription* nativeFunctionsDescription[] = {
 // Native function pointers
 const AsebaNativeFunctionPointer nativeFunctions[] = {
     AsebaNative__system_reboot,
-	ASEBA_NATIVES_STD_FUNCTIONS,
+    ASEBA_NATIVES_STD_FUNCTIONS,
 };

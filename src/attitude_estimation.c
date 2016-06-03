@@ -15,7 +15,7 @@ void att_estim_update(att_estim_t *est, float gyro, float acc, float delta_t)
         est->compl_flt_gain = parameter_scalar_get(&est->compl_flt_gain_param);
     }
     est->theta = est->compl_flt_gain * (est->theta + gyro * delta_t)
-                + (1 - est->compl_flt_gain) * (- acc / GRAVITY);
+                 + (1 - est->compl_flt_gain) * (-acc / GRAVITY);
 }
 
 float att_estim_get_theta(att_estim_t *est)

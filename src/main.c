@@ -35,14 +35,14 @@
 static THD_WORKING_AREA(waThread1, 128);
 static THD_FUNCTION(Thread1, arg) {
 
-  (void)arg;
-  chRegSetThreadName("Heartbeat");
-  while (TRUE) {
-    palSetPad(GPIOE, GPIOE_LED_HEARTBEAT);
-    chThdSleepMilliseconds(300);
-    palClearPad(GPIOE, GPIOE_LED_HEARTBEAT);
-    chThdSleepMilliseconds(300);
-  }
+    (void)arg;
+    chRegSetThreadName("Heartbeat");
+    while (TRUE) {
+        palSetPad(GPIOE, GPIOE_LED_HEARTBEAT);
+        chThdSleepMilliseconds(300);
+        palClearPad(GPIOE, GPIOE_LED_HEARTBEAT);
+        chThdSleepMilliseconds(300);
+    }
 }
 
 void i2c_init(void)
@@ -74,16 +74,16 @@ void __late_init(void)
 int main(void)
 {
     /*
-    * Initializes a serial-over-USB CDC driver.
-    */
+     * Initializes a serial-over-USB CDC driver.
+     */
     sduObjectInit(&SDU1);
     sduStart(&SDU1, &serusbcfg);
 
     /*
-    * Activates the USB driver and then the USB bus pull-up on D+.
-    * Note, a delay is inserted in order to not have to disconnect the cable
-    * after a reset.
-    */
+     * Activates the USB driver and then the USB bus pull-up on D+.
+     * Note, a delay is inserted in order to not have to disconnect the cable
+     * after a reset.
+     */
     usbDisconnectBus(serusbcfg.usbp);
     chThdSleepMilliseconds(1000);
     usbStart(serusbcfg.usbp, &usbcfg);

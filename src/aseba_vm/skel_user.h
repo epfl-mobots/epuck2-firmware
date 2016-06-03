@@ -36,22 +36,21 @@ extern "C" {
 
 
 struct _vmVariables {
-	sint16 id; 							// NodeID
-	sint16 source; 						// Source
-	sint16 args[VM_VARIABLES_ARG_SIZE]; // Args
-	sint16 fwversion[2];				// Firmware version
-	sint16 productId;					// Product ID
+    sint16 id;                          // NodeID
+    sint16 source;                      // Source
+    sint16 args[VM_VARIABLES_ARG_SIZE]; // Args
+    sint16 fwversion[2];                // Firmware version
+    sint16 productId;                   // Product ID
 
-	sint16 range;
+    sint16 range;
 
-	// Free space
-	sint16 freeSpace[VM_VARIABLES_FREE_SPACE];
+    // Free space
+    sint16 freeSpace[VM_VARIABLES_FREE_SPACE];
 };
 
 
-enum Events
-{
-	EVENTS_COUNT   // Do not touch
+enum Events {
+    EVENTS_COUNT   // Do not touch
 };
 
 // The content of this structure is implementation-specific.
@@ -59,9 +58,9 @@ enum Events
 // The only way to write it is to do it from inside the VM (native function)
 // The native function access it as a integer array. So, use only int inside this structure
 struct private_settings {
-	/* ADD here the settings to save into flash */
-	/* The minimum size is one integer, the maximum size is 95 integer (Check done at compilation) */
-	int settings[95];
+    /* ADD here the settings to save into flash */
+    /* The minimum size is one integer, the maximum size is 95 integer (Check done at compilation) */
+    int settings[95];
 };
 
 extern const AsebaNativeFunctionPointer nativeFunctions[];

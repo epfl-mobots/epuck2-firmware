@@ -21,7 +21,7 @@ void update_pid_parameters(pid_ctrl_t *pid, struct pid_parameter_s *pid_paramete
     float ki;
     float kd;
     float ilimit;
-    if(parameter_namespace_contains_changed(&(pid_parameter->root))) {
+    if (parameter_namespace_contains_changed(&(pid_parameter->root))) {
         kp = parameter_scalar_get(&(pid_parameter->kp));
         ki = parameter_scalar_get(&(pid_parameter->ki));
         kd = parameter_scalar_get(&(pid_parameter->kd));
@@ -56,21 +56,29 @@ static THD_FUNCTION(ThreadControl, arg) {
         feedback_get(&(left.feedback), &(right.feedback));
 
         /*Errors*/
-        left.cascade.position_error = setpoints_error_position(&(left.setpoints), (left.feedback.position));
-        left.cascade.velocity_error = setpoints_error_velocity(&(left.setpoints), left.feedback.velocity);
-        left.cascade.current_error = setpoints_error_current(&(left.setpoints), left.feedback.current);
+        left.cascade.position_error =
+            setpoints_error_position(&(left.setpoints), (left.feedback.position));
+        left.cascade.velocity_error = setpoints_error_velocity(&(left.setpoints),
+                                                               left.feedback.velocity);
+        left.cascade.current_error = setpoints_error_current(&(left.setpoints),
+                                                             left.feedback.current);
 
-        right.cascade.position_error = setpoints_error_position(&(right.setpoints), (right.feedback.position));
-        right.cascade.velocity_error = setpoints_error_velocity(&(right.setpoints), right.feedback.velocity);
-        right.cascade.current_error = setpoints_error_current(&(right.setpoints), right.feedback.current);
+        right.cascade.position_error =
+            setpoints_error_position(&(right.setpoints), (right.feedback.position));
+        right.cascade.velocity_error = setpoints_error_velocity(&(right.setpoints),
+                                                                right.feedback.velocity);
+        right.cascade.current_error = setpoints_error_current(&(right.setpoints),
+                                                              right.feedback.current);
 
         switch (setpoint_get_mode(&left.setpoints)) {
             case SETPT_MODE_POS:
                 cascade_mode_pos_ctrl(&left.cascade);
                 break;
+
             case SETPT_MODE_VEL:
                 cascade_mode_vel_ctrl(&left.cascade);
                 break;
+
             case SETPT_MODE_CUR:
                 cascade_mode_cur_ctrl(&left.cascade);
                 break;
@@ -80,9 +88,11 @@ static THD_FUNCTION(ThreadControl, arg) {
             case SETPT_MODE_POS:
                 cascade_mode_pos_ctrl(&right.cascade);
                 break;
+
             case SETPT_MODE_VEL:
                 cascade_mode_vel_ctrl(&right.cascade);
                 break;
+
             case SETPT_MODE_CUR:
                 cascade_mode_cur_ctrl(&right.cascade);
                 break;
@@ -104,8 +114,8 @@ static THD_FUNCTION(ThreadControl, arg) {
 
 
 void pid_register(struct pid_parameter_s *pid,
-                         parameter_namespace_t *parent,
-                         const char *name)
+                  parameter_namespace_t *parent,
+                  const char *name)
 {
 
     parameter_namespace_declare(&pid->root, parent, name);
@@ -169,4 +179,3 @@ void control_start(void)
 
     chThdCreateStatic(waThreadControl, sizeof(waThreadControl), NORMALPRIO, ThreadControl, NULL);
 }
-

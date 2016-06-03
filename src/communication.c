@@ -177,49 +177,56 @@ static THD_FUNCTION(comm_tx_stream, arg)
         cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
         if (send_imu(&cmp) == 0) {
             chMtxLock(&send_lock);
-            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
+            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn,
+                                 out);
             chMtxUnlock(&send_lock);
         }
 
         cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
         if (send_current(&cmp) == 0) {
             chMtxLock(&send_lock);
-            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
+            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn,
+                                 out);
             chMtxUnlock(&send_lock);
         }
 
         cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
         if (send_velocity(&cmp) == 0) {
             chMtxLock(&send_lock);
-            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
+            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn,
+                                 out);
             chMtxUnlock(&send_lock);
         }
 
         cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
         if (send_position(&cmp) == 0) {
             chMtxLock(&send_lock);
-            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
+            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn,
+                                 out);
             chMtxUnlock(&send_lock);
         }
 
         cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
         if (send_distance(&cmp) == 0) {
             chMtxLock(&send_lock);
-            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
+            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn,
+                                 out);
             chMtxUnlock(&send_lock);
         }
 
         cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
         if (send_attitude(&cmp) == 0) {
             chMtxLock(&send_lock);
-            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
+            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn,
+                                 out);
             chMtxUnlock(&send_lock);
         }
 
         cmp_mem_access_init(&cmp, &mem, dtgrm, sizeof(dtgrm));
         if (send_forward_velocity(&cmp) == 0) {
             chMtxLock(&send_lock);
-            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn, out);
+            serial_datagram_send(dtgrm, cmp_mem_access_get_pos(&mem), _stream_imu_values_sndfn,
+                                 out);
             chMtxUnlock(&send_lock);
         }
 
@@ -243,7 +250,8 @@ int ping_cb(cmp_ctx_t *cmp, void *arg)
     const char *ping_resp = "ping";
     if (cmp_write_str(cmp, ping_resp, strlen(ping_resp))) {
         chMtxLock(&send_lock);
-        serial_datagram_send(reply_buf, cmp_mem_access_get_pos(&reply_mem), _stream_imu_values_sndfn, arg);
+        serial_datagram_send(reply_buf, cmp_mem_access_get_pos(
+                                 &reply_mem), _stream_imu_values_sndfn, arg);
         chMtxUnlock(&send_lock);
     }
     return 0;
@@ -265,11 +273,12 @@ int velocity_cb(cmp_ctx_t *cmp, void *arg)
     float velocity;
     bool motor;
 
-    if(cmp_read_array(cmp, &size) && size == 2 && cmp_read_bool(cmp, &motor) && cmp_read_float(cmp, &velocity)) {
-        if(!motor) {
+    if (cmp_read_array(cmp,
+                       &size) && size == 2 &&
+        cmp_read_bool(cmp, &motor) && cmp_read_float(cmp, &velocity)) {
+        if (!motor) {
             setpoints_set_velocity(&(left.setpoints),velocity);
-        }
-        else {
+        } else {
             setpoints_set_velocity(&(right.setpoints),velocity);
         }
         return 0;
@@ -284,11 +293,12 @@ int position_cb(cmp_ctx_t *cmp, void *arg)
     float position;
     bool motor;
 
-    if(cmp_read_array(cmp, &size) && size == 2 && cmp_read_bool(cmp, &motor) && cmp_read_float(cmp, &position)) {
-        if(!motor) {
+    if (cmp_read_array(cmp,
+                       &size) && size == 2 &&
+        cmp_read_bool(cmp, &motor) && cmp_read_float(cmp, &position)) {
+        if (!motor) {
             setpoints_set_position(&(left.setpoints),position);
-        }
-        else {
+        } else {
             setpoints_set_position(&(right.setpoints),position);
         }
         return 0;
@@ -303,11 +313,12 @@ int current_cb(cmp_ctx_t *cmp, void *arg)
     float current;
     bool motor;
 
-    if(cmp_read_array(cmp, &size) && size == 2 && cmp_read_bool(cmp, &motor) && cmp_read_float(cmp, &current)) {
-        if(!motor) {
+    if (cmp_read_array(cmp,
+                       &size) && size == 2 &&
+        cmp_read_bool(cmp, &motor) && cmp_read_float(cmp, &current)) {
+        if (!motor) {
             setpoints_set_current(&(left.setpoints),current);
-        }
-        else {
+        } else {
             setpoints_set_current(&(right.setpoints),current);
         }
         return 0;

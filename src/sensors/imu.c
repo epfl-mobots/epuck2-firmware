@@ -4,7 +4,7 @@
 #include "exti.h"
 #include "imu.h"
 
-#define IMU_INTERRUPT_EVENT		1
+#define IMU_INTERRUPT_EVENT     1
 
 
 typedef struct {
@@ -16,9 +16,9 @@ typedef struct {
 } accelerometer_sample_t;
 
 
-static mpu60X0_t 		mpu6050;
-gyrometer_sample_t 		imu_gyro_sample;
-accelerometer_sample_t 	imu_acc_sample;
+static mpu60X0_t mpu6050;
+gyrometer_sample_t imu_gyro_sample;
+accelerometer_sample_t imu_acc_sample;
 
 event_source_t imu_events;
 
@@ -47,19 +47,21 @@ static THD_FUNCTION(imu_reader_thd, arg) {
     static event_listener_t imu_int;
     float temp;
     chEvtRegisterMaskWithFlags(&exti_events, &imu_int,
-                           (eventmask_t)IMU_INTERRUPT_EVENT,
-                           (eventflags_t)EXTI_EVENT_MPU6000_INT);
+                               (eventmask_t)IMU_INTERRUPT_EVENT,
+                               (eventflags_t)EXTI_EVENT_MPU6000_INT);
 
     chRegSetThreadName("IMU_reader");
 
 
     i2cAcquireBus(mpu6050.i2c);
-    while(!mpu60X0_ping(&mpu6050));
+    while (!mpu60X0_ping(&mpu6050)) {
+        ;
+    }
 
     mpu60X0_setup(&mpu6050, MPU60X0_ACC_FULL_RANGE_2G
-                          | MPU60X0_GYRO_FULL_RANGE_250DPS
-                          | MPU60X0_SAMPLE_RATE_DIV(100)
-                          | MPU60X0_LOW_PASS_FILTER_6);
+                  | MPU60X0_GYRO_FULL_RANGE_250DPS
+                  | MPU60X0_SAMPLE_RATE_DIV(100)
+                  | MPU60X0_LOW_PASS_FILTER_6);
     i2cReleaseBus(mpu6050.i2c);
 
 
@@ -67,7 +69,7 @@ static THD_FUNCTION(imu_reader_thd, arg) {
     static float acc[3];
 
     while (TRUE) {
-        //MPU reading
+        // MPU reading
         // chEvtWaitAny(IMU_INTERRUPT_EVENT);
         // chEvtGetAndClearFlags(&imu_int);
         chThdSleepMilliseconds(1);
@@ -94,7 +96,8 @@ void imu_start(void)
     exti_setup();
     chEvtObjectInit(&imu_events);
 
-    chThdCreateStatic(imu_reader_thd_wa, sizeof(imu_reader_thd_wa), NORMALPRIO, imu_reader_thd, NULL);
+    chThdCreateStatic(imu_reader_thd_wa, sizeof(imu_reader_thd_wa), NORMALPRIO, imu_reader_thd,
+                      NULL);
 }
 
 void imu_init(I2CDriver *dev)

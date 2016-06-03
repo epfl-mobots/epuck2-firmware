@@ -13,9 +13,9 @@ uint32_t encoder_get_right(void);
 uint32_t encoder_get_left(void);
 
 /**
-  * For two encoder values, returns the minimal signed difference
-  * while considering an overflow or underflow.
-  */
+ * For two encoder values, returns the minimal signed difference
+ * while considering an overflow or underflow.
+ */
 int encoder_tick_diff(uint32_t enc_old, uint32_t enc_new);
 
 

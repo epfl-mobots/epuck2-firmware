@@ -5,7 +5,7 @@
 #include "sensors/mpu60X0_registers.h"
 
 #define STANDARD_GRAVITY 9.80665f
-#define DEG2RAD(deg) (deg/180*M_PI)
+#define DEG2RAD(deg) (deg / 180 * M_PI)
 
 static uint8_t mpu60X0_reg_read(mpu60X0_t *dev, uint8_t reg)
 {
@@ -103,8 +103,9 @@ void mpu60X0_setup(mpu60X0_t *dev, int config)
     // reset device
     mpu60X0_reg_write(dev, MPU60X0_RA_PWR_MGMT_1, 0x80);
     chThdSleepMilliseconds(1);
-    while (mpu60X0_reg_read(dev, MPU60X0_RA_PWR_MGMT_1) & 0x80)
+    while (mpu60X0_reg_read(dev, MPU60X0_RA_PWR_MGMT_1) & 0x80) {
         chThdSleepMilliseconds(1);
+    }
     chThdSleepMilliseconds(1);
     // select gyro x as clock source and disable sleep
     mpu60X0_reg_write(dev, MPU60X0_RA_PWR_MGMT_1, MPU60X0_CLOCK_PLL_XGYRO);
@@ -114,10 +115,10 @@ void mpu60X0_setup(mpu60X0_t *dev, int config)
         chThdSleepMilliseconds(1);
     }
     // gyro full scale
-    mpu60X0_reg_write(dev, MPU60X0_RA_GYRO_CONFIG, (config<<1) & 0x18);
+    mpu60X0_reg_write(dev, MPU60X0_RA_GYRO_CONFIG, (config << 1) & 0x18);
     chThdSleepMilliseconds(1);
     // accelerometer full scale
-    mpu60X0_reg_write(dev, MPU60X0_RA_ACCEL_CONFIG, (config<<3) & 0x18);
+    mpu60X0_reg_write(dev, MPU60X0_RA_ACCEL_CONFIG, (config << 3) & 0x18);
     chThdSleepMilliseconds(1);
     // sample rate divisor
     mpu60X0_reg_write(dev, MPU60X0_RA_SMPLRT_DIV, (config >> 8) & 0xff);
@@ -126,7 +127,7 @@ void mpu60X0_setup(mpu60X0_t *dev, int config)
     mpu60X0_reg_write(dev, MPU60X0_RA_INT_ENABLE, MPU60X0_INTERRUPT_DATA_RDY);
     chThdSleepMilliseconds(1);
     // low pass filter config, FSYNC disabled
-    mpu60X0_reg_write(dev, MPU60X0_RA_CONFIG, (config>>16) & 0x07);
+    mpu60X0_reg_write(dev, MPU60X0_RA_CONFIG, (config >> 16) & 0x07);
     chThdSleepMilliseconds(1);
 }
 
@@ -134,7 +135,7 @@ bool mpu60X0_ping(mpu60X0_t *dev)
 {
     int id = mpu60X0_reg_read(dev, MPU60X0_RA_WHO_AM_I);
     chThdSleepMilliseconds(1);
-    return (id == 0x68);
+    return id == 0x68;
 }
 
 bool mpu60X0_self_test(mpu60X0_t *dev)
@@ -145,19 +146,19 @@ bool mpu60X0_self_test(mpu60X0_t *dev)
 
 static int32_t read_word(const uint8_t *buf) // signed int16
 {
-    return ((int16_t)((int8_t)buf[0]) << 8 | buf[1]);
+    return (int16_t)((int8_t)buf[0]) << 8 | buf[1];
 }
 
 void mpu60X0_read(mpu60X0_t *dev, float *gyro, float *acc, float *temp)
 {
-    static const float gyro_res[] = { DEG2RAD(1/131.f),
-                                      DEG2RAD(1/65.5f),
-                                      DEG2RAD(1/32.8f),
-                                      DEG2RAD(1/16.4f) }; // rad/s/LSB
-    static const float acc_res[] = { STANDARD_GRAVITY/16384.f,
-                                     STANDARD_GRAVITY/8192.f,
-                                     STANDARD_GRAVITY/4096.f,
-                                     STANDARD_GRAVITY/2048.f }; // m/s^2 / LSB
+    static const float gyro_res[] = { DEG2RAD(1 / 131.f),
+                                      DEG2RAD(1 / 65.5f),
+                                      DEG2RAD(1 / 32.8f),
+                                      DEG2RAD(1 / 16.4f) }; // rad/s/LSB
+    static const float acc_res[] = { STANDARD_GRAVITY / 16384.f,
+                                     STANDARD_GRAVITY / 8192.f,
+                                     STANDARD_GRAVITY / 4096.f,
+                                     STANDARD_GRAVITY / 2048.f }; // m/s^2 / LSB
     uint8_t buf[1 + 6 + 2 + 6]; // interrupt status, accel, temp, gyro
     mpu60X0_reg_read_multi(dev, MPU60X0_RA_INT_STATUS, buf, sizeof(buf));
     if (acc) {

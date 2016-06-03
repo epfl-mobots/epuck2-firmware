@@ -6,23 +6,23 @@
 #define MPU60X0_ADDRESS_AD0_HIGH    0x69
 #define MPU60X0_DEFAULT_ADDRESS     MPU60X0_ADDRESS_AD0_LOW
 
-#define MPU60X0_RA_XG_OFFS_TC       0x00 //[7] PWR_MODE, [6:1] XG_OFFS_TC, [0] OTP_BNK_VLD
-#define MPU60X0_RA_YG_OFFS_TC       0x01 //[7] PWR_MODE, [6:1] YG_OFFS_TC, [0] OTP_BNK_VLD
-#define MPU60X0_RA_ZG_OFFS_TC       0x02 //[7] PWR_MODE, [6:1] ZG_OFFS_TC, [0] OTP_BNK_VLD
-#define MPU60X0_RA_X_FINE_GAIN      0x03 //[7:0] X_FINE_GAIN
-#define MPU60X0_RA_Y_FINE_GAIN      0x04 //[7:0] Y_FINE_GAIN
-#define MPU60X0_RA_Z_FINE_GAIN      0x05 //[7:0] Z_FINE_GAIN
-#define MPU60X0_RA_XA_OFFS_H        0x06 //[15:0] XA_OFFS
+#define MPU60X0_RA_XG_OFFS_TC       0x00 // [7] PWR_MODE, [6:1] XG_OFFS_TC, [0] OTP_BNK_VLD
+#define MPU60X0_RA_YG_OFFS_TC       0x01 // [7] PWR_MODE, [6:1] YG_OFFS_TC, [0] OTP_BNK_VLD
+#define MPU60X0_RA_ZG_OFFS_TC       0x02 // [7] PWR_MODE, [6:1] ZG_OFFS_TC, [0] OTP_BNK_VLD
+#define MPU60X0_RA_X_FINE_GAIN      0x03 // [7:0] X_FINE_GAIN
+#define MPU60X0_RA_Y_FINE_GAIN      0x04 // [7:0] Y_FINE_GAIN
+#define MPU60X0_RA_Z_FINE_GAIN      0x05 // [7:0] Z_FINE_GAIN
+#define MPU60X0_RA_XA_OFFS_H        0x06 // [15:0] XA_OFFS
 #define MPU60X0_RA_XA_OFFS_L_TC     0x07
-#define MPU60X0_RA_YA_OFFS_H        0x08 //[15:0] YA_OFFS
+#define MPU60X0_RA_YA_OFFS_H        0x08 // [15:0] YA_OFFS
 #define MPU60X0_RA_YA_OFFS_L_TC     0x09
-#define MPU60X0_RA_ZA_OFFS_H        0x0A //[15:0] ZA_OFFS
+#define MPU60X0_RA_ZA_OFFS_H        0x0A // [15:0] ZA_OFFS
 #define MPU60X0_RA_ZA_OFFS_L_TC     0x0B
-#define MPU60X0_RA_XG_OFFS_USRH     0x13 //[15:0] XG_OFFS_USR
+#define MPU60X0_RA_XG_OFFS_USRH     0x13 // [15:0] XG_OFFS_USR
 #define MPU60X0_RA_XG_OFFS_USRL     0x14
-#define MPU60X0_RA_YG_OFFS_USRH     0x15 //[15:0] YG_OFFS_USR
+#define MPU60X0_RA_YG_OFFS_USRH     0x15 // [15:0] YG_OFFS_USR
 #define MPU60X0_RA_YG_OFFS_USRL     0x16
-#define MPU60X0_RA_ZG_OFFS_USRH     0x17 //[15:0] ZG_OFFS_USR
+#define MPU60X0_RA_ZG_OFFS_USRH     0x17 // [15:0] ZG_OFFS_USR
 #define MPU60X0_RA_ZG_OFFS_USRL     0x18
 #define MPU60X0_RA_SMPLRT_DIV       0x19
 #define MPU60X0_RA_CONFIG           0x1A
@@ -118,21 +118,21 @@
 #define MPU60X0_RA_WHO_AM_I         0x75
 
 #define MPU60X0_TC_PWR_MODE_BIT     7
-#define MPU60X0_TC_PWR_MODE         (1<<7)
+#define MPU60X0_TC_PWR_MODE         (1 << 7)
 #define MPU60X0_TC_OFFSET_BIT       6
-#define MPU60X0_TC_OFFSET           (1<<6)
+#define MPU60X0_TC_OFFSET           (1 << 6)
 #define MPU60X0_TC_OFFSET_LENGTH    6
 #define MPU60X0_TC_OTP_BNK_VLD_BIT  0
-#define MPU60X0_TC_OTP_BNK_VLD      (1<<0)
+#define MPU60X0_TC_OTP_BNK_VLD      (1 << 0)
 
 #define MPU60X0_VDDIO_LEVEL_VLOGIC  0
 #define MPU60X0_VDDIO_LEVEL_VDD     1
 
 #define MPU60X0_CFG_EXT_SYNC_SET_BIT    5
-#define MPU60X0_CFG_EXT_SYNC_SET        (1<<5)
+#define MPU60X0_CFG_EXT_SYNC_SET        (1 << 5)
 #define MPU60X0_CFG_EXT_SYNC_SET_LENGTH 3
 #define MPU60X0_CFG_DLPF_CFG_BIT    2
-#define MPU60X0_CFG_DLPF_CFG        (1<<2)
+#define MPU60X0_CFG_DLPF_CFG        (1 << 2)
 #define MPU60X0_CFG_DLPF_CFG_LENGTH 3
 
 #define MPU60X0_EXT_SYNC_DISABLED       0x0
@@ -153,7 +153,7 @@
 #define MPU60X0_DLPF_BW_5           0x06
 
 #define MPU60X0_GCONFIG_FS_SEL_BIT      4
-#define MPU60X0_GCONFIG_FS_SEL          (1<<4)
+#define MPU60X0_GCONFIG_FS_SEL          (1 << 4)
 #define MPU60X0_GCONFIG_FS_SEL_LENGTH   2
 
 #define MPU60X0_GYRO_FS_250         0x00
@@ -162,16 +162,16 @@
 #define MPU60X0_GYRO_FS_2000        0x03
 
 #define MPU60X0_ACONFIG_XA_ST_BIT           7
-#define MPU60X0_ACONFIG_XA_ST               (1<<7)
+#define MPU60X0_ACONFIG_XA_ST               (1 << 7)
 #define MPU60X0_ACONFIG_YA_ST_BIT           6
-#define MPU60X0_ACONFIG_YA_ST               (1<<6)
+#define MPU60X0_ACONFIG_YA_ST               (1 << 6)
 #define MPU60X0_ACONFIG_ZA_ST_BIT           5
-#define MPU60X0_ACONFIG_ZA_ST               (1<<5)
+#define MPU60X0_ACONFIG_ZA_ST               (1 << 5)
 #define MPU60X0_ACONFIG_AFS_SEL_BIT         4
-#define MPU60X0_ACONFIG_AFS_SEL             (1<<4)
+#define MPU60X0_ACONFIG_AFS_SEL             (1 << 4)
 #define MPU60X0_ACONFIG_AFS_SEL_LENGTH      2
 #define MPU60X0_ACONFIG_ACCEL_HPF_BIT       2
-#define MPU60X0_ACONFIG_ACCEL_HPF           (1<<2)
+#define MPU60X0_ACONFIG_ACCEL_HPF           (1 << 2)
 #define MPU60X0_ACONFIG_ACCEL_HPF_LENGTH    3
 
 #define MPU60X0_ACCEL_FS_2          0x00
@@ -187,32 +187,32 @@
 #define MPU60X0_DHPF_HOLD           0x07
 
 #define MPU60X0_TEMP_FIFO_EN_BIT    7
-#define MPU60X0_TEMP_FIFO_EN        (1<<7)
+#define MPU60X0_TEMP_FIFO_EN        (1 << 7)
 #define MPU60X0_XG_FIFO_EN_BIT      6
-#define MPU60X0_XG_FIFO_EN          (1<<6)
+#define MPU60X0_XG_FIFO_EN          (1 << 6)
 #define MPU60X0_YG_FIFO_EN_BIT      5
-#define MPU60X0_YG_FIFO_EN          (1<<5)
+#define MPU60X0_YG_FIFO_EN          (1 << 5)
 #define MPU60X0_ZG_FIFO_EN_BIT      4
-#define MPU60X0_ZG_FIFO_EN          (1<<4)
+#define MPU60X0_ZG_FIFO_EN          (1 << 4)
 #define MPU60X0_ACCEL_FIFO_EN_BIT   3
-#define MPU60X0_ACCEL_FIFO_EN       (1<<3)
+#define MPU60X0_ACCEL_FIFO_EN       (1 << 3)
 #define MPU60X0_SLV2_FIFO_EN_BIT    2
-#define MPU60X0_SLV2_FIFO_EN        (1<<2)
+#define MPU60X0_SLV2_FIFO_EN        (1 << 2)
 #define MPU60X0_SLV1_FIFO_EN_BIT    1
-#define MPU60X0_SLV1_FIFO_EN        (1<<1)
+#define MPU60X0_SLV1_FIFO_EN        (1 << 1)
 #define MPU60X0_SLV0_FIFO_EN_BIT    0
-#define MPU60X0_SLV0_FIFO_EN        (1<<0)
+#define MPU60X0_SLV0_FIFO_EN        (1 << 0)
 
 #define MPU60X0_MULT_MST_EN_BIT     7
-#define MPU60X0_MULT_MST_EN         (1<<7)
+#define MPU60X0_MULT_MST_EN         (1 << 7)
 #define MPU60X0_WAIT_FOR_ES_BIT     6
-#define MPU60X0_WAIT_FOR_ES         (1<<6)
+#define MPU60X0_WAIT_FOR_ES         (1 << 6)
 #define MPU60X0_SLV_3_FIFO_EN_BIT   5
-#define MPU60X0_SLV_3_FIFO_EN       (1<<5)
+#define MPU60X0_SLV_3_FIFO_EN       (1 << 5)
 #define MPU60X0_I2C_MST_P_NSR_BIT   4
-#define MPU60X0_I2C_MST_P_NSR       (1<<4)
+#define MPU60X0_I2C_MST_P_NSR       (1 << 4)
 #define MPU60X0_I2C_MST_CLK_BIT     3
-#define MPU60X0_I2C_MST_CLK         (1<<3)
+#define MPU60X0_I2C_MST_CLK         (1 << 3)
 #define MPU60X0_I2C_MST_CLK_LENGTH  4
 
 #define MPU60X0_CLOCK_DIV_348       0x0
@@ -233,70 +233,70 @@
 #define MPU60X0_CLOCK_DIV_364       0xF
 
 #define MPU60X0_I2C_SLV_RW_BIT      7
-#define MPU60X0_I2C_SLV_RW          (1<<7)
+#define MPU60X0_I2C_SLV_RW          (1 << 7)
 #define MPU60X0_I2C_SLV_ADDR_BIT    6
-#define MPU60X0_I2C_SLV_ADDR        (1<<6)
+#define MPU60X0_I2C_SLV_ADDR        (1 << 6)
 #define MPU60X0_I2C_SLV_ADDR_LENGTH 7
 #define MPU60X0_I2C_SLV_EN_BIT      7
-#define MPU60X0_I2C_SLV_EN          (1<<7)
+#define MPU60X0_I2C_SLV_EN          (1 << 7)
 #define MPU60X0_I2C_SLV_BYTE_SW_BIT 6
-#define MPU60X0_I2C_SLV_BYTE_SW     (1<<6)
+#define MPU60X0_I2C_SLV_BYTE_SW     (1 << 6)
 #define MPU60X0_I2C_SLV_REG_DIS_BIT 5
-#define MPU60X0_I2C_SLV_REG_DIS     (1<<5)
+#define MPU60X0_I2C_SLV_REG_DIS     (1 << 5)
 #define MPU60X0_I2C_SLV_GRP_BIT     4
-#define MPU60X0_I2C_SLV_GRP         (1<<4)
+#define MPU60X0_I2C_SLV_GRP         (1 << 4)
 #define MPU60X0_I2C_SLV_LEN_BIT     3
-#define MPU60X0_I2C_SLV_LEN         (1<<3)
+#define MPU60X0_I2C_SLV_LEN         (1 << 3)
 #define MPU60X0_I2C_SLV_LEN_LENGTH  4
 
 #define MPU60X0_I2C_SLV4_RW_BIT         7
-#define MPU60X0_I2C_SLV4_RW             (1<<7)
+#define MPU60X0_I2C_SLV4_RW             (1 << 7)
 #define MPU60X0_I2C_SLV4_ADDR_BIT       6
-#define MPU60X0_I2C_SLV4_ADDR           (1<<6)
+#define MPU60X0_I2C_SLV4_ADDR           (1 << 6)
 #define MPU60X0_I2C_SLV4_ADDR_LENGTH    7
 #define MPU60X0_I2C_SLV4_EN_BIT         7
-#define MPU60X0_I2C_SLV4_EN             (1<<7)
+#define MPU60X0_I2C_SLV4_EN             (1 << 7)
 #define MPU60X0_I2C_SLV4_INT_EN_BIT     6
-#define MPU60X0_I2C_SLV4_INT_EN         (1<<6)
+#define MPU60X0_I2C_SLV4_INT_EN         (1 << 6)
 #define MPU60X0_I2C_SLV4_REG_DIS_BIT    5
-#define MPU60X0_I2C_SLV4_REG_DIS        (1<<5)
+#define MPU60X0_I2C_SLV4_REG_DIS        (1 << 5)
 #define MPU60X0_I2C_SLV4_MST_DLY_BIT    4
-#define MPU60X0_I2C_SLV4_MST_DLY        (1<<4)
+#define MPU60X0_I2C_SLV4_MST_DLY        (1 << 4)
 #define MPU60X0_I2C_SLV4_MST_DLY_LENGTH 5
 
 #define MPU60X0_MST_PASS_THROUGH_BIT    7
-#define MPU60X0_MST_PASS_THROUGH        (1<<7)
+#define MPU60X0_MST_PASS_THROUGH        (1 << 7)
 #define MPU60X0_MST_I2C_SLV4_DONE_BIT   6
-#define MPU60X0_MST_I2C_SLV4_DONE       (1<<6)
+#define MPU60X0_MST_I2C_SLV4_DONE       (1 << 6)
 #define MPU60X0_MST_I2C_LOST_ARB_BIT    5
-#define MPU60X0_MST_I2C_LOST_ARB        (1<<5)
+#define MPU60X0_MST_I2C_LOST_ARB        (1 << 5)
 #define MPU60X0_MST_I2C_SLV4_NACK_BIT   4
-#define MPU60X0_MST_I2C_SLV4_NACK       (1<<4)
+#define MPU60X0_MST_I2C_SLV4_NACK       (1 << 4)
 #define MPU60X0_MST_I2C_SLV3_NACK_BIT   3
-#define MPU60X0_MST_I2C_SLV3_NACK       (1<<3)
+#define MPU60X0_MST_I2C_SLV3_NACK       (1 << 3)
 #define MPU60X0_MST_I2C_SLV2_NACK_BIT   2
-#define MPU60X0_MST_I2C_SLV2_NACK       (1<<2)
+#define MPU60X0_MST_I2C_SLV2_NACK       (1 << 2)
 #define MPU60X0_MST_I2C_SLV1_NACK_BIT   1
-#define MPU60X0_MST_I2C_SLV1_NACK       (1<<1)
+#define MPU60X0_MST_I2C_SLV1_NACK       (1 << 1)
 #define MPU60X0_MST_I2C_SLV0_NACK_BIT   0
-#define MPU60X0_MST_I2C_SLV0_NACK       (1<<0)
+#define MPU60X0_MST_I2C_SLV0_NACK       (1 << 0)
 
 #define MPU60X0_INTCFG_INT_LEVEL_BIT        7
-#define MPU60X0_INTCFG_INT_LEVEL            (1<<7)
+#define MPU60X0_INTCFG_INT_LEVEL            (1 << 7)
 #define MPU60X0_INTCFG_INT_OPEN_BIT         6
-#define MPU60X0_INTCFG_INT_OPEN             (1<<6)
+#define MPU60X0_INTCFG_INT_OPEN             (1 << 6)
 #define MPU60X0_INTCFG_LATCH_INT_EN_BIT     5
-#define MPU60X0_INTCFG_LATCH_INT_EN         (1<<5)
+#define MPU60X0_INTCFG_LATCH_INT_EN         (1 << 5)
 #define MPU60X0_INTCFG_INT_RD_CLEAR_BIT     4
-#define MPU60X0_INTCFG_INT_RD_CLEAR         (1<<4)
+#define MPU60X0_INTCFG_INT_RD_CLEAR         (1 << 4)
 #define MPU60X0_INTCFG_FSYNC_INT_LEVEL_BIT  3
-#define MPU60X0_INTCFG_FSYNC_INT_LEVEL      (1<<3)
+#define MPU60X0_INTCFG_FSYNC_INT_LEVEL      (1 << 3)
 #define MPU60X0_INTCFG_FSYNC_INT_EN_BIT     2
-#define MPU60X0_INTCFG_FSYNC_INT_EN         (1<<2)
+#define MPU60X0_INTCFG_FSYNC_INT_EN         (1 << 2)
 #define MPU60X0_INTCFG_I2C_BYPASS_EN_BIT    1
-#define MPU60X0_INTCFG_I2C_BYPASS_EN        (1<<1)
+#define MPU60X0_INTCFG_I2C_BYPASS_EN        (1 << 1)
 #define MPU60X0_INTCFG_CLKOUT_EN_BIT        0
-#define MPU60X0_INTCFG_CLKOUT_EN            (1<<0)
+#define MPU60X0_INTCFG_CLKOUT_EN            (1 << 0)
 
 #define MPU60X0_INTMODE_ACTIVEHIGH  0x00
 #define MPU60X0_INTMODE_ACTIVELOW   0x01
@@ -311,78 +311,78 @@
 #define MPU60X0_INTCLEAR_ANYREAD    0x01
 
 #define MPU60X0_INTERRUPT_FF_BIT            7
-#define MPU60X0_INTERRUPT_FF                (1<<7)
+#define MPU60X0_INTERRUPT_FF                (1 << 7)
 #define MPU60X0_INTERRUPT_MOT_BIT           6
-#define MPU60X0_INTERRUPT_MOT               (1<<6)
+#define MPU60X0_INTERRUPT_MOT               (1 << 6)
 #define MPU60X0_INTERRUPT_ZMOT_BIT          5
-#define MPU60X0_INTERRUPT_ZMOT              (1<<5)
+#define MPU60X0_INTERRUPT_ZMOT              (1 << 5)
 #define MPU60X0_INTERRUPT_FIFO_OFLOW_BIT    4
-#define MPU60X0_INTERRUPT_FIFO_OFLOW        (1<<4)
+#define MPU60X0_INTERRUPT_FIFO_OFLOW        (1 << 4)
 #define MPU60X0_INTERRUPT_I2C_MST_INT_BIT   3
-#define MPU60X0_INTERRUPT_I2C_MST_INT       (1<<3)
+#define MPU60X0_INTERRUPT_I2C_MST_INT       (1 << 3)
 #define MPU60X0_INTERRUPT_PLL_RDY_INT_BIT   2
-#define MPU60X0_INTERRUPT_PLL_RDY_INT       (1<<2)
+#define MPU60X0_INTERRUPT_PLL_RDY_INT       (1 << 2)
 #define MPU60X0_INTERRUPT_DMP_INT_BIT       1
-#define MPU60X0_INTERRUPT_DMP_INT           (1<<1)
+#define MPU60X0_INTERRUPT_DMP_INT           (1 << 1)
 #define MPU60X0_INTERRUPT_DATA_RDY_BIT      0
-#define MPU60X0_INTERRUPT_DATA_RDY          (1<<0)
+#define MPU60X0_INTERRUPT_DATA_RDY          (1 << 0)
 
 #define MPU60X0_DMPINT_5_BIT            5
-#define MPU60X0_DMPINT_5                (1<<5)
+#define MPU60X0_DMPINT_5                (1 << 5)
 #define MPU60X0_DMPINT_4_BIT            4
-#define MPU60X0_DMPINT_4                (1<<4)
+#define MPU60X0_DMPINT_4                (1 << 4)
 #define MPU60X0_DMPINT_3_BIT            3
-#define MPU60X0_DMPINT_3                (1<<3)
+#define MPU60X0_DMPINT_3                (1 << 3)
 #define MPU60X0_DMPINT_2_BIT            2
-#define MPU60X0_DMPINT_2                (1<<2)
+#define MPU60X0_DMPINT_2                (1 << 2)
 #define MPU60X0_DMPINT_1_BIT            1
-#define MPU60X0_DMPINT_1                (1<<1)
+#define MPU60X0_DMPINT_1                (1 << 1)
 #define MPU60X0_DMPINT_0_BIT            0
-#define MPU60X0_DMPINT_0                (1<<0)
+#define MPU60X0_DMPINT_0                (1 << 0)
 
 #define MPU60X0_MOTION_MOT_XNEG_BIT     7
-#define MPU60X0_MOTION_MOT_XNEG         (1<<7)
+#define MPU60X0_MOTION_MOT_XNEG         (1 << 7)
 #define MPU60X0_MOTION_MOT_XPOS_BIT     6
-#define MPU60X0_MOTION_MOT_XPOS         (1<<6)
+#define MPU60X0_MOTION_MOT_XPOS         (1 << 6)
 #define MPU60X0_MOTION_MOT_YNEG_BIT     5
-#define MPU60X0_MOTION_MOT_YNEG         (1<<5)
+#define MPU60X0_MOTION_MOT_YNEG         (1 << 5)
 #define MPU60X0_MOTION_MOT_YPOS_BIT     4
-#define MPU60X0_MOTION_MOT_YPOS         (1<<4)
+#define MPU60X0_MOTION_MOT_YPOS         (1 << 4)
 #define MPU60X0_MOTION_MOT_ZNEG_BIT     3
-#define MPU60X0_MOTION_MOT_ZNEG         (1<<3)
+#define MPU60X0_MOTION_MOT_ZNEG         (1 << 3)
 #define MPU60X0_MOTION_MOT_ZPOS_BIT     2
-#define MPU60X0_MOTION_MOT_ZPOS         (1<<2)
+#define MPU60X0_MOTION_MOT_ZPOS         (1 << 2)
 #define MPU60X0_MOTION_MOT_ZRMOT_BIT    0
-#define MPU60X0_MOTION_MOT_ZRMOT        (1<<0)
+#define MPU60X0_MOTION_MOT_ZRMOT        (1 << 0)
 
 #define MPU60X0_DELAYCTRL_DELAY_ES_SHADOW_BIT   7
-#define MPU60X0_DELAYCTRL_DELAY_ES_SHADOW       (1<<7)
+#define MPU60X0_DELAYCTRL_DELAY_ES_SHADOW       (1 << 7)
 #define MPU60X0_DELAYCTRL_I2C_SLV4_DLY_EN_BIT   4
-#define MPU60X0_DELAYCTRL_I2C_SLV4_DLY_EN       (1<<4)
+#define MPU60X0_DELAYCTRL_I2C_SLV4_DLY_EN       (1 << 4)
 #define MPU60X0_DELAYCTRL_I2C_SLV3_DLY_EN_BIT   3
-#define MPU60X0_DELAYCTRL_I2C_SLV3_DLY_EN       (1<<3)
+#define MPU60X0_DELAYCTRL_I2C_SLV3_DLY_EN       (1 << 3)
 #define MPU60X0_DELAYCTRL_I2C_SLV2_DLY_EN_BIT   2
-#define MPU60X0_DELAYCTRL_I2C_SLV2_DLY_EN       (1<<2)
+#define MPU60X0_DELAYCTRL_I2C_SLV2_DLY_EN       (1 << 2)
 #define MPU60X0_DELAYCTRL_I2C_SLV1_DLY_EN_BIT   1
-#define MPU60X0_DELAYCTRL_I2C_SLV1_DLY_EN       (1<<1)
+#define MPU60X0_DELAYCTRL_I2C_SLV1_DLY_EN       (1 << 1)
 #define MPU60X0_DELAYCTRL_I2C_SLV0_DLY_EN_BIT   0
-#define MPU60X0_DELAYCTRL_I2C_SLV0_DLY_EN       (1<<0)
+#define MPU60X0_DELAYCTRL_I2C_SLV0_DLY_EN       (1 << 0)
 
 #define MPU60X0_PATHRESET_GYRO_RESET_BIT    2
-#define MPU60X0_PATHRESET_GYRO_RESET        (1<<2)
+#define MPU60X0_PATHRESET_GYRO_RESET        (1 << 2)
 #define MPU60X0_PATHRESET_ACCEL_RESET_BIT   1
-#define MPU60X0_PATHRESET_ACCEL_RESET       (1<<1)
+#define MPU60X0_PATHRESET_ACCEL_RESET       (1 << 1)
 #define MPU60X0_PATHRESET_TEMP_RESET_BIT    0
-#define MPU60X0_PATHRESET_TEMP_RESET        (1<<0)
+#define MPU60X0_PATHRESET_TEMP_RESET        (1 << 0)
 
 #define MPU60X0_DETECT_ACCEL_ON_DELAY_BIT       5
-#define MPU60X0_DETECT_ACCEL_ON_DELAY           (1<<5)
+#define MPU60X0_DETECT_ACCEL_ON_DELAY           (1 << 5)
 #define MPU60X0_DETECT_ACCEL_ON_DELAY_LENGTH    2
 #define MPU60X0_DETECT_FF_COUNT_BIT             3
-#define MPU60X0_DETECT_FF_COUNT                 (1<<3)
+#define MPU60X0_DETECT_FF_COUNT                 (1 << 3)
 #define MPU60X0_DETECT_FF_COUNT_LENGTH          2
 #define MPU60X0_DETECT_MOT_COUNT_BIT            1
-#define MPU60X0_DETECT_MOT_COUNT                (1<<1)
+#define MPU60X0_DETECT_MOT_COUNT                (1 << 1)
 #define MPU60X0_DETECT_MOT_COUNT_LENGTH         2
 
 #define MPU60X0_DETECT_DECREMENT_RESET  0x0
@@ -391,32 +391,32 @@
 #define MPU60X0_DETECT_DECREMENT_4      0x3
 
 #define MPU60X0_USERCTRL_DMP_EN_BIT             7
-#define MPU60X0_USERCTRL_DMP_EN                 (1<<7)
+#define MPU60X0_USERCTRL_DMP_EN                 (1 << 7)
 #define MPU60X0_USERCTRL_FIFO_EN_BIT            6
-#define MPU60X0_USERCTRL_FIFO_EN                (1<<6)
+#define MPU60X0_USERCTRL_FIFO_EN                (1 << 6)
 #define MPU60X0_USERCTRL_I2C_MST_EN_BIT         5
-#define MPU60X0_USERCTRL_I2C_MST_EN             (1<<5)
+#define MPU60X0_USERCTRL_I2C_MST_EN             (1 << 5)
 #define MPU60X0_USERCTRL_I2C_IF_DIS_BIT         4
-#define MPU60X0_USERCTRL_I2C_IF_DIS             (1<<4)
+#define MPU60X0_USERCTRL_I2C_IF_DIS             (1 << 4)
 #define MPU60X0_USERCTRL_DMP_RESET_BIT          3
-#define MPU60X0_USERCTRL_DMP_RESET              (1<<3)
+#define MPU60X0_USERCTRL_DMP_RESET              (1 << 3)
 #define MPU60X0_USERCTRL_FIFO_RESET_BIT         2
-#define MPU60X0_USERCTRL_FIFO_RESET             (1<<2)
+#define MPU60X0_USERCTRL_FIFO_RESET             (1 << 2)
 #define MPU60X0_USERCTRL_I2C_MST_RESET_BIT      1
-#define MPU60X0_USERCTRL_I2C_MST_RESET          (1<<1)
+#define MPU60X0_USERCTRL_I2C_MST_RESET          (1 << 1)
 #define MPU60X0_USERCTRL_SIG_COND_RESET_BIT     0
-#define MPU60X0_USERCTRL_SIG_COND_RESET         (1<<0)
+#define MPU60X0_USERCTRL_SIG_COND_RESET         (1 << 0)
 
 #define MPU60X0_PWR1_DEVICE_RESET_BIT   7
-#define MPU60X0_PWR1_DEVICE_RESET       (1<<7)
+#define MPU60X0_PWR1_DEVICE_RESET       (1 << 7)
 #define MPU60X0_PWR1_SLEEP_BIT          6
-#define MPU60X0_PWR1_SLEEP              (1<<6)
+#define MPU60X0_PWR1_SLEEP              (1 << 6)
 #define MPU60X0_PWR1_CYCLE_BIT          5
-#define MPU60X0_PWR1_CYCLE              (1<<5)
+#define MPU60X0_PWR1_CYCLE              (1 << 5)
 #define MPU60X0_PWR1_TEMP_DIS_BIT       3
-#define MPU60X0_PWR1_TEMP_DIS           (1<<3)
+#define MPU60X0_PWR1_TEMP_DIS           (1 << 3)
 #define MPU60X0_PWR1_CLKSEL_BIT         2
-#define MPU60X0_PWR1_CLKSEL             (1<<2)
+#define MPU60X0_PWR1_CLKSEL             (1 << 2)
 #define MPU60X0_PWR1_CLKSEL_LENGTH      3
 
 #define MPU60X0_CLOCK_INTERNAL          0x00
@@ -428,20 +428,20 @@
 #define MPU60X0_CLOCK_KEEP_RESET        0x07
 
 #define MPU60X0_PWR2_LP_WAKE_CTRL_BIT       7
-#define MPU60X0_PWR2_LP_WAKE_CTRL           (1<<7)
+#define MPU60X0_PWR2_LP_WAKE_CTRL           (1 << 7)
 #define MPU60X0_PWR2_LP_WAKE_CTRL_LENGTH    2
 #define MPU60X0_PWR2_STBY_XA_BIT            5
-#define MPU60X0_PWR2_STBY_XA                (1<<5)
+#define MPU60X0_PWR2_STBY_XA                (1 << 5)
 #define MPU60X0_PWR2_STBY_YA_BIT            4
-#define MPU60X0_PWR2_STBY_YA                (1<<4)
+#define MPU60X0_PWR2_STBY_YA                (1 << 4)
 #define MPU60X0_PWR2_STBY_ZA_BIT            3
-#define MPU60X0_PWR2_STBY_ZA                (1<<3)
+#define MPU60X0_PWR2_STBY_ZA                (1 << 3)
 #define MPU60X0_PWR2_STBY_XG_BIT            2
-#define MPU60X0_PWR2_STBY_XG                (1<<2)
+#define MPU60X0_PWR2_STBY_XG                (1 << 2)
 #define MPU60X0_PWR2_STBY_YG_BIT            1
-#define MPU60X0_PWR2_STBY_YG                (1<<1)
+#define MPU60X0_PWR2_STBY_YG                (1 << 1)
 #define MPU60X0_PWR2_STBY_ZG_BIT            0
-#define MPU60X0_PWR2_STBY_ZG                (1<<0)
+#define MPU60X0_PWR2_STBY_ZG                (1 << 0)
 
 #define MPU60X0_WAKE_FREQ_1P25      0x0
 #define MPU60X0_WAKE_FREQ_2P5       0x1
@@ -449,15 +449,15 @@
 #define MPU60X0_WAKE_FREQ_10        0x3
 
 #define MPU60X0_BANKSEL_PRFTCH_EN_BIT       6
-#define MPU60X0_BANKSEL_PRFTCH_EN           (1<<6)
+#define MPU60X0_BANKSEL_PRFTCH_EN           (1 << 6)
 #define MPU60X0_BANKSEL_CFG_USER_BANK_BIT   5
-#define MPU60X0_BANKSEL_CFG_USER_BANK       (1<<5)
+#define MPU60X0_BANKSEL_CFG_USER_BANK       (1 << 5)
 #define MPU60X0_BANKSEL_MEM_SEL_BIT         4
-#define MPU60X0_BANKSEL_MEM_SEL             (1<<4)
+#define MPU60X0_BANKSEL_MEM_SEL             (1 << 4)
 #define MPU60X0_BANKSEL_MEM_SEL_LENGTH      5
 
 #define MPU60X0_WHO_AM_I_BIT        6
-#define MPU60X0_WHO_AM_I            (1<<6)
+#define MPU60X0_WHO_AM_I            (1 << 6)
 #define MPU60X0_WHO_AM_I_LENGTH     6
 
 #endif // MPU60X0_REGISTERS_H

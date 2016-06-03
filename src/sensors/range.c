@@ -38,7 +38,11 @@ static THD_FUNCTION(range_reader_thd, arg) {
 
 void range_start(void)
 {
-    chThdCreateStatic(range_reader_thd_wa, sizeof(range_reader_thd_wa), NORMALPRIO, range_reader_thd, NULL);
+    chThdCreateStatic(range_reader_thd_wa,
+                      sizeof(range_reader_thd_wa),
+                      NORMALPRIO,
+                      range_reader_thd,
+                      NULL);
 }
 
 // PB9: I2C1_SDA (AF4)

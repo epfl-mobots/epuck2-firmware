@@ -16,7 +16,7 @@ void imu_get_acc(float *acc);
 
 extern event_source_t imu_events;
 
-#define IMU_EVENT_READING        (1<<0)
+#define IMU_EVENT_READING        (1 << 0)
 
 
 #ifdef __cplusplus

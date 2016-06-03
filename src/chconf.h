@@ -12,7 +12,7 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-*/
+ */
 
 /**
  * @file    templates/chconf.h
@@ -410,7 +410,7 @@
  * @details User fields added to the end of the @p thread_t structure.
  */
 #define CH_CFG_THREAD_EXTRA_FIELDS                                          \
-  /* Add threads custom fields here.*/
+    /* Add threads custom fields here.*/
 
 /**
  * @brief   Threads initialization hook.
@@ -420,7 +420,7 @@
  *          the threads creation APIs.
  */
 #define CH_CFG_THREAD_INIT_HOOK(tp) {                                       \
-  /* Add threads initialization code here.*/                                \
+        /* Add threads initialization code here.*/                                \
 }
 
 /**
@@ -432,7 +432,7 @@
  *          terminate.
  */
 #define CH_CFG_THREAD_EXIT_HOOK(tp) {                                       \
-  /* Add threads finalization code here.*/                                  \
+        /* Add threads finalization code here.*/                                  \
 }
 
 /**
@@ -440,7 +440,7 @@
  * @details This hook is invoked just before switching between threads.
  */
 #define CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
-  /* Context switch code here.*/                                            \
+        /* Context switch code here.*/                                            \
 }
 
 /**
@@ -466,7 +466,7 @@
  * @details This hook is continuously invoked by the idle thread loop.
  */
 #define CH_CFG_IDLE_LOOP_HOOK() {                                           \
-  /* Idle loop code here.*/                                                 \
+        /* Idle loop code here.*/                                                 \
 }
 
 /**
@@ -475,7 +475,7 @@
  *          after processing the virtual timers queue.
  */
 #define CH_CFG_SYSTEM_TICK_HOOK() {                                         \
-  /* System tick event code here.*/                                         \
+        /* System tick event code here.*/                                         \
 }
 
 /**
@@ -493,8 +493,8 @@ void panic_handler(const char *reason);
 #endif
 #endif /* _FROM_ASM_ */
 #define CH_CFG_SYSTEM_HALT_HOOK(reason) {                                   \
-  /* System halt code here.*/                                               \
-  panic_handler(reason);                                                    \
+        /* System halt code here.*/                                               \
+        panic_handler(reason);                                                    \
 }
 
 

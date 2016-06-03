@@ -23,7 +23,7 @@ float cascade_step(cascade_controller *ctrl)
         ctrl->velocity_output = 0;
     }
 
-    //torque control
+    // torque control
     ctrl->current_error -= ctrl->velocity_output;
     ctrl->current_output = pid_process(&(ctrl->current_pid), ctrl->current_error);
 

@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
-*/
+ */
 #ifndef MEMORY_PROTECTION_H
 #define MEMORY_PROTECTION_H
 
@@ -36,13 +36,13 @@ extern "C" {
  * The first group is for priviledged code, the second for unpriviledged code.
  */
 typedef enum {
-    AP_NO_NO=0x0,
-    AP_RW_NO=0x1,
-    AP_RW_RO=0x2,
-    AP_RW_RW=0x3,
-    AP_RESERVED=0x4,
-    AP_RO_NO=0x5,
-    AP_RO_RO=0x6,
+    AP_NO_NO = 0x0,
+    AP_RW_NO = 0x1,
+    AP_RW_RO = 0x2,
+    AP_RW_RW = 0x3,
+    AP_RESERVED = 0x4,
+    AP_RO_NO = 0x5,
+    AP_RO_RO = 0x6,
 } access_permission_t;
 
 /** Initializes the Memory Protection Unit.

@@ -12,7 +12,7 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-*/
+ */
 
 #ifndef _BOARD_H_
 #define _BOARD_H_
@@ -231,7 +231,7 @@
 #define PIN_PUPDR_FLOATING(n)       (0U << ((n) * 2))
 #define PIN_PUPDR_PULLUP(n)         (1U << ((n) * 2))
 #define PIN_PUPDR_PULLDOWN(n)       (2U << ((n) * 2))
-#define PIN_AFIO_AF(n, v)           ((v##U) << ((n % 8) * 4))
+#define PIN_AFIO_AF(n, v)           ((v ## U) << ((n % 8) * 4))
 
 /*
  * GPIOA setup:
@@ -439,7 +439,7 @@
  * GPIOC setup:
  *
  */
-#define VAL_GPIOC_MODER             (PIN_MODE_ANALOG(GPIOC_IR_AN8) |\
+#define VAL_GPIOC_MODER             (PIN_MODE_ANALOG(GPIOC_IR_AN8) | \
                                      PIN_MODE_ANALOG(GPIOC_IR_AN9) |           \
                                      PIN_MODE_ANALOG(GPIOC_IR_AN10) |           \
                                      PIN_MODE_ANALOG(GPIOC_IR_AN11) |        \
@@ -455,7 +455,7 @@
                                      PIN_MODE_INPUT(GPIOC_CAM_STROBE) |          \
                                      PIN_MODE_INPUT(GPIOC_CAM_RST) |          \
                                      PIN_MODE_INPUT(GPIOC_CAM_PWDN))
-#define VAL_GPIOC_OTYPER            (PIN_OTYPE_OPENDRAIN(GPIOC_IR_AN8) |\
+#define VAL_GPIOC_OTYPER            (PIN_OTYPE_OPENDRAIN(GPIOC_IR_AN8) | \
                                      PIN_OTYPE_OPENDRAIN(GPIOC_IR_AN9) |       \
                                      PIN_OTYPE_OPENDRAIN(GPIOC_IR_AN10) |       \
                                      PIN_OTYPE_OPENDRAIN(GPIOC_IR_AN11) |    \
@@ -471,7 +471,7 @@
                                      PIN_OTYPE_PUSHPULL(GPIOC_CAM_STROBE) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOC_CAM_RST) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOC_CAM_PWDN))
-#define VAL_GPIOC_OSPEEDR           (PIN_OSPEED_100M(GPIOC_IR_AN8) |\
+#define VAL_GPIOC_OSPEEDR           (PIN_OSPEED_100M(GPIOC_IR_AN8) | \
                                      PIN_OSPEED_100M(GPIOC_IR_AN9) |          \
                                      PIN_OSPEED_100M(GPIOC_IR_AN10) |          \
                                      PIN_OSPEED_100M(GPIOC_IR_AN11) |       \
@@ -487,7 +487,7 @@
                                      PIN_OSPEED_100M(GPIOC_CAM_STROBE) |         \
                                      PIN_OSPEED_100M(GPIOC_CAM_RST) |         \
                                      PIN_OSPEED_100M(GPIOC_CAM_PWDN))
-#define VAL_GPIOC_PUPDR             (PIN_PUPDR_FLOATING(GPIOC_IR_AN8) |\
+#define VAL_GPIOC_PUPDR             (PIN_PUPDR_FLOATING(GPIOC_IR_AN8) | \
                                      PIN_PUPDR_FLOATING(GPIOC_IR_AN9) |         \
                                      PIN_PUPDR_FLOATING(GPIOC_IR_AN10) |         \
                                      PIN_PUPDR_FLOATING(GPIOC_IR_AN11) |      \
@@ -519,7 +519,7 @@
                                      PIN_ODR_HIGH(GPIOC_CAM_STROBE) |            \
                                      PIN_ODR_HIGH(GPIOC_CAM_RST) |            \
                                      PIN_ODR_HIGH(GPIOC_CAM_PWDN))
-#define VAL_GPIOC_AFRL              (PIN_AFIO_AF(GPIOC_IR_AN8, 0) |\
+#define VAL_GPIOC_AFRL              (PIN_AFIO_AF(GPIOC_IR_AN8, 0) | \
                                      PIN_AFIO_AF(GPIOC_IR_AN9, 0) |           \
                                      PIN_AFIO_AF(GPIOC_IR_AN10, 0) |           \
                                      PIN_AFIO_AF(GPIOC_IR_AN11, 0) |        \
@@ -561,7 +561,7 @@
                                      PIN_OTYPE_PUSHPULL(GPIOD_SDIO_CMD) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOD_2V8_ON) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOD_PIN4) |      \
-                                     PIN_OTYPE_PUSHPULL(GPIOD_CAM_GPIO_0) |\
+                                     PIN_OTYPE_PUSHPULL(GPIOD_CAM_GPIO_0) | \
                                      PIN_OTYPE_PUSHPULL(GPIOD_CAM_GPIO_1) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOD_CAM_GPIO_2) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOD_CAM_EXPST) |       \
@@ -593,7 +593,7 @@
                                      PIN_PUPDR_PULLUP(GPIOD_SDIO_CMD) |         \
                                      PIN_PUPDR_FLOATING(GPIOD_2V8_ON) |         \
                                      PIN_PUPDR_PULLUP(GPIOD_PIN4) |      \
-                                     PIN_PUPDR_PULLUP(GPIOD_CAM_GPIO_0) |\
+                                     PIN_PUPDR_PULLUP(GPIOD_CAM_GPIO_0) | \
                                      PIN_PUPDR_PULLUP(GPIOD_CAM_GPIO_1) |         \
                                      PIN_PUPDR_PULLUP(GPIOD_CAM_GPIO_2) |         \
                                      PIN_PUPDR_PULLUP(GPIOD_CAM_EXPST) |         \
@@ -1147,7 +1147,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void boardInit(void);
+void boardInit(void);
 #ifdef __cplusplus
 }
 #endif

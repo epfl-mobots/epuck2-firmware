@@ -32,7 +32,7 @@ static THD_FUNCTION(segway_thd, arg)
     static float gyro[3];
     static uint32_t enc_right;
     static uint32_t enc_left;
-    float delta_t = 1.f/SEGWAY_CONTROL_FREQ;
+    float delta_t = 1.f / SEGWAY_CONTROL_FREQ;
 
     static float prev_attitude_meas = 0.f;
     float wheel_speed_fwd = 0;
@@ -64,7 +64,7 @@ static THD_FUNCTION(segway_thd, arg)
         setpoints_set_velocity(&(left.setpoints), wheel_speed_fwd);
         setpoints_set_velocity(&(right.setpoints), wheel_speed_fwd);
 
-        chThdSleepMilliseconds(1000/SEGWAY_CONTROL_FREQ);
+        chThdSleepMilliseconds(1000 / SEGWAY_CONTROL_FREQ);
     }
 }
 

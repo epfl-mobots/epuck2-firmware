@@ -12,16 +12,16 @@ extern "C" {
 #define SETPT_MODE_CUR      2
 
 typedef struct setpoints {
-	float position;
-	float velocity;
-	float current;
+    float position;
+    float velocity;
+    float current;
 
-	float max_position;
-	float max_velocity;
-	float max_current;
+    float max_position;
+    float max_velocity;
+    float max_current;
 
     int setpt_mode;
-}setpoints;
+} setpoints;
 
 void setpoints_init(setpoints *setpoints);
 void setpoints_set_position(setpoints *motor, float position);

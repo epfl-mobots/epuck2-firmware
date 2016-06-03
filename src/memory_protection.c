@@ -23,7 +23,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
-*/
+ */
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
@@ -124,7 +124,7 @@ void MemManage_Handler(void)
     if (MMFSR & (1 << 0)) {
         snprintf(msg, sizeof(msg),
                  "Jumped to XN region %p (lr_thd=%p)",
-                    (void *)SCB->MMFAR, ctx.lr_thd);
+                 (void *)SCB->MMFAR, ctx.lr_thd);
     }
 #endif
 

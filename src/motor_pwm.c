@@ -16,10 +16,10 @@ static const PWMConfig pwmcfg1 = {
     PWM_CYCLE,                                      /* PWM cycle is 21kHz.   */
     NULL,
     {
-    {PWM_OUTPUT_DISABLED, NULL},
-    {PWM_OUTPUT_DISABLED, NULL},
-    {PWM_OUTPUT_ACTIVE_HIGH, NULL},
-    {PWM_OUTPUT_ACTIVE_HIGH, NULL}
+        {PWM_OUTPUT_DISABLED, NULL},
+        {PWM_OUTPUT_DISABLED, NULL},
+        {PWM_OUTPUT_ACTIVE_HIGH, NULL},
+        {PWM_OUTPUT_ACTIVE_HIGH, NULL}
     },
     /* HW dependent part.*/
     0,                  // TIMx_CR2 value
@@ -31,10 +31,10 @@ static const PWMConfig pwmcfg2 = {
     PWM_CYCLE,                                      /* PWM cycle is 21kHz.   */
     NULL,
     {
-    {PWM_OUTPUT_ACTIVE_HIGH, NULL},
-    {PWM_OUTPUT_ACTIVE_HIGH, NULL},
-    {PWM_OUTPUT_DISABLED, NULL},
-    {PWM_OUTPUT_DISABLED, NULL}
+        {PWM_OUTPUT_ACTIVE_HIGH, NULL},
+        {PWM_OUTPUT_ACTIVE_HIGH, NULL},
+        {PWM_OUTPUT_DISABLED, NULL},
+        {PWM_OUTPUT_DISABLED, NULL}
     },
     /* HW dependent part.*/
     0,                  // TIMx_CR2 value
@@ -63,29 +63,26 @@ void motor_pwm_stop(void)
 void motor_pwm_set(int pwm_select, float pwm_command)
 {
     pwm_command = -pwm_command;
-    if(pwm_command >= 0) {
+    if (pwm_command >= 0) {
         if (pwm_command > PWM_LIMIT) {
             pwm_command = PWM_LIMIT;
         }
-        if(!pwm_select) {
+        if (!pwm_select) {
             pwmEnableChannel(&PWMD3, MOT0_PHASE_A, (pwmcnt_t) (PWM_CYCLE * pwm_command));
             pwmEnableChannel(&PWMD3, MOT0_PHASE_B, (pwmcnt_t) 0);
-        }
-        else {
+        } else {
             pwmEnableChannel(&PWMD4, MOT1_PHASE_B, (pwmcnt_t) (PWM_CYCLE * pwm_command));
             pwmEnableChannel(&PWMD4, MOT1_PHASE_A, (pwmcnt_t) 0);
         }
-    }
-    else {
-        if(pwm_command < -PWM_LIMIT) {
+    } else {
+        if (pwm_command < -PWM_LIMIT) {
             pwm_command = -PWM_LIMIT;
         }
         pwm_command = -pwm_command;
-        if(!pwm_select) {
+        if (!pwm_select) {
             pwmEnableChannel(&PWMD3, MOT0_PHASE_B, (pwmcnt_t) (PWM_CYCLE * pwm_command));
             pwmEnableChannel(&PWMD3, MOT0_PHASE_A, (pwmcnt_t) 0);
-        }
-        else {
+        } else {
             pwmEnableChannel(&PWMD4, MOT1_PHASE_A, (pwmcnt_t) (PWM_CYCLE * pwm_command));
             pwmEnableChannel(&PWMD4, MOT1_PHASE_B, (pwmcnt_t) 0);
         }

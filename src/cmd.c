@@ -37,9 +37,9 @@ static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[])
     tp = chRegFirstThread();
     do {
         chprintf(chp, "%08lx %08lx %4lu %4lu %9s\r\n",
-                         (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
-                         (uint32_t)tp->p_prio, (uint32_t)(tp->p_refs - 1),
-                         states[tp->p_state]);
+                 (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
+                 (uint32_t)tp->p_prio, (uint32_t)(tp->p_refs - 1),
+                 states[tp->p_state]);
         tp = chRegNextThread(tp);
     } while (tp != NULL);
 }
@@ -54,7 +54,7 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[])
         return;
     }
     tp = chThdCreateFromHeap(NULL, TEST_WA_SIZE, chThdGetPriorityX(),
-                                                     TestThread, chp);
+                             TestThread, chp);
     if (tp == NULL) {
         chprintf(chp, "out of memory\r\n");
         return;
@@ -70,7 +70,14 @@ static void cmd_mpu6050(BaseSequentialStream *chp, int argc, char *argv[])
     float gyro[3];
     imu_get_gyro(gyro);
     imu_get_acc(acc);
-    chprintf(chp, "gyro: %f %f %f, acc %f %f %f\n", gyro[0], gyro[1], gyro[2], acc[0], acc[1], acc[2]);
+    chprintf(chp,
+             "gyro: %f %f %f, acc %f %f %f\n",
+             gyro[0],
+             gyro[1],
+             gyro[2],
+             acc[0],
+             acc[1],
+             acc[2]);
 }
 
 static void cmd_readclock(BaseSequentialStream *chp, int argc, char *argv[])
@@ -78,7 +85,7 @@ static void cmd_readclock(BaseSequentialStream *chp, int argc, char *argv[])
     (void)argc;
     (void)argv;
     chprintf(chp, "SYSCLK: %i \n HCLK: %i \n PCLK1  %i \n PCLK2 %i \n",
-        STM32_SYSCLK, STM32_HCLK, STM32_PCLK1, STM32_PCLK2);
+             STM32_SYSCLK, STM32_HCLK, STM32_PCLK1, STM32_PCLK2);
 }
 
 
@@ -115,7 +122,7 @@ static THD_FUNCTION(shell_spawn_thd, p)
                 shelltp = NULL;
             }
         }
-    chThdSleepMilliseconds(500);
+        chThdSleepMilliseconds(500);
     }
 }
 
