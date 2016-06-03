@@ -137,8 +137,6 @@ static THD_FUNCTION(adc_motor_current, arg)
     adcStart(&ADCD1, NULL);
 
     adcStartConversion(&ADCD1, &adcgrpcfg1, adc_motor_samples, DMA_BUFFER_SIZE); // should never return
-
-    return 0;
 }
 
 
@@ -172,8 +170,6 @@ static THD_FUNCTION(adc2_proximity_current, arg)
     adcStart(&ADCD2, NULL);
 
     adcStartConversion(&ADCD2, &adcgrpcfg2, adc2_proximity_samples, DMA_BUFFER_SIZE); // should never return
-
-    return 0;
 }
 
 static THD_WORKING_AREA(adc3_proximity_current_wa, 128);
@@ -221,8 +217,6 @@ static THD_FUNCTION(adc3_proximity_current, arg)
     adcStart(&ADCD3, NULL);
 
     adcStartConversion(&ADCD3, &adcgrpcfg3, adc3_proximity_samples, DMA_BUFFER_SIZE); // should never return
-
-    return 0;
 }
 
 void analogic_start(bool adc1, bool adc2, bool adc3)

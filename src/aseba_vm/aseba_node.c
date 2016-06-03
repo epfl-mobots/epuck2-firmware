@@ -36,7 +36,6 @@ static THD_FUNCTION(aseba_vm_thd, arg)
         // Sync the Microcontroller with the state of Aseba
         update_aseba_variables_write();
     }
-    return 0;
 }
 
 void aseba_vm_init(void)

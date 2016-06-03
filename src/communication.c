@@ -225,7 +225,6 @@ static THD_FUNCTION(comm_tx_stream, arg)
 
         chThdSleepMilliseconds(10);
     }
-    return 0;
 }
 
 
@@ -343,7 +342,6 @@ static THD_FUNCTION(comm_rx, arg)
         char c = chSequentialStreamGet(in);
         serial_datagram_receive(&rcv_handler, &c, 1);
     }
-    return 0;
 }
 
 

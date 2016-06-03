@@ -34,7 +34,6 @@ static THD_FUNCTION(range_reader_thd, arg) {
         range_sample.raw = range_sample.raw_mm * MILLIMETER_TO_METER;
         chSysUnlock();
     }
-    return 0;
 }
 
 void range_start(void)

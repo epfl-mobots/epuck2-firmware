@@ -66,7 +66,6 @@ static THD_FUNCTION(segway_thd, arg)
 
         chThdSleepMilliseconds(1000/SEGWAY_CONTROL_FREQ);
     }
-    return 0;
 }
 
 

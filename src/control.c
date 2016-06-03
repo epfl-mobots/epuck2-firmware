@@ -100,8 +100,7 @@ static THD_FUNCTION(ThreadControl, arg) {
 
         chThdSleepMilliseconds(2);
     }
-    return 0;
-};
+}
 
 
 void pid_register(struct pid_parameter_s *pid,

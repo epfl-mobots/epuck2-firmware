@@ -87,7 +87,6 @@ static THD_FUNCTION(imu_reader_thd, arg) {
 
         chEvtBroadcastFlags(&imu_events, IMU_EVENT_READING);
     }
-    return 0;
 }
 
 void imu_start(void)
