@@ -153,7 +153,8 @@ static const USBDescriptor vcom_strings[] = {
 static const USBDescriptor *get_descriptor(USBDriver *usbp,
                                            uint8_t dtype,
                                            uint8_t dindex,
-                                           uint16_t lang) {
+                                           uint16_t lang)
+{
 
     (void)usbp;
     (void)lang;
@@ -205,7 +206,8 @@ static const USBEndpointConfig ep2config = {
 };
 
 /** Handles the USB driver global events.  */
-static void usb_event(USBDriver *usbp, usbevent_t event) {
+static void usb_event(USBDriver *usbp, usbevent_t event)
+{
 
     switch (event) {
         case USB_EVENT_RESET:

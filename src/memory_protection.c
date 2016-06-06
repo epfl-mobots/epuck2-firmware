@@ -120,8 +120,12 @@ void MemManage_Handler(void)
 
     /* Data access violation */
     if (MMFSR & (1 << 1)) {
-        snprintf(msg, sizeof(msg),
-                 "Invalid access to %p (pc=%p), current_thread=\"%s\"", (void *)SCB->MMFAR, ctx.pc, thd_name);
+        snprintf(msg,
+                 sizeof(msg),
+                 "Invalid access to %p (pc=%p), current_thread=\"%s\"",
+                 (void *)SCB->MMFAR,
+                 ctx.pc,
+                 thd_name);
     }
 
     /* Instruction address violation. */

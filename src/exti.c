@@ -5,7 +5,8 @@
 
 event_source_t exti_events;
 
-static void gpio_exti_callback(EXTDriver *extp, expchannel_t channel) {
+static void gpio_exti_callback(EXTDriver *extp, expchannel_t channel)
+{
     (void)extp;
     if (channel == GPIOF_IMU_INT) {  // Channel MPU6000
         chSysLockFromISR();

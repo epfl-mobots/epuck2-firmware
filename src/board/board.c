@@ -68,7 +68,8 @@ const PALConfig pal_default_config = {
  * @details This initialization must be performed just after stack setup
  *          and before any other initialization.
  */
-void __early_init(void) {
+void __early_init(void)
+{
 
     stm32_clock_init();
 }
@@ -77,7 +78,8 @@ void __early_init(void) {
 /**
  * @brief   SDC card detection.
  */
-bool sdc_lld_is_card_inserted(SDCDriver *sdcp) {
+bool sdc_lld_is_card_inserted(SDCDriver *sdcp)
+{
 
     (void)sdcp;
     /* TODO: Fill the implementation.*/
@@ -88,7 +90,8 @@ include $(CHIBIOS) / os / hal / boards / ST_STM32F4_DISCOVERY / board.mk
 /**
  * @brief   SDC card write protection detection.
  */
-bool sdc_lld_is_write_protected(SDCDriver *sdcp) {
+bool sdc_lld_is_write_protected(SDCDriver *sdcp)
+{
 
     (void)sdcp;
     /* TODO: Fill the implementation.*/
@@ -100,7 +103,8 @@ bool sdc_lld_is_write_protected(SDCDriver *sdcp) {
 /**
  * @brief   MMC_SPI card detection.
  */
-bool mmc_lld_is_card_inserted(MMCDriver *mmcp) {
+bool mmc_lld_is_card_inserted(MMCDriver *mmcp)
+{
 
     (void)mmcp;
     /* TODO: Fill the implementation.*/
@@ -110,7 +114,8 @@ bool mmc_lld_is_card_inserted(MMCDriver *mmcp) {
 /**
  * @brief   MMC_SPI card write protection detection.
  */
-bool mmc_lld_is_write_protected(MMCDriver *mmcp) {
+bool mmc_lld_is_write_protected(MMCDriver *mmcp)
+{
 
     (void)mmcp;
     /* TODO: Fill the implementation.*/
@@ -122,6 +127,7 @@ bool mmc_lld_is_write_protected(MMCDriver *mmcp) {
  * @brief   Board-specific initialization code.
  * @todo    Add your board-specific code, if any.
  */
-void boardInit(void) {
+void boardInit(void)
+{
     palSetPad(GPIOF, GPIOF_POWERON);
 }

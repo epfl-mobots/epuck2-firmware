@@ -33,7 +33,8 @@ static const PWMConfig pwmcfg_proximity = {
     0                   // TIMx_DIER value
 };
 
-int proximity_change_adc_trigger(void) {
+int proximity_change_adc_trigger(void)
+{
     if (STM32_TIM8->CCR[0] == COUNTER_HIGH_STATE) {
         STM32_TIM8->CCR[0] = COUNTER_LOW_STATE;
         return TRUE;
@@ -57,7 +58,8 @@ void proximity_get(float* proximity)
 }
 
 
-void proximity_start(void) {
+void proximity_start(void)
+{
 
     /*Init PWM*/
     pwmStart(&PWMD8, &pwmcfg_proximity);

@@ -450,7 +450,7 @@ void context_switch_hook(void *ntp, void *otp);
 #endif /* _FROM_ASM_ */
 
 #define CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
-    context_switch_hook(ntp, otp); \
+        context_switch_hook(ntp, otp); \
 }
 
 /**
