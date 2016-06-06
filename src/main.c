@@ -8,7 +8,7 @@
 
 #include "chprintf.h"
 #include "shell.h"
-#include "usbconf.h"
+#include "usbconf_ethernet.h"
 
 #include "cmd.h"
 #include "control.h"
@@ -36,10 +36,10 @@ static THD_FUNCTION(Thread1, arg) {
     (void)arg;
     chRegSetThreadName("Heartbeat");
     while (TRUE) {
+        chSequentialStreamGet(&EDU1);
         palSetPad(GPIOE, GPIOE_LED_HEARTBEAT);
         chThdSleepMilliseconds(300);
         palClearPad(GPIOE, GPIOE_LED_HEARTBEAT);
-        chThdSleepMilliseconds(300);
     }
 }
 
@@ -74,27 +74,40 @@ int main(void)
     /*
      * Initializes a serial-over-USB CDC driver.
      */
-    sduObjectInit(&SDU1);
-    sduStart(&SDU1, &serusbcfg);
+    eduObjectInit(&EDU1);
+    eduStart(&EDU1, &ethusbcfg);
 
     /*
      * Activates the USB driver and then the USB bus pull-up on D+.
      * Note, a delay is inserted in order to not have to disconnect the cable
      * after a reset.
      */
-    usbDisconnectBus(serusbcfg.usbp);
+    usbDisconnectBus(ethusbcfg.usbp);
     chThdSleepMilliseconds(1000);
-    usbStart(serusbcfg.usbp, &usbcfg);
-    usbConnectBus(serusbcfg.usbp);
+    usbStart(ethusbcfg.usbp, &usbcfg);
+    usbConnectBus(ethusbcfg.usbp);
 
-    chprintf((BaseSequentialStream*)&SDU1, "boot");
+    //chprintf((BaseSequentialStream*)&EDU1, "boot");
+    uint8_t frame[] =  {
+        0xde, 0xad, 0xbe, 0xef, 0xca, 0xfe, // mac
+        0xde, 0xad, 0xbe, 0xef, 0xca, 0xfe, // mac
+        0x42, 0x42,
+        'h', 'e', 'l', 'l', 'o',
+    };
+
+
+    while (true) {
+    chnWrite(&EDU1, frame, sizeof(frame));
+//    volatile int ret = chnRead(&EDU1, frame, sizeof(frame));
+    chThdSleepMilliseconds(100);
+    }
 
     sdStart(&SD6, NULL);
 
 #if 0
-    communication_start((BaseSequentialStream *)&SDU1);
+    communication_start((BaseSequentialStream *)&EDU1);
 #else
-    shell_start();
+    //shell_start();
 #endif
 
     // Start heartbeat thread
