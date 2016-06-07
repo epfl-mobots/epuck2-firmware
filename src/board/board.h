@@ -338,8 +338,8 @@
  * GPIOB setup:
  *
  */
-#define VAL_GPIOB_MODER             (PIN_MODE_OUTPUT(GPIOB_PWM0_PHASE_A) |           \
-                                     PIN_MODE_OUTPUT(GPIOB_PWM0_PHASE_B) |           \
+#define VAL_GPIOB_MODER             (PIN_MODE_ALTERNATE(GPIOB_PWM0_PHASE_A) |           \
+                                     PIN_MODE_ALTERNATE(GPIOB_PWM0_PHASE_B) |           \
                                      PIN_MODE_INPUT(GPIOB_BOOT1) |           \
                                      PIN_MODE_INPUT(GPIOB_SPI_CLK) |        \
                                      PIN_MODE_INPUT(GPIOB_SPI_MISO) |           \
@@ -418,8 +418,8 @@
                                      PIN_ODR_HIGH(GPIOB_PIN13) |            \
                                      PIN_ODR_LOW(GPIOB_IR_PWM) |            \
                                      PIN_ODR_HIGH(GPIOB_PIN15))
-#define VAL_GPIOB_AFRL              (PIN_AFIO_AF(GPIOB_PWM0_PHASE_A, 0) |           \
-                                     PIN_AFIO_AF(GPIOB_PWM0_PHASE_B, 0) |           \
+#define VAL_GPIOB_AFRL              (PIN_AFIO_AF(GPIOB_PWM0_PHASE_A, 2) |           \
+                                     PIN_AFIO_AF(GPIOB_PWM0_PHASE_B, 2) |           \
                                      PIN_AFIO_AF(GPIOB_BOOT1, 0) |           \
                                      PIN_AFIO_AF(GPIOB_SPI_CLK, 5) |            \
                                      PIN_AFIO_AF(GPIOB_SPI_MISO, 5) |           \
@@ -552,8 +552,8 @@
                                      PIN_MODE_INPUT(GPIOD_CAM_FREX) |           \
                                      PIN_MODE_INPUT(GPIOD_PIN10) |          \
                                      PIN_MODE_INPUT(GPIOD_PIN11) |          \
-                                     PIN_MODE_OUTPUT(GPIOD_PWM1_PHASE_A) |  \
-                                     PIN_MODE_OUTPUT(GPIOD_PWM1_PHASE_B) |  \
+                                     PIN_MODE_ALTERNATE(GPIOD_PWM1_PHASE_A) |  \
+                                     PIN_MODE_ALTERNATE(GPIOD_PWM1_PHASE_B) |  \
                                      PIN_MODE_INPUT(GPIOD_LED_DRIVER_RST) |          \
                                      PIN_MODE_OUTPUT(GPIOD_LED_ERROR))
 #define VAL_GPIOD_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOD_CAN_RX) |       \
@@ -632,8 +632,8 @@
                                      PIN_AFIO_AF(GPIOD_CAM_FREX, 0) |           \
                                      PIN_AFIO_AF(GPIOD_PIN10, 0) |          \
                                      PIN_AFIO_AF(GPIOD_PIN11, 0) |          \
-                                     PIN_AFIO_AF(GPIOD_PWM1_PHASE_A, 0) |           \
-                                     PIN_AFIO_AF(GPIOD_PWM1_PHASE_B, 0) |           \
+                                     PIN_AFIO_AF(GPIOD_PWM1_PHASE_A, 2) |           \
+                                     PIN_AFIO_AF(GPIOD_PWM1_PHASE_B, 2) |           \
                                      PIN_AFIO_AF(GPIOD_LED_DRIVER_RST, 0) |           \
                                      PIN_AFIO_AF(GPIOD_LED_ERROR, 0))
 

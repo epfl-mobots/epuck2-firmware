@@ -18,11 +18,6 @@ void motor_pwm_set(int pwm_select, float pwm_command);
  */
 void motor_pwm_start(void);
 
-/*
- * don't drive the motor (floating)
- */
-void motor_pwm_stop(void);
-
 #ifdef __cplusplus
 }
 #endif
