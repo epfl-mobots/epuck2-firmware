@@ -36,10 +36,8 @@ static THD_FUNCTION(Thread1, arg) {
     (void)arg;
     chRegSetThreadName("Heartbeat");
     while (TRUE) {
-        palSetPad(GPIOE, GPIOE_LED_HEARTBEAT);
-        chThdSleepMilliseconds(300);
-        palClearPad(GPIOE, GPIOE_LED_HEARTBEAT);
-        chThdSleepMilliseconds(300);
+        palTogglePad(GPIOE, GPIOE_LED_HEARTBEAT);
+        chThdSleepMilliseconds(500);
     }
 }
 

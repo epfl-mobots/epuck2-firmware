@@ -651,7 +651,7 @@
                                      PIN_MODE_OUTPUT(GPIOE_LED_HEARTBEAT) |           \
                                      PIN_MODE_OUTPUT(GPIOE_LED_STATUS) |           \
                                      PIN_MODE_INPUT(GPIOE_MOT0_QEA) |           \
-                                     PIN_MODE_INPUT(GPIOE_LED_SD) |          \
+                                     PIN_MODE_OUTPUT(GPIOE_LED_SD) |          \
                                      PIN_MODE_INPUT(GPIOE_MOT0_QEB) |          \
                                      PIN_MODE_INPUT(GPIOE_RF_GPIO0_1) |          \
                                      PIN_MODE_INPUT(GPIOE_RF_GPIO1_1) |          \
@@ -699,7 +699,7 @@
                                      PIN_PUPDR_FLOATING(GPIOE_LED_HEARTBEAT) |       \
                                      PIN_PUPDR_FLOATING(GPIOE_LED_STATUS) |       \
                                      PIN_PUPDR_PULLUP(GPIOE_MOT0_QEA) |       \
-                                     PIN_PUPDR_PULLUP(GPIOE_LED_SD) |      \
+                                     PIN_PUPDR_FLOATING(GPIOE_LED_SD) |      \
                                      PIN_PUPDR_PULLUP(GPIOE_MOT0_QEB) |      \
                                      PIN_PUPDR_PULLUP(GPIOE_RF_GPIO0_1) |      \
                                      PIN_PUPDR_PULLUP(GPIOE_RF_GPIO1_1) |      \
@@ -715,7 +715,7 @@
                                      PIN_ODR_LOW(GPIOE_LED_HEARTBEAT) |             \
                                      PIN_ODR_LOW(GPIOE_LED_STATUS) |             \
                                      PIN_ODR_HIGH(GPIOE_MOT0_QEA) |             \
-                                     PIN_ODR_HIGH(GPIOE_LED_SD) |            \
+                                     PIN_ODR_LOW(GPIOE_LED_SD) |            \
                                      PIN_ODR_HIGH(GPIOE_MOT0_QEB) |            \
                                      PIN_ODR_HIGH(GPIOE_RF_GPIO0_1) |            \
                                      PIN_ODR_HIGH(GPIOE_RF_GPIO1_1) |            \
