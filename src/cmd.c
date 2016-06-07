@@ -1,9 +1,12 @@
-#include "hal.h"
-#include "test.h"
-#include "chprintf.h"
-#include "shell.h"
+#include <string.h>
+#include <stdlib.h>
+#include <hal.h>
+#include <test.h>
+#include <chprintf.h>
+#include <shell.h>
 #include "usbconf.h"
 #include "sensors/imu.h"
+#include "motor_pwm.h"
 
 #define TEST_WA_SIZE        THD_WORKING_AREA_SIZE(256)
 #define SHELL_WA_SIZE       THD_WORKING_AREA_SIZE(2048)
@@ -88,11 +91,34 @@ static void cmd_readclock(BaseSequentialStream *chp, int argc, char *argv[])
              STM32_SYSCLK, STM32_HCLK, STM32_PCLK1, STM32_PCLK2);
 }
 
+static void cmd_motor(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    if (argc < 2) {
+        chprintf(chp, "Usage: pwm left|right percentage\r\n");
+        return;
+    }
+
+    float value = atoi(argv[1]) / 100.;
+    int select;
+
+    if (!strcmp("left", argv[0])) {
+        select = 1;
+    } else if (!strcmp("right", argv[0]))   {
+        select = 0;
+    } else {
+        chprintf(chp, "Unknown motor \"%s\".\r\n", argv[0]);
+        return;
+    }
+
+    motor_pwm_set(select, value);
+}
+
 
 const ShellCommand shell_commands[] = {
     {"mem", cmd_mem},
     {"threads", cmd_threads},
     {"test", cmd_test},
+    {"pwm", cmd_motor},
     {"mpu6050", cmd_mpu6050},
     {"clock", cmd_readclock},
     {NULL, NULL}

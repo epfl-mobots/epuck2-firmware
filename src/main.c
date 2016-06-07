@@ -89,6 +89,8 @@ int main(void)
 
     sdStart(&SD6, NULL);
 
+    motor_pwm_start();
+
 #if 0
     communication_start((BaseSequentialStream *)&SDU1);
 #else
@@ -106,7 +108,7 @@ int main(void)
     range_start();
 
     // Start control loops
-    control_start();
+//    control_start();
 
     // Initialise Aseba node (CAN and VM)
     aseba_vm_init();
