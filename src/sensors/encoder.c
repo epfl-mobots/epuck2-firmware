@@ -33,39 +33,27 @@ int encoder_tick_diff(uint32_t enc_old, uint32_t enc_new)
     }
 }
 
-void encoder_init(void)
+static void setup_timer(stm32_tim_t *tmr)
 {
-    /* Left Encoder Init*/
-    palSetPadMode(GPIOE, GPIOE_MOT0_QEA, PAL_MODE_ALTERNATE(1) | PAL_MODE_INPUT);  // Tim1_Ch1 -> PE9
-    palSetPadMode(GPIOE, GPIOE_MOT0_QEB, PAL_MODE_ALTERNATE(1) | PAL_MODE_INPUT); // Tim1_Ch2 -> PE11
+    tmr->CR2    = 0;
+    tmr->PSC    = 0;                         // Prescaler value.
+    tmr->SR     = 0;                         // Clear pending IRQs.
+    tmr->DIER   = 0;                         // DMA-related DIER bits.
+    tmr->SMCR   = STM32_TIM_SMCR_SMS(3);     // count on both edges
+    tmr->CCMR1  = STM32_TIM_CCMR1_CC1S(1);   // CC1 channel is input, IC1 is mapped on TI1
+    tmr->CCMR1 |= STM32_TIM_CCMR1_CC2S(1);   // CC2 channel is input, IC2 is mapped on TI2
+    tmr->CCER   = 0;
+    tmr->ARR    = 0xFFFF;
+    tmr->CR1    = 1;                         // start
+}
 
+void encoder_start(void)
+{
     rccEnableTIM1(FALSE);                           // enable timer 1 clock
     rccResetTIM1();
-    STM32_TIM1->CR2    = 0;
-    STM32_TIM1->PSC    = 0;                         // Prescaler value.
-    STM32_TIM1->SR     = 0;                         // Clear pending IRQs.
-    STM32_TIM1->DIER   = 0;                         // DMA-related DIER bits.
-    STM32_TIM1->SMCR   = STM32_TIM_SMCR_SMS(3);     // count on both edges
-    STM32_TIM1->CCMR1  = STM32_TIM_CCMR1_CC1S(1);   // CC1 channel is input, IC1 is mapped on TI1
-    STM32_TIM1->CCMR1 |= STM32_TIM_CCMR1_CC2S(1);   // CC2 channel is input, IC2 is mapped on TI2
-    STM32_TIM1->CCER   = 0;
-    STM32_TIM1->ARR    = 0xFFFF;
-    STM32_TIM1->CR1    = 1;                         // start
-
-    /* Right Encoder Init*/
-    palSetPadMode(GPIOA, GPIOA_MOT1_QEB, PAL_MODE_ALTERNATE(1) | PAL_MODE_INPUT);  // Tim2_Ch1 -> PA15
-    palSetPadMode(GPIOA, GPIOA_MOT1_QEA, PAL_MODE_ALTERNATE(1) | PAL_MODE_INPUT);   // Tim2_Ch2 -> PA1
+    setup_timer(STM32_TIM1);
 
     rccEnableTIM2(FALSE);                           // enable timer 2 clock
     rccResetTIM2();
-    STM32_TIM2->CR2    = 0;
-    STM32_TIM2->PSC    = 0;                         // Prescaler value.
-    STM32_TIM2->SR     = 0;                         // Clear pending IRQs.
-    STM32_TIM2->DIER   = 0;                         // DMA-related DIER bits.
-    STM32_TIM2->SMCR   = STM32_TIM_SMCR_SMS(3);     // count on both edges
-    STM32_TIM2->CCMR1  = STM32_TIM_CCMR1_CC1S(1);   // CC1 channel is input, IC1 is mapped on TI1
-    STM32_TIM2->CCMR1 |= STM32_TIM_CCMR1_CC2S(1);   // CC2 channel is input, IC2 is mapped on TI2
-    STM32_TIM2->CCER   = 0;
-    STM32_TIM2->ARR    = 0xFFFF;
-    STM32_TIM2->CR1    = 1;                         // start
+    setup_timer(STM32_TIM2);
 }

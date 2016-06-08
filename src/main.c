@@ -21,6 +21,7 @@
 #include "sensors/proximity.h"
 #include "sensors/imu.h"
 #include "sensors/range.h"
+#include "sensors/encoder.h"
 
 /* Aseba includes */
 #include "aseba_vm/skel.h"
@@ -90,6 +91,7 @@ int main(void)
     sdStart(&SD6, NULL);
 
     motor_pwm_start();
+    encoder_start();
 
 #if 0
     communication_start((BaseSequentialStream *)&SDU1);

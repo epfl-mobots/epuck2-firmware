@@ -8,7 +8,7 @@ extern "C" {
 #include <stdint.h>
 
 /*Encoder uses Timer 3 & 4*/
-void encoder_init(void);
+void encoder_start(void);
 uint32_t encoder_get_right(void);
 uint32_t encoder_get_left(void);
 

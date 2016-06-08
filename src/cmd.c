@@ -6,6 +6,7 @@
 #include <shell.h>
 #include "usbconf.h"
 #include "sensors/imu.h"
+#include "sensors/encoder.h"
 #include "motor_pwm.h"
 
 #define TEST_WA_SIZE        THD_WORKING_AREA_SIZE(256)
@@ -69,10 +70,19 @@ static void cmd_motor(BaseSequentialStream *chp, int argc, char *argv[])
     motor_pwm_set(select, value);
 }
 
+static void cmd_encoders(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    (void) argc;
+    (void) argv;
+
+    chprintf(chp, "left: %ld\r\nright: %ld\r\n", encoder_get_left(), encoder_get_right());
+}
+
 
 const ShellCommand shell_commands[] = {
     {"test", cmd_test},
     {"pwm", cmd_motor},
+    {"encoders", cmd_encoders},
     {"mpu6050", cmd_mpu6050},
     {NULL, NULL}
 };

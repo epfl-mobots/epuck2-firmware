@@ -147,9 +147,7 @@ void control_start(void)
     motor_init(&left, "left");
     motor_init(&right, "right");
 
-    motor_pwm_start();
     analogic_start(1, 0, 0);
-    encoder_init();
 
     /*PID gains init*/
     parameter_scalar_set(&(left.position_pid.kp), 0.);
