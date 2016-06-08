@@ -34,7 +34,7 @@ static AsebaNativeFunctionDescription AsebaNativeDescription__system_reboot =
     "_system.reboot",
     "Reboot the microcontroller",
     {
-        {0,0}
+        {0, 0}
     }
 };
 

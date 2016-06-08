@@ -81,5 +81,5 @@ void proximity_start(void)
     STM32_TIM8->CCER |= TIM_CCER_CC1E;              // enable output
 
     /*Start ADC for proximity sensors*/
-    analogic_start(0,0,1);
+    analogic_start(0, 0, 1);
 }

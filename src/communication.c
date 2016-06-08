@@ -277,9 +277,9 @@ int velocity_cb(cmp_ctx_t *cmp, void *arg)
                        &size) && size == 2 &&
         cmp_read_bool(cmp, &motor) && cmp_read_float(cmp, &velocity)) {
         if (!motor) {
-            setpoints_set_velocity(&(left.setpoints),velocity);
+            setpoints_set_velocity(&(left.setpoints), velocity);
         } else {
-            setpoints_set_velocity(&(right.setpoints),velocity);
+            setpoints_set_velocity(&(right.setpoints), velocity);
         }
         return 0;
     }
@@ -297,9 +297,9 @@ int position_cb(cmp_ctx_t *cmp, void *arg)
                        &size) && size == 2 &&
         cmp_read_bool(cmp, &motor) && cmp_read_float(cmp, &position)) {
         if (!motor) {
-            setpoints_set_position(&(left.setpoints),position);
+            setpoints_set_position(&(left.setpoints), position);
         } else {
-            setpoints_set_position(&(right.setpoints),position);
+            setpoints_set_position(&(right.setpoints), position);
         }
         return 0;
     }
@@ -317,9 +317,9 @@ int current_cb(cmp_ctx_t *cmp, void *arg)
                        &size) && size == 2 &&
         cmp_read_bool(cmp, &motor) && cmp_read_float(cmp, &current)) {
         if (!motor) {
-            setpoints_set_current(&(left.setpoints),current);
+            setpoints_set_current(&(left.setpoints), current);
         } else {
-            setpoints_set_current(&(right.setpoints),current);
+            setpoints_set_current(&(right.setpoints), current);
         }
         return 0;
     }

@@ -148,7 +148,7 @@ void control_start(void)
     motor_init(&right, "right");
 
     motor_pwm_start();
-    analogic_start(1,0,0);
+    analogic_start(1, 0, 0);
     encoder_init();
 
     /*PID gains init*/
