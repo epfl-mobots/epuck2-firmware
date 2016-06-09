@@ -542,7 +542,7 @@
  */
 #define VAL_GPIOD_MODER             (PIN_MODE_ALTERNATE(GPIOD_CAN_RX) | \
                                      PIN_MODE_ALTERNATE(GPIOD_CAN_TX) | \
-                                     PIN_MODE_INPUT(GPIOD_SDIO_CMD) |           \
+                                     PIN_MODE_ALTERNATE(GPIOD_SDIO_CMD) |           \
                                      PIN_MODE_OUTPUT(GPIOD_2V8_ON) |           \
                                      PIN_MODE_INPUT(GPIOD_PIN4) |         \
                                      PIN_MODE_INPUT(GPIOD_CAM_GPIO_0) |   \
@@ -622,7 +622,7 @@
                                      PIN_ODR_LOW(GPIOD_LED_ERROR))
 #define VAL_GPIOD_AFRL              (PIN_AFIO_AF(GPIOD_CAN_RX, 9) |           \
                                      PIN_AFIO_AF(GPIOD_CAN_TX, 9) |           \
-                                     PIN_AFIO_AF(GPIOD_SDIO_CMD, 0) |           \
+                                     PIN_AFIO_AF(GPIOD_SDIO_CMD, 12) |           \
                                      PIN_AFIO_AF(GPIOD_2V8_ON, 0) |           \
                                      PIN_AFIO_AF(GPIOD_PIN4, 0) |          \
                                      PIN_AFIO_AF(GPIOD_CAM_GPIO_0, 0) |   \
