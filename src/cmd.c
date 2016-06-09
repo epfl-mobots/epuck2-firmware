@@ -78,7 +78,13 @@ static void cmd_encoders(BaseSequentialStream *chp, int argc, char *argv[])
     (void) argc;
     (void) argv;
 
-    chprintf(chp, "left: %ld\r\nright: %ld\r\n", encoder_get_left(), encoder_get_right());
+    messagebus_topic_t *encoders_topic;
+    encoders_msg_t values;
+
+    encoders_topic = messagebus_find_topic_blocking(&bus, "/encoders");
+    messagebus_topic_wait(encoders_topic, &values, sizeof(values));
+
+    chprintf(chp, "left: %ld\r\nright: %ld\r\n", values.left, values.right);
 }
 
 static void cmd_reboot(BaseSequentialStream *chp, int argc, char **argv)

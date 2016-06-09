@@ -7,6 +7,11 @@ extern "C" {
 
 #include <stdint.h>
 
+typedef struct {
+    int32_t left;
+    int32_t right;
+} encoders_msg_t;
+
 /*Encoder uses Timer 3 & 4*/
 void encoder_start(void);
 uint32_t encoder_get_right(void);
