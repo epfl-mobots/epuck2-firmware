@@ -36,11 +36,10 @@ messagebus_t bus;
 MUTEX_DECL(bus_lock);
 CONDVAR_DECL(bus_condvar);
 
-static THD_WORKING_AREA(waThread1, 128);
-static THD_FUNCTION(Thread1, arg) {
-
+static THD_FUNCTION(blinker_thd, arg)
+{
     (void)arg;
-    chRegSetThreadName("Heartbeat");
+    chRegSetThreadName(__FUNCTION__);
     while (TRUE) {
         palTogglePad(GPIOE, GPIOE_LED_HEARTBEAT);
         chThdSleepMilliseconds(500);
@@ -108,7 +107,8 @@ int main(void)
 #endif
 
     // Start heartbeat thread
-    chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+    static THD_WORKING_AREA(blinker_thd_wa, 128);
+    chThdCreateStatic(blinker_thd_wa, sizeof(blinker_thd_wa), NORMALPRIO, blinker_thd, NULL);
 
     // Initialise i2c
     i2c_init();
