@@ -85,7 +85,6 @@ bool sdc_lld_is_card_inserted(SDCDriver *sdcp)
     /* TODO: Fill the implementation.*/
     return true;
 }
-include $(CHIBIOS) / os / hal / boards / ST_STM32F4_DISCOVERY / board.mk
 
 /**
  * @brief   SDC card write protection detection.

@@ -8,6 +8,7 @@
 #include "sensors/imu.h"
 #include "sensors/encoder.h"
 #include "motor_pwm.h"
+#include "ff.h"
 
 #define TEST_WA_SIZE        THD_WORKING_AREA_SIZE(256)
 #define SHELL_WA_SIZE       THD_WORKING_AREA_SIZE(2048)
@@ -78,11 +79,62 @@ static void cmd_encoders(BaseSequentialStream *chp, int argc, char *argv[])
     chprintf(chp, "left: %ld\r\nright: %ld\r\n", encoder_get_left(), encoder_get_right());
 }
 
+static void cmd_reboot(BaseSequentialStream *chp, int argc, char **argv)
+{
+    (void) chp;
+    (void) argc;
+    (void) argv;
+    NVIC_SystemReset();
+}
+
+static void cmd_sdcard(BaseSequentialStream *chp, int argc, char **argv)
+{
+    (void) chp;
+    (void) argc;
+    (void) argv;
+
+    FRESULT err;
+    FATFS SDC_FS;
+
+    chprintf(chp, "Starting SDC driver...\r\n");
+    sdcStart(&SDCD1, NULL);
+    chThdSleepMilliseconds(500);
+
+    chprintf(chp, "Connecting to SDC...");
+    while (true) {
+        if (sdcConnect(&SDCD1) == 0) {
+            chprintf(chp, "OK");
+            break;
+        } else {
+            chprintf(chp, "FAILED");
+        }
+        chThdSleepMilliseconds(50);
+    }
+    chprintf(chp, "\r\n");
+
+    chThdSleepMilliseconds(500);
+
+    chprintf(chp, "Mouting card... ");
+    err = f_mount(&SDC_FS, "", 1);
+    if (err == FR_OK) {
+        chprintf(chp, "OK");
+    } else {
+        chprintf(chp, "FAILED (err code=%d)", err);
+    }
+
+    chprintf(chp, "\r\n");
+
+    sdcDisconnect(&SDCD1);
+}
+
 
 const ShellCommand shell_commands[] = {
     {"test", cmd_test},
     {"pwm", cmd_motor},
     {"encoders", cmd_encoders},
+    {"reboot", cmd_reboot},
+    {"test", cmd_test},
+    {"sdcard", cmd_sdcard},
     {"mpu6050", cmd_mpu6050},
     {NULL, NULL}
 };
