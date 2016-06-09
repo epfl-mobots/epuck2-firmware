@@ -159,11 +159,102 @@ static void cmd_topics(BaseSequentialStream *chp, int argc, char *argv[])
     }
 }
 
+#define DAC_BUFFER_SIZE 360
+
+/*
+ * DAC test buffer (sine wave).
+ */
+
+#include "../sound.c"
+
+/*
+ * DAC streaming callback.
+ */
+
+static void end_cb1(DACDriver *dacp, const dacsample_t *buffer, size_t n);
+static void error_cb1(DACDriver *dacp, dacerror_t err);
+
+static const DACConversionGroup dacgrpcfg1 = {
+  num_channels: 2U,
+  end_cb:       end_cb1,
+  error_cb:     error_cb1,
+  trigger:      DAC_TRG(0)
+};
+
+size_t pos=0;
+static void end_cb1(DACDriver *dacp, const dacsample_t *buffer, size_t n) {
+
+  (void)dacp;
+
+
+
+  memcpy(buffer, &sound_wav[pos], n);
+
+  pos += n;
+  if (pos > sound_wav_len) {
+      pos = 0;
+  }
+
+}
+
+/*
+ * DAC error callback.
+ */
+static void error_cb1(DACDriver *dacp, dacerror_t err) {
+
+  (void)dacp;
+  (void)err;
+
+  chSysHalt("DAC failure");
+}
+
+static const DACConfig dac1cfg1 = {
+  init:         2047U,
+  datamode:     DAC_DHRM_12BIT_RIGHT_DUAL
+};
+
+
+/*
+ * GPT2 configuration.
+ */
+static const GPTConfig gpt6cfg1 = {
+  frequency:    1000000U,
+  callback:     NULL,
+  cr2:          TIM_CR2_MMS_1,  /* MMS = 010 = TRGO on Update Event.        */
+  dier:         0U
+};
+
+static void cmd_dac(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    (void) argc;
+    (void) argv;
+    (void) chp;
+    palSetPadMode(GPIOA, 4, PAL_MODE_INPUT_ANALOG);
+    palSetPadMode(GPIOA, 5, PAL_MODE_INPUT_ANALOG);
+    dacStart(&DACD1, &dac1cfg1);
+
+    /*
+     * Starting GPT6 driver, it is used for triggering the DAC.
+     */
+    gptStart(&GPTD6, &gpt6cfg1);
+
+    /*
+     * Starting a continuous conversion.
+     * Note, the buffer size is divided by two because two elements are fetched
+     * for each transfer.
+     */
+    dacStartConversion(&DACD1, &dacgrpcfg1, sound_wav, 1000);
+    gptStartContinuous(&GPTD6, 2U);
+
+
+
+}
 
 const ShellCommand shell_commands[] = {
     {"test", cmd_test},
     {"range", cmd_range},
     {"topics", cmd_topics},
+    {"dac", cmd_dac},
     {"pwm", cmd_motor},
     {"encoders", cmd_encoders},
     {"reboot", cmd_reboot},

@@ -242,7 +242,7 @@
                                      PIN_MODE_ANALOG(GPIOA_MOT1_CURRENT) |           \
                                      PIN_MODE_INPUT(GPIOA_VSYS_ADC) |           \
                                      PIN_MODE_INPUT(GPIOA_DCMI_HSYNC) |       \
-                                     PIN_MODE_INPUT(GPIOA_AUDIO_SPEAKER) |        \
+                                     PIN_MODE_ANALOG(GPIOA_AUDIO_SPEAKER) |        \
                                      PIN_MODE_INPUT(GPIOA_DCMI_PIXCLK) |        \
                                      PIN_MODE_INPUT(GPIOA_AUDIO_MIC2) |        \
                                      PIN_MODE_INPUT(GPIOA_CAM_CLK) |           \
@@ -290,7 +290,7 @@
                                      PIN_PUPDR_FLOATING(GPIOA_MOT1_CURRENT) |         \
                                      PIN_PUPDR_PULLUP(GPIOA_VSYS_ADC) |         \
                                      PIN_PUPDR_PULLUP(GPIOA_DCMI_HSYNC) |       \
-                                     PIN_PUPDR_PULLUP(GPIOA_AUDIO_SPEAKER) |        \
+                                     PIN_PUPDR_FLOATING(GPIOA_AUDIO_SPEAKER) |        \
                                      PIN_PUPDR_PULLUP(GPIOA_DCMI_PIXCLK) |        \
                                      PIN_PUPDR_PULLUP(GPIOA_AUDIO_MIC2) |        \
                                      PIN_PUPDR_PULLUP(GPIOA_CAM_CLK) |         \
@@ -322,7 +322,7 @@
                                      PIN_AFIO_AF(GPIOA_MOT1_CURRENT, 0) |           \
                                      PIN_AFIO_AF(GPIOA_VSYS_ADC, 0) |           \
                                      PIN_AFIO_AF(GPIOA_DCMI_HSYNC, 6) |           \
-                                     PIN_AFIO_AF(GPIOA_AUDIO_SPEAKER, 5) |            \
+                                     PIN_AFIO_AF(GPIOA_AUDIO_SPEAKER, 0) |            \
                                      PIN_AFIO_AF(GPIOA_DCMI_PIXCLK, 5) |            \
                                      PIN_AFIO_AF(GPIOA_AUDIO_MIC2, 5))
 #define VAL_GPIOA_AFRH              (PIN_AFIO_AF(GPIOA_CAM_CLK, 0) |           \
