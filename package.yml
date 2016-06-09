@@ -15,7 +15,6 @@ depends:
 
 source:
     - src/cmp/cmp.c
-    - fatfs/src/ff.c
 
 target.arm:
     - src/panic.c
@@ -42,6 +41,7 @@ target.arm:
     - src/segway.c
     - src/pose_estimation.c
     - src/memory_protection.c
+    - fatfs/src/ff.c
 
 templates:
     src/src.mk.jinja: 'src/src.mk'
