@@ -10,6 +10,7 @@
 #include "sensors/range.h"
 #include "motor_pwm.h"
 #include "ff.h"
+#include "main.h"
 
 #define TEST_WA_SIZE        THD_WORKING_AREA_SIZE(256)
 #define SHELL_WA_SIZE       THD_WORKING_AREA_SIZE(2048)
@@ -140,10 +141,23 @@ static void cmd_range(BaseSequentialStream *chp, int argc, char *argv[])
     chprintf(chp, "distance = %.2f m", distance_m);
 }
 
+static void cmd_topics(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    (void) argc;
+    (void) argv;
+
+    chprintf(chp, "available topics:\r\n");
+
+    MESSAGEBUS_TOPIC_FOREACH(&bus, topic) {
+        chprintf(chp, "%s\r\n", topic->name);
+    }
+}
+
 
 const ShellCommand shell_commands[] = {
     {"test", cmd_test},
     {"range", cmd_range},
+    {"topics", cmd_topics},
     {"pwm", cmd_motor},
     {"encoders", cmd_encoders},
     {"reboot", cmd_reboot},
