@@ -1,27 +1,42 @@
 #include "ch.h"
 #include "hal.h"
+#include "main.h"
 #include "sensors/range.h"
 #include "sensors/vl6180x-driver/vl6180x.h"
 
 #define MILLIMETER_TO_METER 1e-3f
 
 static vl6180x_t vl6180x;
-range_t range_sample;
 
 void range_get_range(float *range)
 {
-    chSysLock();
+    messagebus_topic_t *topic;
+    range_t range_sample;
+
+    topic = messagebus_find_topic_blocking(&bus, "/range");
+
+    messagebus_topic_wait(topic, &range_sample, sizeof(range_sample));
+
     *range = range_sample.raw;
-    chSysUnlock();
 }
 
 static THD_WORKING_AREA(range_reader_thd_wa, 1024);
-static THD_FUNCTION(range_reader_thd, arg) {
-
+static THD_FUNCTION(range_reader_thd, arg)
+{
     (void)arg;
+
+    messagebus_topic_t range_topic;
+    MUTEX_DECL(range_topic_lock);
+    CONDVAR_DECL(range_topic_condvar);
+    range_t range_topic_value;
+
+    range_t range_sample;
 
     static uint8_t temp;
     chRegSetThreadName("Range_reader");
+
+    messagebus_topic_init(&range_topic, &range_topic_lock, &range_topic_condvar, &range_topic_value, sizeof(range_topic_value));
+    messagebus_advertise_topic(&bus, &range_topic, "/range");
 
     while (TRUE) {
         // Read sensor
@@ -29,10 +44,10 @@ static THD_FUNCTION(range_reader_thd, arg) {
         vl6180x_measure_distance(&vl6180x, &temp);
         i2cReleaseBus(vl6180x.i2c);
 
-        chSysLock();
         range_sample.raw_mm = temp;
         range_sample.raw = range_sample.raw_mm * MILLIMETER_TO_METER;
-        chSysUnlock();
+
+        messagebus_topic_publish(&range_topic, &range_sample, sizeof(range_sample));
     }
 }
 

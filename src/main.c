@@ -14,6 +14,8 @@
 #include "control.h"
 #include "communication.h"
 
+#include "main.h"
+
 /* Testing includes */
 #include "analogic.h"
 #include "motor_pwm.h"
@@ -30,6 +32,9 @@
 
 #include "segway.h"
 
+messagebus_t bus;
+MUTEX_DECL(bus_lock);
+CONDVAR_DECL(bus_condvar);
 
 static THD_WORKING_AREA(waThread1, 128);
 static THD_FUNCTION(Thread1, arg) {
@@ -75,6 +80,9 @@ int main(void)
      */
     sduObjectInit(&SDU1);
     sduStart(&SDU1, &serusbcfg);
+
+    /** Inits the Inter Process Communication bus. */
+    messagebus_init(&bus, &bus_lock, &bus_condvar);
 
     /*
      * Activates the USB driver and then the USB bus pull-up on D+.

@@ -7,6 +7,7 @@
 #include "usbconf.h"
 #include "sensors/imu.h"
 #include "sensors/encoder.h"
+#include "sensors/range.h"
 #include "motor_pwm.h"
 #include "ff.h"
 
@@ -127,9 +128,22 @@ static void cmd_sdcard(BaseSequentialStream *chp, int argc, char **argv)
     sdcDisconnect(&SDCD1);
 }
 
+static void cmd_range(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    (void) argc;
+    (void) argv;
+
+    float distance_m;
+
+    range_get_range(&distance_m);
+
+    chprintf(chp, "distance = %.2f m", distance_m);
+}
+
 
 const ShellCommand shell_commands[] = {
     {"test", cmd_test},
+    {"range", cmd_range},
     {"pwm", cmd_motor},
     {"encoders", cmd_encoders},
     {"reboot", cmd_reboot},

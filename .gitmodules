@@ -31,3 +31,6 @@
 [submodule "src/chibios-syscalls"]
 	path = src/chibios-syscalls
 	url = https://github.com/cvra/chibios-syscalls
+[submodule "src/msgbus"]
+	path = src/msgbus
+	url = https://git.wise-robotics.com/epuck2/msgbus.git

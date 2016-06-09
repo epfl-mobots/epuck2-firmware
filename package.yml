@@ -12,6 +12,7 @@ depends:
     - serial-datagram
     - aseba_vm
     - chibios-syscalls
+    - msgbus
 
 source:
     - src/cmp/cmp.c
