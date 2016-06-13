@@ -257,7 +257,7 @@ libssp_nonshared.a:
 .PHONY: ctags
 ctags:
 	@echo "Generating ctags file..."
-	@cat .dep/*.d | grep ":$$" | sed "s/://" | sort | uniq | xargs ctags  --extra=+q $(CSRC) $(CPPSRC)
+	@cat .dep/*.d | grep ":$$" | sed "s/://" | sort | uniq | xargs ctags  --extra=+qf $(CSRC) $(CPPSRC)
 
 flash: build/$(PROJECT).elf
 	openocd -f oocd.cfg -c "program build/$(PROJECT).elf verify reset exit"
