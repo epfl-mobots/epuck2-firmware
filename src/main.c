@@ -21,6 +21,7 @@
 #include "sensors/encoder.h"
 #include "sensors/battery_level.h"
 #include "config_flash_storage.h"
+#include "sensors/motor_current.h"
 
 #include "aseba_vm/aseba_node.h"
 #include "aseba_vm/skel_user.h"
@@ -112,6 +113,7 @@ int main(void)
     proximity_start();
     imu_start();
     exti_start();
+    motor_current_start();
 
 
     // Initialise aseba parameters

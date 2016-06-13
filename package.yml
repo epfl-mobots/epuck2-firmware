@@ -24,6 +24,7 @@ target.arm:
     - src/sensors/mpu60X0.c
     - src/sensors/proximity.c
     - src/sensors/imu.c
+    - src/sensors/motor_current.c
     - src/usbconf.c
     - src/exti.c
     - src/encoder.c
