@@ -13,6 +13,7 @@
 #include "sensors/proximity.h"
 #include "sensors/battery_level.h"
 #include "sensors/imu.h"
+#include "sensors/motor_current.h"
 #include "motor_pwm.h"
 #include "ff.h"
 #include "main.h"
@@ -383,11 +384,26 @@ static void cmd_shutdown(BaseSequentialStream *chp, int argc, char **argv)
     board_shutdown();
 }
 
+static void cmd_current(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    (void) argc;
+    (void) argv;
+
+    motor_current_msg_t msg;
+    messagebus_topic_t *topic;
+
+    topic = messagebus_find_topic_blocking(&bus, "/motor/current");
+    messagebus_topic_wait(topic, &msg, sizeof(msg));
+
+    chprintf(chp, "left=%.2f\r\nright=%.2f\r\n", msg.left, msg.right);
+}
+
 const ShellCommand shell_commands[] = {
     {"test", cmd_test},
     {"range", cmd_range},
     {"proximity", cmd_proximity},
     {"battery", cmd_battery},
+    {"current", cmd_current},
     {"topics", cmd_topics},
     {"pwm", cmd_motor},
     {"encoders", cmd_encoders},

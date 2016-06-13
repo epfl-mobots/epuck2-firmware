@@ -82,10 +82,23 @@ static THD_FUNCTION(adc_motor_current, arg)
     /* Then start the measurement itself. */
     motor_current_start_adc();
 
+
     while (1) {
+        motor_current_msg_t msg;
+
         /* Wait for a new measurement to be available. */
         chBSemWait(&measurement_ready_sem);
-        // Todo: take data from the callback and publish it
+
+        /* Convert the value to amperes. */
+        chSysLock();
+        msg.left = motor_value[0];
+        msg.right = motor_value[1];
+        chSysUnlock();
+
+        // TODO: Convert it to amperes
+
+        /* Publish them. */
+        messagebus_topic_publish(&motor_current_topic, &msg, sizeof(msg));
     }
 }
 
