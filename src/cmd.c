@@ -144,7 +144,7 @@ static void cmd_range(BaseSequentialStream *chp, int argc, char *argv[])
 
     range_get_range(&distance_m);
 
-    chprintf(chp, "distance = %.2f m", distance_m);
+    chprintf(chp, "distance = %.2f m\r\n", distance_m);
 }
 
 static void cmd_topics(BaseSequentialStream *chp, int argc, char *argv[])

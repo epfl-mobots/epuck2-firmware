@@ -362,8 +362,8 @@
                                      PIN_OTYPE_PUSHPULL(GPIOB_SPI_MOSI) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_DCMI_D5) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_DCMI_VSYNC) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOB_I2C_SCLK) | \
-                                     PIN_OTYPE_PUSHPULL(GPIOB_I2C_SDA) | \
+                                     PIN_OTYPE_OPENDRAIN(GPIOB_I2C_SCLK) | \
+                                     PIN_OTYPE_OPENDRAIN(GPIOB_I2C_SDA) | \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN10) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN11) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN12) |      \
