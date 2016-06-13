@@ -2,6 +2,8 @@
 .dep/*
 build/
 debug/
+*.elf
+*.a
 
 
 # Vim swap
