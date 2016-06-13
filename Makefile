@@ -245,6 +245,14 @@ ULIBS =
 RULESPATH = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC
 include $(RULESPATH)/rules.mk
 
+# Empty libraries, required by stack smashing protection
+PRE_MAKE_ALL_RULE_HOOK: libssp.a libssp_nonshared.a
+libssp.a:
+	arm-none-eabi-ar rcs $@
+
+libssp_nonshared.a:
+	arm-none-eabi-ar rcs $@
+
 # Generates a ctags file containing the correct definition for the build
 .PHONY: ctags
 ctags:
