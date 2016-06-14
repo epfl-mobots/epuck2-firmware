@@ -128,6 +128,8 @@ int main(void)
     range_init(&I2CD1);
     range_start();
 
+    proximity_start();
+
     // Start control loops
 //    control_start();
 
