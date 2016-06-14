@@ -12,33 +12,35 @@
 #define MOT1_PHASE_B 1
 
 static const PWMConfig pwmcfg1 = {
-    PWM_CLK_FREQ,                                   /* 42MHz PWM clock frequency.  */
-    PWM_CYCLE,                                      /* PWM cycle is 21kHz.   */
-    NULL,
+    .frequency = PWM_CLK_FREQ,                                   /* 42MHz PWM clock frequency.  */
+    .period = PWM_CYCLE,                                      /* PWM cycle is 21kHz.   */
+    .callback = NULL,
     {
-        {PWM_OUTPUT_DISABLED, NULL},
-        {PWM_OUTPUT_DISABLED, NULL},
-        {PWM_OUTPUT_ACTIVE_HIGH, NULL},
-        {PWM_OUTPUT_ACTIVE_HIGH, NULL}
-    },
+     {PWM_OUTPUT_DISABLED, NULL},
+     {PWM_OUTPUT_DISABLED, NULL},
+     {PWM_OUTPUT_ACTIVE_HIGH, NULL},
+     {PWM_OUTPUT_ACTIVE_HIGH, NULL}
+},
     /* HW dependent part.*/
     0,                  // TIMx_CR2 value
+    0,
     0                   // TIMx_DIER value
 };
 
 static const PWMConfig pwmcfg2 = {
-    PWM_CLK_FREQ,                                   /* 42MHz PWM clock frequency.  */
-    PWM_CYCLE,                                      /* PWM cycle is 21kHz.   */
-    NULL,
-    {
-        {PWM_OUTPUT_ACTIVE_HIGH, NULL},
-        {PWM_OUTPUT_ACTIVE_HIGH, NULL},
-        {PWM_OUTPUT_DISABLED, NULL},
-        {PWM_OUTPUT_DISABLED, NULL}
-    },
+    .frequency = PWM_CLK_FREQ,                                   /* 42MHz PWM clock frequency.  */
+    .period = PWM_CYCLE,                                      /* PWM cycle is 21kHz.   */
+    .callback = NULL,
+    .channels = {
+                 {.mode = PWM_OUTPUT_ACTIVE_HIGH, .callback = NULL},
+                 {.mode = PWM_OUTPUT_ACTIVE_HIGH, .callback = NULL},
+                 {.mode = PWM_OUTPUT_DISABLED, .callback = NULL},
+                 {.mode = PWM_OUTPUT_DISABLED, .callback = NULL}
+},
     /* HW dependent part.*/
-    0,                  // TIMx_CR2 value
-    0                   // TIMx_DIER value
+    .cr2 = 0,
+    .bdtr = 0,
+    .dier = 0
 };
 
 
