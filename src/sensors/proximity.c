@@ -160,10 +160,10 @@ void proximity_start(void)
     pwmStart(&PWMD8, &pwmcfg_proximity);
 
     /* Set duty cycle for TCRT1000 drivers. */
-//    pwmEnableChannel(&PWMD8, 1, (pwmcnt_t) (PWM_CYCLE * TCRT1000_DC));
+    pwmEnableChannel(&PWMD8, 1, (pwmcnt_t) (PWM_CYCLE * TCRT1000_DC));
 
     /* Set measurement time for ADC. */
-    pwmEnableChannel(&PWMD8, 0, (pwmcnt_t) (PWM_CYCLE * OFF_MEASUREMENT_POS));
+    pwmEnableChannel(&PWMD8, 0, (pwmcnt_t) (PWM_CYCLE * ON_MEASUREMENT_POS));
 
     static THD_WORKING_AREA(proximity_thd_wa, 2048);
     chThdCreateStatic(proximity_thd_wa, sizeof(proximity_thd_wa), NORMALPRIO, proximity_thd, NULL);
