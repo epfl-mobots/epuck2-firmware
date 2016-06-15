@@ -81,9 +81,12 @@ static void adc2_proximity_cb(ADCDriver *adcp, adcsample_t *adc2_proximity_sampl
 static void adc3_proximity_cb(ADCDriver *adcp, adcsample_t *adc3_proximity_samples, size_t n)
 {
     (void)adcp;
-    uint32_t accumulator[PROXIMITY_NB_CHANNELS_ADC3] = {0};
+    (void)adc3_proximity_samples;
+    (void)n;
 
+    /*
     size_t i, j;
+    uint32_t accumulator[PROXIMITY_NB_CHANNELS_ADC3] = {0};
     if (proximity_change_adc_trigger()) {
         for (i = 0; i < n; i += PROXIMITY_NB_CHANNELS_ADC3) {
             for (j = 0; j < PROXIMITY_NB_CHANNELS_ADC3; i++) {
@@ -108,6 +111,7 @@ static void adc3_proximity_cb(ADCDriver *adcp, adcsample_t *adc3_proximity_sampl
         chSysUnlockFromISR();
     }
     chEvtBroadcastFlags(&analogic_events, PROXIMITY_CB);
+    */
 }
 
 static THD_WORKING_AREA(adc_motor_current_wa, 128);
