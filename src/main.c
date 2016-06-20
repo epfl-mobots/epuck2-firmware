@@ -36,6 +36,8 @@ messagebus_t bus;
 MUTEX_DECL(bus_lock);
 CONDVAR_DECL(bus_condvar);
 
+parameter_namespace_t parameter_root;
+
 static THD_FUNCTION(blinker_thd, arg)
 {
     (void)arg;
@@ -82,6 +84,8 @@ int main(void)
 
     /** Inits the Inter Process Communication bus. */
     messagebus_init(&bus, &bus_lock, &bus_condvar);
+
+    parameter_namespace_declare(&parameter_root, NULL, "");
 
     /*
      * Activates the USB driver and then the USB bus pull-up on D+.

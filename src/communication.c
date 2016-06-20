@@ -14,8 +14,8 @@
 #include "attitude_estimation.h"
 #include "pose_estimation.h"
 #include "segway.h"
+#include "main.h"
 
-parameter_namespace_t parameter_root;
 
 static mutex_t send_lock;
 
@@ -358,7 +358,6 @@ static THD_FUNCTION(comm_rx, arg)
 
 void communication_start(BaseSequentialStream *out)
 {
-    parameter_namespace_declare(&parameter_root, NULL, NULL);
     chMtxObjectInit(&send_lock);
     chThdCreateStatic(comm_tx_stream_wa, sizeof(comm_tx_stream_wa), LOWPRIO, comm_tx_stream, out);
     chThdCreateStatic(comm_rx_wa, sizeof(comm_rx_wa), LOWPRIO, comm_rx, out);

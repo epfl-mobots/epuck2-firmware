@@ -16,6 +16,7 @@ depends:
 
 source:
     - src/cmp/cmp.c
+    - src/config_flash_storage.c
 
 target.arm:
     - src/panic.c
@@ -42,7 +43,12 @@ target.arm:
     - src/segway.c
     - src/pose_estimation.c
     - src/memory_protection.c
+    - src/flash/flash.c
     - fatfs/src/ff.c
+
+tests:
+    - tests/config_save_test.cpp
+    - tests/flash_mock.cpp
 
 templates:
     src/src.mk.jinja: 'src/src.mk'
