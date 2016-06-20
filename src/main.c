@@ -26,8 +26,8 @@
 #include "sensors/encoder.h"
 
 /* Aseba includes */
-#include "aseba_vm/skel.h"
 #include "aseba_vm/aseba_node.h"
+#include "aseba_vm/skel_user.h"
 #include "aseba_vm/aseba_can_interface.h"
 
 #include "segway.h"

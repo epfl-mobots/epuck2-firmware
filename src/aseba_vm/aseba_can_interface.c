@@ -15,7 +15,8 @@ CanFrame aseba_can_send_queue[ASEBA_CAN_SEND_QUEUE_SIZE];
 CanFrame aseba_can_receive_queue[ASEBA_CAN_RECEIVE_QUEUE_SIZE];
 
 static THD_WORKING_AREA(can_rx_thread_wa, 256);
-static THD_FUNCTION(can_rx_thread, arg) {
+static THD_FUNCTION(can_rx_thread, arg)
+{
     (void)arg;
     chRegSetThreadName("CAN rx");
     while (1) {
@@ -43,6 +44,7 @@ static THD_FUNCTION(can_rx_thread, arg) {
 
 void can_init(void)
 {
+
     static const CANConfig can1_config = {
         .mcr = (1 << 6)  /* Automatic bus-off management enabled. */
                | (1 << 2), /* Message are prioritized by order of arrival. */
@@ -54,6 +56,7 @@ void can_init(void)
                | (7 << 20) /* Time segment 2 (3 bits) */
                | (0 << 24) /* Resync jump width (2 bits) */
     };
+
     canStart(&CAND1, &can1_config);
 }
 
@@ -67,6 +70,7 @@ void aseba_can_tx_dropped(void)
 
 void aseba_can_send_frame(const CanFrame *frame)
 {
+    aseba_can_lock();
     CANTxFrame txf;
     txf.DLC = frame->len;
     txf.RTR = 0;
@@ -80,7 +84,9 @@ void aseba_can_send_frame(const CanFrame *frame)
 
     canTransmit(&CAND1, CAN_ANY_MAILBOX, &txf, MS2ST(100));
     chThdSleepMilliseconds(1);
+
     AsebaCanFrameSent();
+    aseba_can_unlock();
 }
 
 // Returns true if there is enough space to send the frame
@@ -101,4 +107,16 @@ void aseba_can_start(AsebaVMState *vm_state)
                  aseba_can_rx_dropped, aseba_can_tx_dropped,
                  aseba_can_send_queue, ASEBA_CAN_SEND_QUEUE_SIZE,
                  aseba_can_receive_queue, ASEBA_CAN_RECEIVE_QUEUE_SIZE);
+}
+
+static MUTEX_DECL(can_lock);
+
+void aseba_can_lock(void)
+{
+    chMtxLock(&can_lock);
+}
+
+void aseba_can_unlock(void)
+{
+    chMtxUnlock(&can_lock);
 }

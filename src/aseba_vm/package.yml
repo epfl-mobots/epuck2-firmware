@@ -9,5 +9,4 @@ target.arm:
     - ../../aseba/vm/vm.c
     - aseba_vm/aseba_can_interface.c
     - aseba_node.c
-    - skel.c
     - skel_user.c

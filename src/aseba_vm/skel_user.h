@@ -5,36 +5,29 @@
 extern "C" {
 #endif
 
-/*
- * Send queue size may be smaller (64 is the smallest value) something like 70-80 is better
- * 128 is luxury
- */
-#define SEND_QUEUE_SIZE 128
+#include "common/types.h"
+#include "vm/vm.h"
+#include "vm/natives.h"
+#include "parameter/parameter.h"
 
-/*
- * Warning, at least an aseba message MUST be able to fit into this RECV_QUEUE_SIZE buffer
- * 256 is IMHO the minimum, but maybe it can be lowered with a lot of caution.
- * The bigger you have, the best it is. Fill the empty ram with it :)
- */
-#define RECV_QUEUE_SIZE 756
-
-/*
- * This is the number of "private" variable the aseba script can have
- */
+/** Number of variables usable by the Aseba script. */
 #define VM_VARIABLES_FREE_SPACE 256
 
-/*
- * This is the maximum number of argument an aseba event can receive
- */
+/** Maximum number of args an Aseba event can use. */
 #define VM_VARIABLES_ARG_SIZE 32
 
-/*
- * The number of opcode an aseba script can have
+#define SETTINGS_COUNT 32
+
+/** Enum containing all the possible events. */
+enum AsebaLocalEvents {
+    EVENT_BUTTON=0, // Button click
+};
+
+
+/** Struct type defining the variables to expose to the VM.
+ *
+ * @note This should be kept in sync with the variable descriptions.
  */
-#define VM_BYTECODE_SIZE (766 + 768)  // PUT HERE 766 + 768 * a, where a is >= 0
-#define VM_STACK_SIZE 128
-
-
 struct _vmVariables {
     sint16 id;                          // NodeID
     sint16 source;                      // Source
@@ -42,31 +35,34 @@ struct _vmVariables {
     sint16 fwversion[2];                // Firmware version
     sint16 productId;                   // Product ID
 
-    sint16 range;
+    // Variables
+    uint16 leds[6];
+    sint16 acc[3];
 
     // Free space
     sint16 freeSpace[VM_VARIABLES_FREE_SPACE];
 };
 
+/** Declares the parameters and variables required by the Aseba application. */
+void aseba_variables_init(parameter_namespace_t *aseba_ns);
 
-enum Events {
-    EVENTS_COUNT   // Do not touch
-};
+/** Updates the Aseba variables from the system. */
+void aseba_read_variables_from_system(AsebaVMState *vm);
 
-// The content of this structure is implementation-specific.
-// The glue provide a way to store and retrive it from flash.
-// The only way to write it is to do it from inside the VM (native function)
-// The native function access it as a integer array. So, use only int inside this structure
-struct private_settings {
-    /* ADD here the settings to save into flash */
-    /* The minimum size is one integer, the maximum size is 95 integer (Check done at compilation) */
-    int settings[95];
-};
+/** Updates the system from the Aseba variables. */
+void aseba_write_variables_to_system(AsebaVMState *vm);
 
-extern const AsebaNativeFunctionPointer nativeFunctions[];
-extern const AsebaNativeFunctionDescription* nativeFunctionsDescription[];
+void accelerometer_cb(void);
+void button_cb(void);
+
+extern struct _vmVariables vmVariables;
+
 extern const AsebaVMDescription vmDescription;
 extern const AsebaLocalEventDescription localEvents[];
+
+extern AsebaNativeFunctionPointer nativeFunctions[];
+extern const AsebaNativeFunctionDescription* nativeFunctionsDescription[];
+extern const int nativeFunctions_length;
 
 #ifdef __cplusplus
 }

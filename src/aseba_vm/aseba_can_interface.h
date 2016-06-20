@@ -9,6 +9,9 @@ extern "C" {
 
 void aseba_can_start(AsebaVMState *vm_state);
 
+void aseba_can_lock(void);
+void aseba_can_unlock(void);
+
 #ifdef __cplusplus
 }
 #endif
