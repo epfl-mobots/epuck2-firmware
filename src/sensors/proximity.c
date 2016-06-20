@@ -15,9 +15,9 @@
 #define OFF_MEASUREMENT_POS 0.5
 #define NUM_IR_SENSORS 13
 
-#define PROXIMITY_NB_CHANNELS_ADC3 12
+#define PROXIMITY_NB_CHANNELS_ADC3 13
 #define PROXIMITY_ADC_SAMPLE_TIME ADC_SAMPLE_112
-#define DMA_BUFFER_SIZE (1)
+#define DMA_BUFFER_SIZE (16)
 
 unsigned int values[PROXIMITY_NB_CHANNELS_ADC3] = {0};
 static BSEMAPHORE_DECL(measurement_ready, true);
@@ -30,22 +30,16 @@ static void adc3_proximity_cb(ADCDriver *adcp, adcsample_t *samples, size_t n)
 
     memset(values, 0, sizeof(values));
 
-    for (int i = 0; i < PROXIMITY_NB_CHANNELS_ADC3; i++) {
-        values[i] = samples[i];
+    for (int j = 0; j < n; j++) {
+        for (int i = 0; i < PROXIMITY_NB_CHANNELS_ADC3; i++) {
+            values[i] += samples[PROXIMITY_NB_CHANNELS_ADC3 * j + i];
+        }
     }
 
+    for (size_t i = 0; i < PROXIMITY_NB_CHANNELS_ADC3; i++) {
+        values[i] /= n;
+    }
 
-
-//j    for (size_t i = 0; i < n; i++) {
-//j        for (size_t j = 0; j < PROXIMITY_NB_CHANNELS_ADC3; j++) {
-//j            values[j] = samples[j * n + i];
-//j        }
-//j    }
-
-//    for (size_t i = 0; i < PROXIMITY_NB_CHANNELS_ADC3; i++) {
-//        values[i] /= n;
-//    }
-//
     palTogglePad(GPIOE, GPIOE_LED_STATUS);
 
     chSysLockFromISR();
@@ -90,13 +84,30 @@ static THD_FUNCTION(proximity_thd, arg)
         ADC_SMPR2_SMP_AN8(PROXIMITY_ADC_SAMPLE_TIME) |   // PF10 - IR_AN7
         ADC_SMPR2_SMP_AN9(PROXIMITY_ADC_SAMPLE_TIME),    // PF3 - IR_AN0
 
-        .sqr1=ADC_SQR1_NUM_CH(PROXIMITY_NB_CHANNELS_ADC3),
+        // Proximity sensors channels (CCW, from above, front is range sensor)
+        // 12
+        // 13
+        // 11
+        // 14
+        // 15
+        // 6
+        // 5
+
+        // Ground sensors
+        // 8
+        // ADC2, TODO
+        // 10
+        // 4
+        // 7
+        // 9
+
+        .sqr1=ADC_SQR1_NUM_CH(PROXIMITY_NB_CHANNELS_ADC3) | ADC_SQR1_SQ13_N(9),
         /*SQR2*/
-        .sqr2=ADC_SQR2_SQ7_N(7) | ADC_SQR2_SQ8_N(8) | ADC_SQR2_SQ9_N(10) | ADC_SQR2_SQ10_N(11) | ADC_SQR2_SQ11_N(12) | ADC_SQR2_SQ12_N(13),
+        .sqr2=ADC_SQR2_SQ7_N(5) | ADC_SQR2_SQ8_N(8) | ADC_SQR2_SQ9_N(2) | ADC_SQR2_SQ10_N(10) | ADC_SQR2_SQ11_N(4) | ADC_SQR2_SQ12_N(7),
         /*SQR3*/
-        .sqr3=ADC_SQR3_SQ1_N(9) | ADC_SQR3_SQ2_N(14) |
-        ADC_SQR3_SQ3_N(15) | ADC_SQR3_SQ4_N(4) |
-        ADC_SQR3_SQ5_N(5) | ADC_SQR3_SQ6_N(6),
+        .sqr3=ADC_SQR3_SQ1_N(12) | ADC_SQR3_SQ2_N(13) |
+        ADC_SQR3_SQ3_N(11) | ADC_SQR3_SQ4_N(14) |
+        ADC_SQR3_SQ5_N(15) | ADC_SQR3_SQ6_N(6),
     };
 
 
