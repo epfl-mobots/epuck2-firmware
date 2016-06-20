@@ -36,7 +36,7 @@ messagebus_t bus;
 MUTEX_DECL(bus_lock);
 CONDVAR_DECL(bus_condvar);
 
-parameter_namespace_t parameter_root;
+parameter_namespace_t parameter_root, aseba_ns;
 
 static THD_FUNCTION(blinker_thd, arg)
 {
@@ -124,6 +124,9 @@ int main(void)
     // Start control loops
 //    control_start();
 
+    // Initialise aseba parameters
+    parameter_namespace_declare(&aseba_ns, &parameter_root, "aseba");
+    aseba_declare_parameters(&aseba_ns);
     // Initialise Aseba node (CAN and VM)
     aseba_vm_init();
     aseba_can_start(&vmState);

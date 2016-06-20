@@ -25,7 +25,7 @@
  * Board identifier.
  */
 #define BOARD_STM32F407_E_PUCK_2_V1
-#define BOARD_NAME     "STM32F407 e_puck_2 V1"
+#define BOARD_NAME     "Epuck 2"
 
 /*
  * Board oscillators-related settings.
