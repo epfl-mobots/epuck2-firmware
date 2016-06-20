@@ -36,8 +36,7 @@ struct _vmVariables {
     sint16 productId;                   // Product ID
 
     // Variables
-    uint16 leds[6];
-    sint16 acc[3];
+    uint16 range;
 
     // Free space
     sint16 freeSpace[VM_VARIABLES_FREE_SPACE];

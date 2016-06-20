@@ -10,7 +10,6 @@ extern "C" {
 typedef struct {
     uint8_t raw_mm;
     float raw;
-    float variance;
 } range_t;
 
 void range_get_range(float *range);

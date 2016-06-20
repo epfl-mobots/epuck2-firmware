@@ -13,6 +13,8 @@
 #include "main.h"
 #include "config_flash_storage.h"
 
+#include "sensors/range.h"
+
 /* Struct used to share Aseba parameters between C-style API and Aseba. */
 static parameter_t aseba_settings[SETTINGS_COUNT];
 static char aseba_settings_name[SETTINGS_COUNT][10];
@@ -30,7 +32,7 @@ const AsebaVMDescription vmDescription = {
      {2, "_fwversion"},
      {1, "_productId"},
 
-     {3, "acc"},
+     {1, "range"},
 
      {0, NULL}
 }
@@ -66,7 +68,16 @@ void aseba_variables_init(parameter_namespace_t *aseba_ns)
 
 void aseba_read_variables_from_system(AsebaVMState *vm)
 {
+    range_t range;
+    messagebus_topic_t *topic;
+
     vmVariables.id = vm->nodeId;
+
+    topic = messagebus_find_topic(&bus, "/range");
+    if (topic != NULL) {
+        messagebus_topic_read(topic, &range, sizeof(range));
+        vmVariables.range = (int)range.raw_mm;
+    }
 }
 
 void aseba_write_variables_to_system(AsebaVMState *vm)
