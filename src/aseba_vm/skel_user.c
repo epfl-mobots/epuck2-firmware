@@ -41,8 +41,25 @@ const AsebaVMDescription vmDescription = {
 // Event descriptions
 const AsebaLocalEventDescription localEvents[] = {
     {"button", "User button clicked"},
+    {"range", "New range measurement"},
     {NULL, NULL}
 };
+
+/** This thread is responsible for handling new range events for Aseba. */
+static THD_FUNCTION(aseba_range_thd, p)
+{
+    (void) p;
+    chRegSetThreadName(__FUNCTION__);
+
+    messagebus_topic_t *topic;
+
+    topic = messagebus_find_topic_blocking(&bus, "/range");
+
+    while (true) {
+        messagebus_topic_wait(topic, NULL, 0);
+        SET_EVENT(EVENT_RANGE);
+    }
+}
 
 void aseba_variables_init(parameter_namespace_t *aseba_ns)
 {
@@ -52,6 +69,10 @@ void aseba_variables_init(parameter_namespace_t *aseba_ns)
     vmVariables.productId = ASEBA_PID_UNDEFINED;
     vmVariables.fwversion[0] = 0;
     vmVariables.fwversion[1] = 1;
+
+    /* Register all event handling threads. */
+    static THD_WORKING_AREA(range_wa, 256);
+    chThdCreateStatic(range_wa, sizeof(range_wa), NORMALPRIO, aseba_range_thd, NULL);
 
     /* Registers all Aseba settings in global namespace. */
     int i;

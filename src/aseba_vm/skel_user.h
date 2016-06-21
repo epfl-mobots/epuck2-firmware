@@ -21,6 +21,7 @@ extern "C" {
 /** Enum containing all the possible events. */
 enum AsebaLocalEvents {
     EVENT_BUTTON=0, // Button click
+    EVENT_RANGE, // New range measurement
 };
 
 
