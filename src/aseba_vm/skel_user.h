@@ -9,6 +9,8 @@ extern "C" {
 #include "vm/vm.h"
 #include "vm/natives.h"
 #include "parameter/parameter.h"
+#include "sensors/proximity.h"
+
 
 /** Number of variables usable by the Aseba script. */
 #define VM_VARIABLES_FREE_SPACE 256
@@ -38,6 +40,7 @@ struct _vmVariables {
 
     // Variables
     uint16 range;
+    uint16 proximity[PROXIMITY_NB_CHANNELS];
 
     // Free space
     sint16 freeSpace[VM_VARIABLES_FREE_SPACE];

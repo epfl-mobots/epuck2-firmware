@@ -33,6 +33,7 @@ const AsebaVMDescription vmDescription = {
      {1, "_productId"},
 
      {1, "range"},
+     {PROXIMITY_NB_CHANNELS, "proximity"},
 
      {0, NULL}
 }
@@ -90,6 +91,8 @@ void aseba_variables_init(parameter_namespace_t *aseba_ns)
 void aseba_read_variables_from_system(AsebaVMState *vm)
 {
     range_t range;
+    proximity_msg_t proximity;
+
     messagebus_topic_t *topic;
 
     vmVariables.id = vm->nodeId;
@@ -98,6 +101,15 @@ void aseba_read_variables_from_system(AsebaVMState *vm)
     if (topic != NULL) {
         messagebus_topic_read(topic, &range, sizeof(range));
         vmVariables.range = (int)range.raw_mm;
+    }
+
+    topic = messagebus_find_topic(&bus, "/proximity");
+
+    if (topic != NULL) {
+        messagebus_topic_read(topic, &proximity, sizeof(proximity));
+        for (int i = 0; i < PROXIMITY_NB_CHANNELS; i++) {
+            vmVariables.proximity[i] = proximity.values[i];
+        }
     }
 }
 
