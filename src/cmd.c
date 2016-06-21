@@ -10,6 +10,7 @@
 #include "sensors/encoder.h"
 #include "sensors/range.h"
 #include "config_flash_storage.h"
+#include "sensors/proximity.h"
 #include "motor_pwm.h"
 #include "ff.h"
 #include "main.h"
@@ -147,6 +148,29 @@ static void cmd_range(BaseSequentialStream *chp, int argc, char *argv[])
     range_get_range(&distance_m);
 
     chprintf(chp, "distance = %.2f m\r\n", distance_m);
+}
+
+static void cmd_proximity(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    (void) argc;
+    (void) argv;
+
+    proximity_msg_t msg;
+    messagebus_topic_t *topic;
+
+    topic = messagebus_find_topic(&bus, "/proximity");
+
+    if (topic == NULL) {
+        chprintf(chp, "Proximity topic not found!\r\n");
+        return;
+    }
+
+    messagebus_topic_read(topic, &msg, sizeof(msg));
+
+    for (int i = 0; i < PROXIMITY_NB_CHANNELS; i++) {
+        chprintf(chp, "%4d\t", msg.values[i]);
+    }
+    chprintf(chp, "\r\n");
 }
 
 static void cmd_topics(BaseSequentialStream *chp, int argc, char *argv[])
@@ -335,6 +359,7 @@ static void cmd_config_load(BaseSequentialStream *chp, int argc, char **argv)
 const ShellCommand shell_commands[] = {
     {"test", cmd_test},
     {"range", cmd_range},
+    {"proximity", cmd_proximity},
     {"topics", cmd_topics},
     {"pwm", cmd_motor},
     {"encoders", cmd_encoders},
