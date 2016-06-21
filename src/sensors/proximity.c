@@ -31,8 +31,8 @@ static void adc3_proximity_cb(ADCDriver *adcp, adcsample_t *samples, size_t n)
 
     memset(values, 0, sizeof(values));
 
-    for (int j = 0; j < n; j++) {
-        for (int i = 0; i < PROXIMITY_NB_CHANNELS; i++) {
+    for (size_t j = 0; j < n; j++) {
+        for (size_t i = 0; i < PROXIMITY_NB_CHANNELS; i++) {
             values[i] += samples[PROXIMITY_NB_CHANNELS * j + i];
         }
     }
