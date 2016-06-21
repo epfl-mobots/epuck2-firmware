@@ -43,6 +43,7 @@ const AsebaVMDescription vmDescription = {
 const AsebaLocalEventDescription localEvents[] = {
     {"button", "User button clicked"},
     {"range", "New range measurement"},
+    {"proximity", "New proximity measurement"},
     {NULL, NULL}
 };
 
@@ -62,6 +63,23 @@ static THD_FUNCTION(aseba_range_thd, p)
     }
 }
 
+/** This thread is responsible for handling new proximity events for Aseba. */
+static THD_FUNCTION(aseba_proximity_thd, p)
+{
+    (void) p;
+    chRegSetThreadName(__FUNCTION__);
+
+    messagebus_topic_t *topic;
+
+    topic = messagebus_find_topic_blocking(&bus, "/proximity");
+
+    while (true) {
+        messagebus_topic_wait(topic, NULL, 0);
+        SET_EVENT(EVENT_PROXIMITY);
+    }
+}
+
+
 void aseba_variables_init(parameter_namespace_t *aseba_ns)
 {
     /* Initializes constant variables. */
@@ -74,6 +92,9 @@ void aseba_variables_init(parameter_namespace_t *aseba_ns)
     /* Register all event handling threads. */
     static THD_WORKING_AREA(range_wa, 256);
     chThdCreateStatic(range_wa, sizeof(range_wa), NORMALPRIO, aseba_range_thd, NULL);
+
+    static THD_WORKING_AREA(proximity_wa, 256);
+    chThdCreateStatic(proximity_wa, sizeof(proximity_wa), NORMALPRIO, aseba_proximity_thd, NULL);
 
     /* Registers all Aseba settings in global namespace. */
     int i;

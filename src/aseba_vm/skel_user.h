@@ -24,6 +24,7 @@ extern "C" {
 enum AsebaLocalEvents {
     EVENT_BUTTON=0, // Button click
     EVENT_RANGE, // New range measurement
+    EVENT_PROXIMITY, // New proximity sensor measurement
 };
 
 
