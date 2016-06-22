@@ -12,6 +12,7 @@
 #include "common/consts.h"
 #include "main.h"
 #include "config_flash_storage.h"
+#include "motor_pwm.h"
 
 #include "sensors/range.h"
 
@@ -34,6 +35,8 @@ const AsebaVMDescription vmDescription = {
 
      {1, "range"},
      {PROXIMITY_NB_CHANNELS, "proximity"},
+     {1, "motor.left.pwm"},
+     {1, "motor.right.pwm"},
 
      {0, NULL}
 }
@@ -137,6 +140,8 @@ void aseba_read_variables_from_system(AsebaVMState *vm)
 void aseba_write_variables_to_system(AsebaVMState *vm)
 {
     ASEBA_UNUSED(vm);
+    motor_pwm_set(0, vmVariables.motor_right_pwm / 100.);
+    motor_pwm_set(1, vmVariables.motor_left_pwm / 100.);
 }
 
 

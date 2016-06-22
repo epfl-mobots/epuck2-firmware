@@ -42,6 +42,8 @@ struct _vmVariables {
     // Variables
     uint16 range;
     uint16 proximity[PROXIMITY_NB_CHANNELS];
+    uint16 motor_left_pwm;
+    uint16 motor_right_pwm;
 
     // Free space
     sint16 freeSpace[VM_VARIABLES_FREE_SPACE];
