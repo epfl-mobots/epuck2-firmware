@@ -22,6 +22,13 @@ static char aseba_settings_name[SETTINGS_COUNT][10];
 
 struct _vmVariables vmVariables;
 
+void AsebaVMResetCB(AsebaVMState *vm)
+{
+    ASEBA_UNUSED(vm);
+
+    vmVariables.motor_right_pwm = 0;
+    vmVariables.motor_left_pwm = 0;
+}
 
 const AsebaVMDescription vmDescription = {
     BOARD_NAME,
