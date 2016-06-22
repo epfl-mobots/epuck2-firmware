@@ -559,7 +559,7 @@
                                      PIN_MODE_INPUT(GPIOD_PIN11) |          \
                                      PIN_MODE_ALTERNATE(GPIOD_PWM1_PHASE_A) |  \
                                      PIN_MODE_ALTERNATE(GPIOD_PWM1_PHASE_B) |  \
-                                     PIN_MODE_INPUT(GPIOD_LED_DRIVER_RST) |          \
+                                     PIN_MODE_OUTPUT(GPIOD_LED_DRIVER_RST) |          \
                                      PIN_MODE_OUTPUT(GPIOD_LED_ERROR))
 #define VAL_GPIOD_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOD_CAN_RX) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOD_CAN_TX) |       \
@@ -607,7 +607,7 @@
                                      PIN_PUPDR_PULLUP(GPIOD_PIN11) |        \
                                      PIN_PUPDR_FLOATING(GPIOD_PWM1_PHASE_A) |       \
                                      PIN_PUPDR_FLOATING(GPIOD_PWM1_PHASE_B) |       \
-                                     PIN_PUPDR_PULLUP(GPIOD_LED_DRIVER_RST) |       \
+                                     PIN_PUPDR_FLOATING(GPIOD_LED_DRIVER_RST) |       \
                                      PIN_PUPDR_FLOATING(GPIOD_LED_ERROR))
 #define VAL_GPIOD_ODR               (PIN_ODR_HIGH(GPIOD_CAN_RX) |             \
                                      PIN_ODR_HIGH(GPIOD_CAN_TX) |             \
@@ -623,7 +623,7 @@
                                      PIN_ODR_HIGH(GPIOD_PIN11) |            \
                                      PIN_ODR_LOW(GPIOD_PWM1_PHASE_A) |              \
                                      PIN_ODR_LOW(GPIOD_PWM1_PHASE_B) |              \
-                                     PIN_ODR_LOW(GPIOD_LED_DRIVER_RST) |              \
+                                     PIN_ODR_HIGH(GPIOD_LED_DRIVER_RST) |              \
                                      PIN_ODR_LOW(GPIOD_LED_ERROR))
 #define VAL_GPIOD_AFRL              (PIN_AFIO_AF(GPIOD_CAN_RX, 9) |           \
                                      PIN_AFIO_AF(GPIOD_CAN_TX, 9) |           \
