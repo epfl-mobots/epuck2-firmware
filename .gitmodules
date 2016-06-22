@@ -10,15 +10,9 @@
 [submodule "src/cmp"]
 	path = src/cmp
 	url = https://github.com/epuck2/cmp
-[submodule "src/serial-datagram"]
-	path = src/serial-datagram
-	url = https://git.wise-robotics.com/epuck2/serial-datagram.git
 [submodule "src/crc"]
 	path = src/crc
 	url = https://github.com/epuck2/crc
-[submodule "src/pid"]
-	path = src/pid
-	url = https://github.com/epuck2/pid.git
 [submodule "src/parameter"]
 	path = src/parameter
 	url = https://github.com/stapelzeiger/parameter.git
