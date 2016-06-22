@@ -21,10 +21,9 @@ uint8_t vl6180x_measure_distance(vl6180x_t *dev, uint8_t *out_mm)
     vl6180x_write_register(dev, VL6180X_SYSRANGE_START, 0x01);
 
     /* Wait for measurement ready. */
-    // do {
-    //     status = vl6180x_read_register(dev, VL6180X_RESULT_INTERRUPT_STATUS_GPIO);
-    // } while ((status & (1 << 2)) == 0);
-    chThdSleepMilliseconds(100);
+    do {
+         status = vl6180x_read_register(dev, VL6180X_RESULT_INTERRUPT_STATUS_GPIO);
+    } while ((status & (1 << 2)) == 0);
 
     /* Read result. */
     mm = vl6180x_read_register(dev, VL6180X_RESULT_RANGE_VAL);
@@ -96,6 +95,9 @@ void vl6180x_configure(vl6180x_t *dev)
     vl6180x_write_register(dev, 0x0040, 0x63);
     /* perform a single temperature calibration of the ranging sensor */
     vl6180x_write_register(dev, 0x002e, 0x01);
+
+    /* Configure interrupt on new sample ready. Required for polling to work. */
+    vl6180x_write_register(dev, 0x0014, 0x24);
 }
 
 
