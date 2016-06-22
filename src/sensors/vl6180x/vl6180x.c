@@ -21,7 +21,7 @@ uint8_t vl6180x_measure_distance(vl6180x_t *dev, uint8_t *out_mm)
 
     /* Wait for measurement ready. */
     do {
-         status = vl6180x_read_register(dev, VL6180X_RESULT_INTERRUPT_STATUS_GPIO);
+        status = vl6180x_read_register(dev, VL6180X_RESULT_INTERRUPT_STATUS_GPIO);
     } while ((status & (1 << 2)) == 0);
 
     /* Read result. */
@@ -37,7 +37,7 @@ uint8_t vl6180x_measure_distance(vl6180x_t *dev, uint8_t *out_mm)
     } while ((status & (1 << 0)) == 0);
 
     /* Return error code. */
-    return (status >> 4);
+    return status >> 4;
 }
 
 void vl6180x_configure(vl6180x_t *dev)

@@ -1,8 +1,0 @@
-depends:
-    - test-runner
-
-source:
-    - vl6180x.c
-
-tests:
-    - tests/test_range_sensor.cpp
