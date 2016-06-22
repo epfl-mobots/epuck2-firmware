@@ -4,7 +4,6 @@
 #include "hal.h"
 #include <stdio.h>
 #include <string.h>
-#include "analogic.h"
 
 #include "main.h"
 

@@ -11,15 +11,11 @@
 #include "usbconf.h"
 
 #include "cmd.h"
-#include "control.h"
-#include "communication.h"
 
 #include "main.h"
 
 /* Testing includes */
-#include "analogic.h"
 #include "motor_pwm.h"
-#include "setpoints.h"
 #include "sensors/proximity.h"
 #include "sensors/imu.h"
 #include "sensors/range.h"
@@ -30,8 +26,6 @@
 #include "aseba_vm/aseba_node.h"
 #include "aseba_vm/skel_user.h"
 #include "aseba_vm/aseba_can_interface.h"
-
-#include "segway.h"
 
 messagebus_t bus;
 MUTEX_DECL(bus_lock);
@@ -111,11 +105,7 @@ int main(void)
     motor_pwm_start();
     encoder_start();
 
-#if 0
-    communication_start((BaseSequentialStream *)&SDU1);
-#else
     shell_start();
-#endif
 
     // Start heartbeat thread
     static THD_WORKING_AREA(blinker_thd_wa, 128);
@@ -129,9 +119,6 @@ int main(void)
     range_start();
 
     proximity_start();
-
-    // Start control loops
-//    control_start();
 
     // Initialise aseba parameters
     parameter_namespace_declare(&aseba_ns, &parameter_root, "aseba");
