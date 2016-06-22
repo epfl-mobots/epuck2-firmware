@@ -1,9 +1,10 @@
 #include <CppUTest/TestHarness.h>
 #include <CppUTestExt/MockSupport.h>
-#include "../vl6180x.h"
 #include <cstring>
-#include "../vl6180x_registers.h"
+#include "sensors/vl6180x/vl6180x.h"
+#include "sensors/vl6180x/vl6180x_registers.h"
 
+extern "C"
 uint8_t vl6180x_read_register(vl6180x_t *dev, uint16_t reg)
 {
     return mock().actualCall(__FUNCTION__)
@@ -11,6 +12,7 @@ uint8_t vl6180x_read_register(vl6180x_t *dev, uint16_t reg)
                  .returnIntValue();
 }
 
+extern "C"
 void vl6180x_write_register(vl6180x_t *dev, uint16_t reg, uint8_t val)
 {
     mock().actualCall(__FUNCTION__)
@@ -21,10 +23,11 @@ void vl6180x_write_register(vl6180x_t *dev, uint16_t reg, uint8_t val)
 TEST_GROUP(VL6180XRegisterTestGroup)
 {
     vl6180x_t dev;
-    I2CDriver i2c;
+    int i2c;
 
     void setup(void)
     {
+        mock().strictOrder();
         vl6180x_init(&dev, &i2c, VL6180X_DEFAULT_ADDRESS);
     }
 
@@ -81,6 +84,10 @@ TEST(VL6180XRegisterTestGroup, CanReadDistance)
      * AN4545 is also very useful. */
     uint8_t mm, ret;
 
+    /* Device ready. */
+    expect_read(VL6180X_RESULT_RANGE_STATUS, 0x00);
+    expect_read(VL6180X_RESULT_RANGE_STATUS, 0x01);
+
     /* Start of measurement. */
     expect_write(VL6180X_SYSRANGE_START, 0x01);
 
@@ -105,4 +112,6 @@ TEST(VL6180XRegisterTestGroup, CanReadDistance)
     ret = vl6180x_measure_distance(&dev, &mm);
 
     CHECK_EQUAL(ret, 0x09);
+
+    CHECK_EQUAL(18, mm);
 }

@@ -1,8 +1,7 @@
 #include "vl6180x.h"
 #include "vl6180x_registers.h"
-#include <ch.h>
 
-void vl6180x_init(vl6180x_t *dev, I2CDriver *i2c_dev, uint8_t address)
+void vl6180x_init(vl6180x_t *dev, void *i2c_dev, uint8_t address)
 {
     dev->i2c = i2c_dev;
     dev->address = address;
@@ -99,20 +98,3 @@ void vl6180x_configure(vl6180x_t *dev)
     /* Configure interrupt on new sample ready. Required for polling to work. */
     vl6180x_write_register(dev, 0x0014, 0x24);
 }
-
-
-#ifdef HAL_USE_I2C
-void vl6180x_write_register(vl6180x_t *dev, uint16_t reg, uint8_t val)
-{
-    uint8_t buf[] = {(reg >> 8), reg & 0xff, val};
-    i2cMasterTransmit(dev->i2c, dev->address, buf, 3, NULL, 0);
-}
-
-uint8_t vl6180x_read_register(vl6180x_t *dev, uint16_t reg)
-{
-    uint8_t ret;
-    uint8_t buf[] = {(reg >> 8), reg & 0xff};
-    i2cMasterTransmit(dev->i2c, dev->address, buf, 2, &ret, 1);
-    return ret;
-}
-#endif
