@@ -22,6 +22,9 @@ static char aseba_settings_name[SETTINGS_COUNT][10];
 
 struct _vmVariables vmVariables;
 
+/* Used to detect if a PWM value has changed. */
+static sint16 motor_pwm_previous_left, motor_pwm_previous_right;
+
 void AsebaVMResetCB(AsebaVMState *vm)
 {
     ASEBA_UNUSED(vm);
@@ -128,27 +131,40 @@ void aseba_read_variables_from_system(AsebaVMState *vm)
 
     vmVariables.id = vm->nodeId;
 
+    /* Read range sensor */
     topic = messagebus_find_topic(&bus, "/range");
     if (topic != NULL) {
         messagebus_topic_read(topic, &range, sizeof(range));
         vmVariables.range = (int)range.raw_mm;
     }
 
+    /* Read proximity sensors. */
     topic = messagebus_find_topic(&bus, "/proximity");
-
     if (topic != NULL) {
         messagebus_topic_read(topic, &proximity, sizeof(proximity));
         for (int i = 0; i < PROXIMITY_NB_CHANNELS; i++) {
             vmVariables.proximity[i] = proximity.values[i];
         }
     }
+
+    /* Keep previous value of PWM. */
+    motor_pwm_previous_left = vmVariables.motor_left_pwm;
+    motor_pwm_previous_right = vmVariables.motor_right_pwm;
 }
 
 void aseba_write_variables_to_system(AsebaVMState *vm)
 {
     ASEBA_UNUSED(vm);
-    motor_pwm_set(0, vmVariables.motor_right_pwm / 100.);
-    motor_pwm_set(1, vmVariables.motor_left_pwm / 100.);
+
+    /* If the motor PWM changed, apply the new one. This is allows setting the
+     * PWM from C without Aseba interfering. */
+    if (vmVariables.motor_left_pwm != motor_pwm_previous_left) {
+        motor_pwm_set(1, vmVariables.motor_left_pwm / 100.);
+    }
+
+    if (vmVariables.motor_right_pwm != motor_pwm_previous_right) {
+        motor_pwm_set(0, vmVariables.motor_right_pwm / 100.);
+    }
 }
 
 
