@@ -35,7 +35,7 @@ target.arm:
     - src/pid_cascade.c
     - src/feedback.c
     - src/setpoints.c
-    - src/sensors/vl6180x-driver/vl6180x.c
+    - src/sensors/vl6180x/vl6180x.c
     - src/sensors/range.c
     - src/communication.c
     - src/datagram_dispatcher.c

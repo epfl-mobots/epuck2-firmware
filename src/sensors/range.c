@@ -2,7 +2,7 @@
 #include "hal.h"
 #include "main.h"
 #include "sensors/range.h"
-#include "sensors/vl6180x-driver/vl6180x.h"
+#include "sensors/vl6180x/vl6180x.h"
 
 #define MILLIMETER_TO_METER 1e-3f
 
