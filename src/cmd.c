@@ -383,6 +383,44 @@ static void cmd_shutdown(BaseSequentialStream *chp, int argc, char **argv)
 
     board_shutdown();
 }
+static void cmd_leds(BaseSequentialStream *chp, int argc, char **argv)
+{
+    (void) argc;
+    (void) argv;
+    (void) chp;
+
+    uint8_t reg[] = {
+        0x01, /* addr */
+        0x1f, /* data */
+        0x1f, /* data */
+        0x1f, /* data */
+        0x1f, /* data */
+        0x1f, /* data */
+        0x1f, /* data */
+        0x1f, /* data */
+        0x1f, /* data */
+        0x1f, /* data */
+        0x1f, /* data */
+        0x1f, /* data */
+        0x1f, /* data */
+        0x1f, /* data */
+        0x1f, /* data */
+        0x1f, /* data */
+        0x1f, /* data */
+        0x1f, /* data */
+        0x1f, /* data */
+    };
+
+    i2cAcquireBus(&I2CD1);
+
+    chprintf(chp, "transmit");
+
+    if (i2cMasterTransmit(&I2CD1, 0x1c, reg, sizeof(reg), NULL, 0) != MSG_OK) {
+        chprintf(chp, " failed %02x", I2CD1.errors);
+    };
+
+    i2cReleaseBus(&I2CD1);
+}
 
 static void cmd_current(BaseSequentialStream *chp, int argc, char *argv[])
 {
@@ -417,6 +455,7 @@ const ShellCommand shell_commands[] = {
     {"config_load", cmd_config_load},
     {"config_erase", cmd_config_erase},
     {"shutdown", cmd_shutdown},
+    {"leds", cmd_leds},
 
     {NULL, NULL}
 };
