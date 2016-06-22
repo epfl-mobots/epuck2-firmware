@@ -14,7 +14,6 @@ typedef struct {
 
 void range_get_range(float *range);
 void range_start(void);
-void range_init(I2CDriver *dev);
 
 #ifdef __cplusplus
 }

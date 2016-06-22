@@ -6,8 +6,6 @@
 
 #define MILLIMETER_TO_METER 1e-3f
 
-static vl6180x_t vl6180x;
-
 void range_get_range(float *range)
 {
     messagebus_topic_t *topic;
@@ -24,6 +22,8 @@ static THD_WORKING_AREA(range_reader_thd_wa, 1024);
 static THD_FUNCTION(range_reader_thd, arg)
 {
     (void)arg;
+    vl6180x_t vl6180x;
+
 
     messagebus_topic_t range_topic;
     MUTEX_DECL(range_topic_lock);
@@ -35,6 +35,19 @@ static THD_FUNCTION(range_reader_thd, arg)
     static uint8_t temp;
     chRegSetThreadName("Range_reader");
 
+    /* Power on the ToF sensor. */
+    palSetPad(GPIOD, GPIOD_2V8_ON);
+    palSetPad(GPIOE, GPIOE_RF_GPIO0_1);
+
+    chThdSleepMilliseconds(100);
+
+    /* Create a sensor instance and configure it. */
+    vl6180x_init(&vl6180x, &I2CD1, VL6180X_DEFAULT_ADDRESS);
+    i2cAcquireBus(vl6180x.i2c);
+    vl6180x_configure(&vl6180x);
+    i2cReleaseBus(vl6180x.i2c);
+
+    /* Create the range topic. */
     messagebus_topic_init(&range_topic, &range_topic_lock, &range_topic_condvar, &range_topic_value, sizeof(range_topic_value));
     messagebus_advertise_topic(&bus, &range_topic, "/range");
 
@@ -58,21 +71,4 @@ void range_start(void)
                       NORMALPRIO,
                       range_reader_thd,
                       NULL);
-}
-
-// PB9: I2C1_SDA (AF4)
-// PB8: I2C1_SCL (AF4)
-void range_init(I2CDriver *dev)
-{
-    // Power on the time of flight sensor
-    palSetPad(GPIOD, GPIOD_2V8_ON);
-    palSetPad(GPIOE, GPIOE_RF_GPIO0_1);
-
-    chThdSleepMilliseconds(100);
-
-    vl6180x_init(&vl6180x, dev, VL6180X_DEFAULT_ADDRESS);
-
-    i2cAcquireBus(dev);
-    vl6180x_configure(&vl6180x);
-    i2cReleaseBus(dev);
 }

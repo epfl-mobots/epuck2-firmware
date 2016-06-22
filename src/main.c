@@ -43,6 +43,13 @@ static THD_FUNCTION(blinker_thd, arg)
     }
 }
 
+static void blinker_start(void)
+{
+    // Start heartbeat thread
+    static THD_WORKING_AREA(blinker_thd_wa, 128);
+    chThdCreateStatic(blinker_thd_wa, sizeof(blinker_thd_wa), NORMALPRIO, blinker_thd, NULL);
+}
+
 void i2c_init(void)
 {
     /*
@@ -101,21 +108,14 @@ int main(void)
     chprintf((BaseSequentialStream*)&SDU1, "boot");
 
     sdStart(&SD6, NULL);
+    i2c_init();
 
     motor_pwm_start();
     encoder_start();
 
     shell_start();
+    blinker_start();
 
-    // Start heartbeat thread
-    static THD_WORKING_AREA(blinker_thd_wa, 128);
-    chThdCreateStatic(blinker_thd_wa, sizeof(blinker_thd_wa), NORMALPRIO, blinker_thd, NULL);
-
-    // Initialise i2c
-    i2c_init();
-
-    // Initialise the time of flight range sensor
-    range_init(&I2CD1);
     range_start();
 
     proximity_start();
