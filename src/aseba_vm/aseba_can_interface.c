@@ -14,11 +14,11 @@
 CanFrame aseba_can_send_queue[ASEBA_CAN_SEND_QUEUE_SIZE];
 CanFrame aseba_can_receive_queue[ASEBA_CAN_RECEIVE_QUEUE_SIZE];
 
-static THD_WORKING_AREA(can_rx_thread_wa, 256);
-static THD_FUNCTION(can_rx_thread, arg)
+static THD_WORKING_AREA(can_rx_thd_wa, 256);
+static THD_FUNCTION(can_rx_thd, arg)
 {
     (void)arg;
-    chRegSetThreadName("CAN rx");
+    chRegSetThreadName(__FUNCTION__);
     while (1) {
         CANRxFrame rxf;
         CanFrame aseba_can_frame;
@@ -98,15 +98,16 @@ int aseba_can_is_frame_room(void)
 void aseba_can_start(AsebaVMState *vm_state)
 {
     can_init();
-    chThdCreateStatic(can_rx_thread_wa,
-                      sizeof(can_rx_thread_wa),
-                      NORMALPRIO + 1,
-                      can_rx_thread,
-                      NULL);
     AsebaCanInit(vm_state->nodeId, aseba_can_send_frame, aseba_can_is_frame_room,
                  aseba_can_rx_dropped, aseba_can_tx_dropped,
                  aseba_can_send_queue, ASEBA_CAN_SEND_QUEUE_SIZE,
                  aseba_can_receive_queue, ASEBA_CAN_RECEIVE_QUEUE_SIZE);
+
+    chThdCreateStatic(can_rx_thd_wa,
+                      sizeof(can_rx_thd_wa),
+                      NORMALPRIO + 1,
+                      can_rx_thd,
+                      NULL);
 }
 
 static MUTEX_DECL(can_lock);
