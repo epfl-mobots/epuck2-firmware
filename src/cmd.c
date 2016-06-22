@@ -62,18 +62,14 @@ static void cmd_motor(BaseSequentialStream *chp, int argc, char *argv[])
     }
 
     float value = atoi(argv[1]) / 100.;
-    int select;
 
     if (!strcmp("left", argv[0])) {
-        select = 1;
+        motor_left_pwm_set(value);
     } else if (!strcmp("right", argv[0]))   {
-        select = 0;
+        motor_right_pwm_set(value);
     } else {
         chprintf(chp, "Unknown motor \"%s\".\r\n", argv[0]);
-        return;
     }
-
-    motor_pwm_set(select, value);
 }
 
 static void cmd_encoders(BaseSequentialStream *chp, int argc, char *argv[])

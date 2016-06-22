@@ -159,11 +159,11 @@ void aseba_write_variables_to_system(AsebaVMState *vm)
     /* If the motor PWM changed, apply the new one. This is allows setting the
      * PWM from C without Aseba interfering. */
     if (vmVariables.motor_left_pwm != motor_pwm_previous_left) {
-        motor_pwm_set(1, vmVariables.motor_left_pwm / 100.);
+        motor_left_pwm_set(vmVariables.motor_left_pwm / 100.);
     }
 
     if (vmVariables.motor_right_pwm != motor_pwm_previous_right) {
-        motor_pwm_set(0, vmVariables.motor_right_pwm / 100.);
+        motor_right_pwm_set(vmVariables.motor_right_pwm / 100.);
     }
 }
 

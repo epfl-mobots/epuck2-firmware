@@ -5,17 +5,17 @@
 extern "C" {
 #endif
 
+/** Sets the duty cycle for left motor PWM.
+ *
+ * @param [in] duty_cycle The PWM duty cycle, between -1 and + 1. */
+void motor_left_pwm_set(float duty_cycle);
 
+/** Sets the duty cycle for left motor PWM.
+ *
+ * @param [in] duty_cycle The PWM duty cycle, between -1 and + 1. */
+void motor_right_pwm_set(float duty_cycle);
 
-/*
- * pwm_select : 0 -> motor on PB0 and PB1 // 1 -> motor on PD12 and PD13
- * pwm_command : duty cycle between -1 and +1, negative for reverse direction
- */
-void motor_pwm_set(int pwm_select, float pwm_command);
-
-/*
- * drive the motor voltage
- */
+/** Configures the motor PWM driver. */
 void motor_pwm_start(void);
 
 #ifdef __cplusplus
