@@ -24,6 +24,7 @@
 #include "sensors/imu.h"
 #include "sensors/range.h"
 #include "sensors/encoder.h"
+#include "config_flash_storage.h"
 
 /* Aseba includes */
 #include "aseba_vm/aseba_node.h"
@@ -73,6 +74,12 @@ void __late_init(void)
     chSysInit();
 }
 
+static bool load_config(void)
+{
+    extern uint32_t _config_start;
+
+    return config_load(&parameter_root, &_config_start);
+}
 
 int main(void)
 {
@@ -127,6 +134,10 @@ int main(void)
     // Initialise aseba parameters
     parameter_namespace_declare(&aseba_ns, &parameter_root, "aseba");
     aseba_declare_parameters(&aseba_ns);
+
+    /* Load parameter tree from flash. */
+    load_config();
+
     // Initialise Aseba node (CAN and VM)
     aseba_vm_init();
     aseba_can_start(&vmState);
