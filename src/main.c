@@ -22,6 +22,7 @@
 #include "sensors/battery_level.h"
 #include "config_flash_storage.h"
 #include "sensors/motor_current.h"
+#include "body_leds.h"
 
 #include "aseba_vm/aseba_node.h"
 #include "aseba_vm/skel_user.h"
@@ -107,6 +108,7 @@ int main(void)
 
     shell_start();
     blinker_start();
+    body_leds_start();
 
     range_start();
 
