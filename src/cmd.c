@@ -17,6 +17,7 @@
 #include "motor_pwm.h"
 #include "ff.h"
 #include "main.h"
+#include "body_leds.h"
 
 #define TEST_WA_SIZE        THD_WORKING_AREA_SIZE(256)
 #define SHELL_WA_SIZE       THD_WORKING_AREA_SIZE(2048)
@@ -389,37 +390,21 @@ static void cmd_leds(BaseSequentialStream *chp, int argc, char **argv)
     (void) argv;
     (void) chp;
 
-    uint8_t reg[] = {
-        0x01, /* addr */
-        0x1f, /* data */
-        0x1f, /* data */
-        0x1f, /* data */
-        0x1f, /* data */
-        0x1f, /* data */
-        0x1f, /* data */
-        0x1f, /* data */
-        0x1f, /* data */
-        0x1f, /* data */
-        0x1f, /* data */
-        0x1f, /* data */
-        0x1f, /* data */
-        0x1f, /* data */
-        0x1f, /* data */
-        0x1f, /* data */
-        0x1f, /* data */
-        0x1f, /* data */
-        0x1f, /* data */
-    };
+    char name[32];
+    body_led_msg_t msg;
+    messagebus_topic_t *topic;
 
-    i2cAcquireBus(&I2CD1);
+    for (int i = 0; i < BODY_LED_COUNT; i++) {
+        sprintf(name, "/body_leds/%d", i);
 
-    chprintf(chp, "transmit");
-
-    if (i2cMasterTransmit(&I2CD1, 0x1c, reg, sizeof(reg), NULL, 0) != MSG_OK) {
-        chprintf(chp, " failed %02x", I2CD1.errors);
-    };
-
-    i2cReleaseBus(&I2CD1);
+        topic = messagebus_find_topic(&bus, name);
+        if (topic) {
+            msg.value = 1.;
+            messagebus_topic_publish(topic, &msg, sizeof(msg));
+        } else {
+            chprintf(chp, "Cannot find topic \"%s\"\r\n", name);
+        }
+    }
 }
 
 static void cmd_current(BaseSequentialStream *chp, int argc, char *argv[])
