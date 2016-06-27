@@ -9,7 +9,7 @@
 void range_get_range(float *range)
 {
     messagebus_topic_t *topic;
-    range_t range_sample;
+    range_msg_t range_sample;
 
     topic = messagebus_find_topic_blocking(&bus, "/range");
 
@@ -28,9 +28,9 @@ static THD_FUNCTION(range_reader_thd, arg)
     messagebus_topic_t range_topic;
     MUTEX_DECL(range_topic_lock);
     CONDVAR_DECL(range_topic_condvar);
-    range_t range_topic_value;
+    range_msg_t range_topic_value;
 
-    range_t range_sample;
+    range_msg_t range_sample;
 
     static uint8_t temp;
     chRegSetThreadName("Range_reader");

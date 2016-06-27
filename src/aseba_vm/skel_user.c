@@ -124,7 +124,7 @@ void aseba_variables_init(parameter_namespace_t *aseba_ns)
 
 void aseba_read_variables_from_system(AsebaVMState *vm)
 {
-    range_t range;
+    range_msg_t range;
     proximity_msg_t proximity;
 
     messagebus_topic_t *topic;

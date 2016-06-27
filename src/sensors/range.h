@@ -10,7 +10,7 @@ extern "C" {
 typedef struct {
     uint8_t raw_mm;
     float raw;
-} range_t;
+} range_msg_t;
 
 void range_get_range(float *range);
 void range_start(void);
