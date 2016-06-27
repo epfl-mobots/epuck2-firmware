@@ -50,7 +50,7 @@ static void blinker_start(void)
     chThdCreateStatic(blinker_thd_wa, sizeof(blinker_thd_wa), NORMALPRIO, blinker_thd, NULL);
 }
 
-void i2c_init(void)
+void i2c_start(void)
 {
     /*
      * I2C configuration structure for MPU6000 & VL6180x.
@@ -75,40 +75,18 @@ void __late_init(void)
     chSysInit();
 }
 
-static bool load_config(void)
-{
-    extern uint32_t _config_start;
-
-    return config_load(&parameter_root, &_config_start);
-}
-
 int main(void)
 {
-    /*
-     * Initializes a serial-over-USB CDC driver.
-     */
-    sduObjectInit(&SDU1);
-    sduStart(&SDU1, &serusbcfg);
+    usb_start();
 
     /** Inits the Inter Process Communication bus. */
     messagebus_init(&bus, &bus_lock, &bus_condvar);
 
     parameter_namespace_declare(&parameter_root, NULL, "");
 
-    /*
-     * Activates the USB driver and then the USB bus pull-up on D+.
-     * Note, a delay is inserted in order to not have to disconnect the cable
-     * after a reset.
-     */
-    usbDisconnectBus(serusbcfg.usbp);
-    chThdSleepMilliseconds(1000);
-    usbStart(serusbcfg.usbp, &usbcfg);
-    usbConnectBus(serusbcfg.usbp);
-
     chprintf((BaseSequentialStream*)&SDU1, "boot");
 
-    sdStart(&SD6, NULL);
-    i2c_init();
+    i2c_start();
 
     motor_pwm_start();
     encoder_start();
@@ -125,7 +103,8 @@ int main(void)
     aseba_declare_parameters(&aseba_ns);
 
     /* Load parameter tree from flash. */
-    load_config();
+    extern uint32_t _config_start;
+    config_load(&parameter_root, &_config_start);
 
     // Initialise Aseba node (CAN and VM)
     aseba_vm_init();

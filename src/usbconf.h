@@ -3,8 +3,9 @@
 
 #include <hal.h>
 
-extern const USBConfig usbcfg;
-extern const SerialUSBConfig serusbcfg;
 extern SerialUSBDriver SDU1;
+
+/* Starts the UART over USB service. */
+void usb_start(void);
 
 #endif
