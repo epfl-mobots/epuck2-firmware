@@ -112,6 +112,12 @@ The following modules are also used, see their respective documentation for more
     See doc for details.
 * `test-runner` does not contain code that will run on the robot but is required to run the unit tests.
 
+### MessageBus
+The code is usually organized around the principle of one thread per sensor/actuator/functionality.
+Those threads communicate using a software message bus (publisher/subscriber pattern), similar in concept to D-bus or ROS.
+This technology prevents the need for custom locking algorithm in user code, which in turns increase code correctness.
+See `src/msgbus/README.md` for more information.
+
 ## Automated low battery cutoff
 Over discharging a Lithium battery can damage it permanently.
 In order to prevent that, the robot will warn the user via a blinking red LED when the battery goes below a certain threshold (3.5V/cell).
