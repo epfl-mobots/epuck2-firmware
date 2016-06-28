@@ -1,32 +1,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "ch.h"
-#include "hal.h"
-#include "test.h"
-#include "memory_protection.h"
-#include "sensors/battery_level.h"
 
-#include "chprintf.h"
-#include "shell.h"
-#include "usbconf.h"
-
-#include "cmd.h"
+#include <ch.h>
+#include <hal.h>
+#include <chprintf.h>
 
 #include "main.h"
 
-/* Testing includes */
+#include "usbconf.h"
+#include "shell.h"
+#include "cmd.h"
+
+
 #include "motor_pwm.h"
 #include "sensors/proximity.h"
 #include "sensors/imu.h"
 #include "sensors/range.h"
 #include "sensors/encoder.h"
+#include "sensors/battery_level.h"
 #include "config_flash_storage.h"
 
-/* Aseba includes */
 #include "aseba_vm/aseba_node.h"
 #include "aseba_vm/skel_user.h"
 #include "aseba_vm/aseba_can_interface.h"
+
+#include "memory_protection.h"
+#include "battery_protection.h"
 
 messagebus_t bus;
 MUTEX_DECL(bus_lock);
@@ -98,6 +98,7 @@ int main(void)
     adc_start();
 
     battery_level_start();
+    battery_protection_start();
 
     motor_pwm_start();
     encoder_start();
