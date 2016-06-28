@@ -178,6 +178,12 @@ static void take_measurement(unsigned int result[PROXIMITY_NB_CHANNELS])
     adcReleaseBus(&ADCD3);
 }
 
+/** Sets the position in the LED waveform (0..1) at which the measurement will be taken. */
+static void set_measurement_position(float pos)
+{
+    pwmEnableChannel(&PWMD8, 0, (pwmcnt_t) (PWM_CYCLE * pos));
+}
+
 static THD_FUNCTION(proximity_thd, arg)
 {
     (void) arg;
@@ -199,7 +205,15 @@ static THD_FUNCTION(proximity_thd, arg)
     while (true) {
         proximity_msg_t msg;
 
-        take_measurement(msg.values);
+        set_measurement_position(OFF_MEASUREMENT_POS);
+        take_measurement(msg.ambient);
+
+        set_measurement_position(ON_MEASUREMENT_POS);
+        take_measurement(msg.reflected);
+
+        for (int i = 0; i < PROXIMITY_NB_CHANNELS; i++) {
+            msg.delta[i] = msg.reflected[i] - msg.ambient[i];
+        }
 
         palTogglePad(GPIOE, GPIOE_LED_STATUS);
 
@@ -236,9 +250,6 @@ void proximity_start(void)
 
     /* Set duty cycle for TCRT1000 drivers. */
     pwmEnableChannel(&PWMD8, 1, (pwmcnt_t) (PWM_CYCLE * TCRT1000_DC));
-
-    /* Set measurement time for ADC. */
-    pwmEnableChannel(&PWMD8, 0, (pwmcnt_t) (PWM_CYCLE * ON_MEASUREMENT_POS));
 
     static THD_WORKING_AREA(proximity_thd_wa, 2048);
     chThdCreateStatic(proximity_thd_wa, sizeof(proximity_thd_wa), NORMALPRIO, proximity_thd, NULL);

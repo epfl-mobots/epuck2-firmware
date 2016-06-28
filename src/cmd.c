@@ -165,7 +165,7 @@ static void cmd_proximity(BaseSequentialStream *chp, int argc, char *argv[])
     messagebus_topic_read(topic, &msg, sizeof(msg));
 
     for (int i = 0; i < PROXIMITY_NB_CHANNELS; i++) {
-        chprintf(chp, "%4d\t", msg.values[i]);
+        chprintf(chp, "%4d\t", msg.delta[i]);
     }
     chprintf(chp, "\r\n");
 }

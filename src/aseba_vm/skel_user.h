@@ -42,7 +42,10 @@ struct _vmVariables {
     // Variables
     uint16 battery_mv;
     uint16 range;
-    uint16 proximity[PROXIMITY_NB_CHANNELS];
+    sint16 proximity_delta[PROXIMITY_NB_CHANNELS];
+    sint16 proximity_ambient[PROXIMITY_NB_CHANNELS];
+    sint16 proximity_reflected[PROXIMITY_NB_CHANNELS];
+
     sint16 motor_left_pwm;
     sint16 motor_right_pwm;
 

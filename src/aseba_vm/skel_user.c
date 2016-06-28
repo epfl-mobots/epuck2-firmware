@@ -46,7 +46,9 @@ const AsebaVMDescription vmDescription = {
 
      {1, "battery"},
      {1, "range"},
-     {PROXIMITY_NB_CHANNELS, "proximity"},
+     {PROXIMITY_NB_CHANNELS, "proximity.delta"},
+     {PROXIMITY_NB_CHANNELS, "proximity.ambient"},
+     {PROXIMITY_NB_CHANNELS, "proximity.reflected"},
      {1, "motor.left.pwm"},
      {1, "motor.right.pwm"},
 
@@ -152,7 +154,9 @@ void aseba_read_variables_from_system(AsebaVMState *vm)
         proximity_msg_t proximity;
         messagebus_topic_read(topic, &proximity, sizeof(proximity));
         for (int i = 0; i < PROXIMITY_NB_CHANNELS; i++) {
-            vmVariables.proximity[i] = proximity.values[i];
+            vmVariables.proximity_delta[i] = proximity.delta[i];
+            vmVariables.proximity_ambient[i] = proximity.ambient[i];
+            vmVariables.proximity_reflected[i] = proximity.reflected[i];
         }
     }
 

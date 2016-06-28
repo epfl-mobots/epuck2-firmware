@@ -9,7 +9,14 @@ extern "C" {
 
 /** Struct containing a proximity measurment message. */
 typedef struct {
-    unsigned int values[PROXIMITY_NB_CHANNELS];
+    /** Ambient light level (LED is OFF). */
+    unsigned int ambient[PROXIMITY_NB_CHANNELS];
+
+    /** Reflected light level (LED is ON). */
+    unsigned int reflected[PROXIMITY_NB_CHANNELS];
+
+    /** Difference between ambient and reflected. */
+    unsigned int delta[PROXIMITY_NB_CHANNELS];
 } proximity_msg_t;
 
 
