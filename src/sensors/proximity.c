@@ -146,6 +146,38 @@ static const ADCConversionGroup adcgrpcfg3 = {
             ADC_SQR1_NUM_CH(PROXIMITY_NB_CHANNELS)
 };
 
+/** Takes a single measurement on all channels and stores the result in the provided array. */
+static void take_measurement(unsigned int result[PROXIMITY_NB_CHANNELS])
+{
+    int i;
+
+    /* Gets exclusive access to the ADCs. */
+    adcAcquireBus(&ADCD3);
+    adcAcquireBus(&ADCD2);
+
+    /* Starts a new conversion. */
+    adcStartConversion(&ADCD3, &adcgrpcfg3, adc3_proximity_samples, DMA_BUFFER_SIZE);
+    adcStartConversion(&ADCD2, &adcgrpcfg2, adc2_proximity_samples, DMA_BUFFER_SIZE);
+
+    /* Wait for the conversions to be done. */
+    chBSemWait(&adc3_ready);
+    chBSemWait(&adc2_ready);
+
+    /* Copies the results in the provided arrays. */
+    for (i = 0; i < PROXIMITY_NB_CHANNELS; i++) {
+        /* The 8th sensor is the only one on ADC2. */
+        if (i == 8) {
+            result[i] = adc2_values[0];
+        } else {
+            result[i] = adc3_values[i];
+        }
+    }
+
+    /* Gets exclusive access to the ADCs. */
+    adcReleaseBus(&ADCD2);
+    adcReleaseBus(&ADCD3);
+}
+
 static THD_FUNCTION(proximity_thd, arg)
 {
     (void) arg;
@@ -165,36 +197,13 @@ static THD_FUNCTION(proximity_thd, arg)
     messagebus_advertise_topic(&bus, &proximity_topic, "/proximity");
 
     while (true) {
-        /* Gets exclusive access to the ADCs. */
-        adcAcquireBus(&ADCD3);
-        adcAcquireBus(&ADCD2);
+        proximity_msg_t msg;
 
-        /* Starts a new conversion. */
-        adcStartConversion(&ADCD3, &adcgrpcfg3, adc3_proximity_samples, DMA_BUFFER_SIZE);
-        adcStartConversion(&ADCD2, &adcgrpcfg2, adc2_proximity_samples, DMA_BUFFER_SIZE);
-
-        /* Wait for the conversions to be done. */
-        chBSemWait(&adc3_ready);
-        chBSemWait(&adc2_ready);
+        take_measurement(msg.values);
 
         palTogglePad(GPIOE, GPIOE_LED_STATUS);
 
-        proximity_msg_t msg;
-
-        for (int i = 0; i < PROXIMITY_NB_CHANNELS; i++) {
-            /* The 8th sensor is the only one on ADC2. */
-            if (i == 8) {
-                msg.values[i] = adc2_values[0];
-            } else {
-                msg.values[i] = adc3_values[i];
-            }
-        }
-
         messagebus_topic_publish(&proximity_topic, &msg, sizeof(msg));
-
-        /* Gets exclusive access to the ADCs. */
-        adcReleaseBus(&ADCD2);
-        adcReleaseBus(&ADCD3);
     }
 }
 
