@@ -84,8 +84,15 @@ The code is split into several subsystems:
 * `panic.c` contains the panic handler, called when the system crashes.
 * `parameter_port.h` defines OS-specific locking mechanisms used by the parameter tree subsystem.
 * `usbcfg.c` contains configuration strings for the USB port.
+* `battery_protection.c` contains the code for the overdischarge protection (see below).
 
-* The `sensors` folder contains the drivers used for the robot sensors.
+* The `sensors` folder contains the drivers used for the robot sensors:
+    * `battery_level.c` is responsible for reading the battery voltage.
+    * `encoder.c` handles the quadrature encoders of the motors and correctly adds them up to 32 bits numbers from their 16 bit hardware timer.
+    * `imu.c` and `mpu60x0.c` contain the drivers for the inertial motion unit (gyro and accelerometer).
+    * `proximity.c` contains the drivers for the TCRT1000-based proximity sensor belt.
+    * `range.c` contains the interface for the Time of Flight range sensor.
+        The low level driver is located in the `vl6180x` folder.
 * `exti.c` acts as the central hub for the GPIO interrupts on the robot and dispatches them to the correct tasks.
     For now it is only used by the IMU to indicate when a measurement is ready.
 * `motor_pwm.c` contains the code to drive the motors.
@@ -104,6 +111,17 @@ The following modules are also used, see their respective documentation for more
 * `parameter` contains an implementation of a centralized parameter service which allows users to make their code configurable from a single place.
     See doc for details.
 * `test-runner` does not contain code that will run on the robot but is required to run the unit tests.
+
+## Automated low battery cutoff
+Over discharging a Lithium battery can damage it permanently.
+In order to prevent that, the robot will warn the user via a blinking red LED when the battery goes below a certain threshold (3.5V/cell).
+If the battery goes under a critical voltage (3V/cell), the robot self-shutdowns to protect the battery.
+**However there are some situations in which this system will not protect your batteries**:
+1. If the software is running in a step by step debugger, or
+2. If the "Keep power enabled" jumper (JP2) is on, or
+3. If software modifications result in the software being locked in a critical zone.
+    This is an example of why critical zones should absolutely be avoided.
+    The protection code runs at highest priority and the RTOS is configured to use round-robin scheduling so thread starvation should not happen.
 
 ## Automated code formatting
 Running `make format` will reformat the code to follow the coding style more accurately.
