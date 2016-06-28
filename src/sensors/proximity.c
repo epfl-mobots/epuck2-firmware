@@ -21,6 +21,8 @@
 
 #define ADC2_NB_CHANNELS 1
 
+#define EXTSEL_TIM8_CH1 0x0d
+
 unsigned int adc3_values[PROXIMITY_NB_CHANNELS] = {0};
 unsigned int adc2_values[ADC2_NB_CHANNELS] = {0};
 static BSEMAPHORE_DECL(adc3_ready, true);
@@ -80,11 +82,14 @@ static const ADCConversionGroup adcgrpcfg2 = {
     /* Discontinuous mode with 1 conversion per trigger. */
     .cr1 = ADC_CR1_DISCEN,
 
-    /* Trigger on timer 8 CC1. */
-    .cr2 = ADC_CR2_EXTEN_1 | ADC_CR2_EXTSEL_SRC(0xd),
+    /* External trigger on timer 8 CC1. */
+    .cr2 = ADC_CR2_EXTEN_1 | ADC_CR2_EXTSEL_SRC(EXTSEL_TIM8_CH1),
+
+    /* Sampling duration, all set to PROXIMITY_ADC_SAMPLE_TIME. */
     .smpr1 = 0,
     .smpr2 = ADC_SMPR2_SMP_AN0(PROXIMITY_ADC_SAMPLE_TIME),
 
+    /* On ADC2 we only have one proximity sensor. */
     .sqr1 = ADC_SQR1_NUM_CH(ADC2_NB_CHANNELS),
     .sqr2 = 0,
     .sqr3 = ADC_SQR3_SQ1_N(14), // IR_AN12
@@ -100,53 +105,45 @@ static const ADCConversionGroup adcgrpcfg3 = {
     /* Discontinuous mode with 1 conversion per trigger. */
     .cr1 = ADC_CR1_DISCEN,
 
-    /* Trigger on timer 8 CC1. */
-    .cr2 = ADC_CR2_EXTEN_1 | ADC_CR2_EXTSEL_SRC(0xd),
+    /* External trigger on timer 8 CC1. */
+    .cr2 = ADC_CR2_EXTEN_1 | ADC_CR2_EXTSEL_SRC(EXTSEL_TIM8_CH1),
 
-    .smpr1 = ADC_SMPR1_SMP_AN10(PROXIMITY_ADC_SAMPLE_TIME) |  // PC0 - IR_AN8
-        ADC_SMPR1_SMP_AN11(PROXIMITY_ADC_SAMPLE_TIME) | // PC1 - IR_AN9
-        ADC_SMPR1_SMP_AN12(PROXIMITY_ADC_SAMPLE_TIME) | // PC2 - IR_AN10
-        ADC_SMPR1_SMP_AN13(PROXIMITY_ADC_SAMPLE_TIME) | // PC3 - IR_AN11
-        ADC_SMPR1_SMP_AN14(PROXIMITY_ADC_SAMPLE_TIME) | // PF4 - IR_AN1
-        ADC_SMPR1_SMP_AN15(PROXIMITY_ADC_SAMPLE_TIME), // PF5 - IR_AN2
+    /* Sampling duration, all set to PROXIMITY_ADC_SAMPLE_TIME. */
+    .smpr2 = ADC_SMPR2_SMP_AN0(PROXIMITY_ADC_SAMPLE_TIME) |
+             ADC_SMPR2_SMP_AN1(PROXIMITY_ADC_SAMPLE_TIME) |
+             ADC_SMPR2_SMP_AN2(PROXIMITY_ADC_SAMPLE_TIME) |
+             ADC_SMPR2_SMP_AN3(PROXIMITY_ADC_SAMPLE_TIME) |
+             ADC_SMPR2_SMP_AN4(PROXIMITY_ADC_SAMPLE_TIME) |
+             ADC_SMPR2_SMP_AN5(PROXIMITY_ADC_SAMPLE_TIME) |
+             ADC_SMPR2_SMP_AN6(PROXIMITY_ADC_SAMPLE_TIME) |
+             ADC_SMPR2_SMP_AN7(PROXIMITY_ADC_SAMPLE_TIME) |
+             ADC_SMPR2_SMP_AN8(PROXIMITY_ADC_SAMPLE_TIME) |
+             ADC_SMPR2_SMP_AN9(PROXIMITY_ADC_SAMPLE_TIME),
+    .smpr1 = ADC_SMPR1_SMP_AN10(PROXIMITY_ADC_SAMPLE_TIME) |
+             ADC_SMPR1_SMP_AN11(PROXIMITY_ADC_SAMPLE_TIME) |
+             ADC_SMPR1_SMP_AN12(PROXIMITY_ADC_SAMPLE_TIME) |
+             ADC_SMPR1_SMP_AN13(PROXIMITY_ADC_SAMPLE_TIME) |
+             ADC_SMPR1_SMP_AN14(PROXIMITY_ADC_SAMPLE_TIME) |
+             ADC_SMPR1_SMP_AN15(PROXIMITY_ADC_SAMPLE_TIME),
 
-    .smpr2 =
-        ADC_SMPR2_SMP_AN0(PROXIMITY_ADC_SAMPLE_TIME) | // PF6 - IR_AN3
-        ADC_SMPR2_SMP_AN1(PROXIMITY_ADC_SAMPLE_TIME) | // PF6 - IR_AN3
-        ADC_SMPR2_SMP_AN2(PROXIMITY_ADC_SAMPLE_TIME) | // PF6 - IR_AN3
-        ADC_SMPR2_SMP_AN3(PROXIMITY_ADC_SAMPLE_TIME) | // PF6 - IR_AN3
-        ADC_SMPR2_SMP_AN4(PROXIMITY_ADC_SAMPLE_TIME) | // PF6 - IR_AN3
-        ADC_SMPR2_SMP_AN5(PROXIMITY_ADC_SAMPLE_TIME) | // PF7 - IR_AN4
-        ADC_SMPR2_SMP_AN6(PROXIMITY_ADC_SAMPLE_TIME) | // PF8 - IR_AN5
-        ADC_SMPR2_SMP_AN7(PROXIMITY_ADC_SAMPLE_TIME) | // PF9 - IR_AN6
-        ADC_SMPR2_SMP_AN8(PROXIMITY_ADC_SAMPLE_TIME) | // PF10 - IR_AN7
-        ADC_SMPR2_SMP_AN9(PROXIMITY_ADC_SAMPLE_TIME), // PF3 - IR_AN0
-
-    // Proximity sensors channels (CCW, from above, front is range sensor)
-    // 12
-    // 13
-    // 11
-    // 14
-    // 15
-    // 6
-    // 5
-
-    // Ground sensors
-    // 8
-    // ADC2, PC4, IN14 (See below)
-    // 10
-    // 4
-    // 7
-    // 9
-
-    .sqr1 = ADC_SQR1_NUM_CH(PROXIMITY_NB_CHANNELS) | ADC_SQR1_SQ13_N(9),
-    /*SQR2*/
-    .sqr2 = ADC_SQR2_SQ7_N(5) | ADC_SQR2_SQ8_N(8) | ADC_SQR2_SQ9_N(2) | ADC_SQR2_SQ10_N(10) |
-        ADC_SQR2_SQ11_N(4) | ADC_SQR2_SQ12_N(7),
-    /*SQR3*/
-    .sqr3 = ADC_SQR3_SQ1_N(12) | ADC_SQR3_SQ2_N(13) |
-        ADC_SQR3_SQ3_N(11) | ADC_SQR3_SQ4_N(14) |
-        ADC_SQR3_SQ5_N(15) | ADC_SQR3_SQ6_N(6),
+    /* Channels are defined starting from front (range sensor) and turning
+     * counter clock wise. */
+    /* Proximity sensors channels. */
+    .sqr3 = ADC_SQR3_SQ1_N(12) |
+            ADC_SQR3_SQ2_N(13) |
+            ADC_SQR3_SQ3_N(11) |
+            ADC_SQR3_SQ4_N(14) |
+            ADC_SQR3_SQ5_N(15) |
+            ADC_SQR3_SQ6_N(6),
+    .sqr2 = ADC_SQR2_SQ7_N(5) |
+    /* Ground sensors channels. */
+            ADC_SQR2_SQ8_N(8) |
+            ADC_SQR2_SQ9_N(2) | /* IR_IN14 is on ADC2, this is only a dummy. */
+            ADC_SQR2_SQ10_N(10) |
+            ADC_SQR2_SQ11_N(4) |
+            ADC_SQR2_SQ12_N(7),
+    .sqr1 = ADC_SQR1_SQ13_N(9) |
+            ADC_SQR1_NUM_CH(PROXIMITY_NB_CHANNELS)
 };
 
 static THD_FUNCTION(proximity_thd, arg)
