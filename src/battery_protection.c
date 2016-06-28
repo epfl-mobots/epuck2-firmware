@@ -44,9 +44,12 @@ static THD_FUNCTION(battery_protection_thd, arg)
 void battery_protection_start(void)
 {
     static THD_WORKING_AREA(battery_protection_thd_wa, 1024);
+
+    /* Since this is used for safety we run it at highest priority to make sure
+     * it never starves. */
     chThdCreateStatic(battery_protection_thd_wa,
                       sizeof(battery_protection_thd_wa),
-                      HIGHPRIO,
+                      ABSPRIO,
                       battery_protection_thd,
                       NULL);
 }
