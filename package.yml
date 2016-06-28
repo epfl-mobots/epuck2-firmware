@@ -30,6 +30,7 @@ target.arm:
     - src/motor_pwm.c
     - src/board/board.c
     - src/sensors/range.c
+    - src/sensors/battery_level.c
     - src/memory_protection.c
     - src/flash/flash.c
     - src/sensors/vl6180x/vl6180x_chibios.c

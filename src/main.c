@@ -5,6 +5,7 @@
 #include "hal.h"
 #include "test.h"
 #include "memory_protection.h"
+#include "sensors/battery_level.h"
 
 #include "chprintf.h"
 #include "shell.h"
@@ -50,6 +51,12 @@ static void blinker_start(void)
     chThdCreateStatic(blinker_thd_wa, sizeof(blinker_thd_wa), NORMALPRIO, blinker_thd, NULL);
 }
 
+void adc_start(void)
+{
+    adcStart(&ADCD3, NULL);
+    adcStart(&ADCD2, NULL);
+}
+
 void i2c_start(void)
 {
     /*
@@ -87,6 +94,10 @@ int main(void)
     chprintf((BaseSequentialStream*)&SDU1, "boot");
 
     i2c_start();
+
+    adc_start();
+
+    battery_level_start();
 
     motor_pwm_start();
     encoder_start();

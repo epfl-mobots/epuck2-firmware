@@ -240,7 +240,7 @@
 #define VAL_GPIOA_MODER             (PIN_MODE_ANALOG(GPIOA_MOT0_CURRENT) |         \
                                      PIN_MODE_ALTERNATE(GPIOA_MOT1_QEA) |           \
                                      PIN_MODE_ANALOG(GPIOA_MOT1_CURRENT) |           \
-                                     PIN_MODE_INPUT(GPIOA_VSYS_ADC) |           \
+                                     PIN_MODE_ANALOG(GPIOA_VSYS_ADC) |           \
                                      PIN_MODE_INPUT(GPIOA_DCMI_HSYNC) |       \
                                      PIN_MODE_INPUT(GPIOA_AUDIO_SPEAKER) |        \
                                      PIN_MODE_INPUT(GPIOA_DCMI_PIXCLK) |        \
@@ -256,7 +256,7 @@
 #define VAL_GPIOA_OTYPER            (PIN_OTYPE_OPENDRAIN(GPIOA_MOT0_CURRENT) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOA_MOT1_QEA) |       \
                                      PIN_OTYPE_OPENDRAIN(GPIOA_MOT1_CURRENT) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_VSYS_ADC) |       \
+                                     PIN_OTYPE_OPENDRAIN(GPIOA_VSYS_ADC) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOA_DCMI_HSYNC) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOA_AUDIO_SPEAKER) |        \
                                      PIN_OTYPE_PUSHPULL(GPIOA_DCMI_PIXCLK) |        \
@@ -288,7 +288,7 @@
 #define VAL_GPIOA_PUPDR             (PIN_PUPDR_FLOATING(GPIOA_MOT0_CURRENT) |     \
                                      PIN_PUPDR_FLOATING(GPIOA_MOT1_QEA) |         \
                                      PIN_PUPDR_FLOATING(GPIOA_MOT1_CURRENT) |         \
-                                     PIN_PUPDR_PULLUP(GPIOA_VSYS_ADC) |         \
+                                     PIN_PUPDR_FLOATING(GPIOA_VSYS_ADC) |         \
                                      PIN_PUPDR_PULLUP(GPIOA_DCMI_HSYNC) |       \
                                      PIN_PUPDR_PULLUP(GPIOA_AUDIO_SPEAKER) |        \
                                      PIN_PUPDR_PULLUP(GPIOA_DCMI_PIXCLK) |        \

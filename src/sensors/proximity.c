@@ -17,14 +17,14 @@
 #define NUM_IR_SENSORS 13
 
 #define PROXIMITY_ADC_SAMPLE_TIME ADC_SAMPLE_112
-#define DMA_BUFFER_SIZE (16)
+#define DMA_BUFFER_SIZE 16
 
 #define ADC2_NB_CHANNELS 1
 
 #define EXTSEL_TIM8_CH1 0x0d
 
-unsigned int adc3_values[PROXIMITY_NB_CHANNELS] = {0};
-unsigned int adc2_values[ADC2_NB_CHANNELS] = {0};
+static unsigned int adc3_values[PROXIMITY_NB_CHANNELS] = {0};
+static unsigned int adc2_values[ADC2_NB_CHANNELS] = {0};
 static BSEMAPHORE_DECL(adc3_ready, true);
 static BSEMAPHORE_DECL(adc2_ready, true);
 
@@ -151,10 +151,6 @@ static THD_FUNCTION(proximity_thd, arg)
     (void) arg;
     chRegSetThreadName(__FUNCTION__);
 
-    /* Configure the AD converters. */
-    adcStart(&ADCD3, NULL);
-    adcStart(&ADCD2, NULL);
-
     /* Declares the topic on the bus. */
     messagebus_topic_t proximity_topic;
     MUTEX_DECL(proximity_topic_lock);
@@ -169,6 +165,10 @@ static THD_FUNCTION(proximity_thd, arg)
     messagebus_advertise_topic(&bus, &proximity_topic, "/proximity");
 
     while (true) {
+        /* Gets exclusive access to the ADCs. */
+        adcAcquireBus(&ADCD3);
+        adcAcquireBus(&ADCD2);
+
         /* Starts a new conversion. */
         adcStartConversion(&ADCD3, &adcgrpcfg3, adc3_proximity_samples, DMA_BUFFER_SIZE);
         adcStartConversion(&ADCD2, &adcgrpcfg2, adc2_proximity_samples, DMA_BUFFER_SIZE);
@@ -191,6 +191,10 @@ static THD_FUNCTION(proximity_thd, arg)
         }
 
         messagebus_topic_publish(&proximity_topic, &msg, sizeof(msg));
+
+        /* Gets exclusive access to the ADCs. */
+        adcReleaseBus(&ADCD2);
+        adcReleaseBus(&ADCD3);
     }
 }
 
