@@ -65,18 +65,18 @@ make check
 
 ## Code organization
 
-The code is split in several subsystems:
+The code is split into several subsystems:
 
 * `main.c` contains the entry point of the program.
     Its main role is to start all the services and threads required by the rest of the application.
 * `chconf.h`, `halconf.h` and `mcuconf.h` are ChibiOS configuration files.
-    They allow to customize OS behavior, add remove device drivers, etc.
-    1. `halconf.h` allows the user to activate and deactivate the different features of the HAL.
+    They allow to customize OS behavior, add / remove device drivers, etc.
+    1. `halconf.h` allows the user to activate and deactivate the different features of the Hardware Abstraction Layer (HAL).
     2. `mcuconf.h` contains the low level details regarding the microcontroller (DMA streams, clocks, etc.).
         You should not have to change it.
     3. `chconf.h` allows the user to configure the different features of ChibiOS (minus the HAL).
         This is were the user can activate and deactivate features like events, mutexes and semaphores.
-* `cmd.c` defines the command available through the debug shell.
+* `cmd.c` defines the commands available through the debug shell.
 * `config_flash_storage.c` contains the code used to store the parameter tree to flash.
     It allows user settings to be persistent across reboots.
 * `memory_protection.c` contains a driver for the Memory Protection Unit (MPU).
@@ -86,7 +86,7 @@ The code is split in several subsystems:
 * `usbcfg.c` contains configuration strings for the USB port.
 
 * The `sensors` folder contains the drivers used for the robot sensors.
-* `exti.c` acts as the central hub for the interrupts on the robot and dispatches them to the correct tasks.
+* `exti.c` acts as the central hub for the GPIO interrupts on the robot and dispatches them to the correct tasks.
     For now it is only used by the IMU to indicate when a measurement is ready.
 * `motor_pwm.c` contains the code to drive the motors.
 
