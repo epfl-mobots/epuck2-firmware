@@ -11,6 +11,7 @@
 #include "sensors/range.h"
 #include "config_flash_storage.h"
 #include "sensors/proximity.h"
+#include "sensors/battery_level.h"
 #include "motor_pwm.h"
 #include "ff.h"
 #include "main.h"
@@ -167,6 +168,24 @@ static void cmd_proximity(BaseSequentialStream *chp, int argc, char *argv[])
         chprintf(chp, "%4d\t", msg.values[i]);
     }
     chprintf(chp, "\r\n");
+}
+
+static void cmd_battery(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    (void) argc;
+    (void) argv;
+
+    battery_msg_t msg;
+    messagebus_topic_t *topic = messagebus_find_topic(&bus, "/battery_level");
+
+    if (topic == NULL) {
+        chprintf(chp, "Battery topic not found!\r\n");
+        return;
+    }
+
+    messagebus_topic_read(topic, &msg, sizeof(msg));
+
+    chprintf(chp, "Battery voltage: %.2f [V]\r\n", msg.voltage);
 }
 
 static void cmd_topics(BaseSequentialStream *chp, int argc, char *argv[])
@@ -356,6 +375,7 @@ const ShellCommand shell_commands[] = {
     {"test", cmd_test},
     {"range", cmd_range},
     {"proximity", cmd_proximity},
+    {"battery", cmd_battery},
     {"topics", cmd_topics},
     {"pwm", cmd_motor},
     {"encoders", cmd_encoders},

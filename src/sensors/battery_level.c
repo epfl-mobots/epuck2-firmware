@@ -2,6 +2,7 @@
 #include <hal.h>
 #include <stdio.h>
 #include "battery_level.h"
+#include "main.h"
 
 #define DMA_BUFFER_SIZE (16)
 #define BATTERY_ADC_GAIN ((51. + 33.) / 33.)
@@ -45,17 +46,37 @@ static THD_FUNCTION(battery_thd, arg)
 {
     (void) arg;
 
+    messagebus_topic_t battery_topic;
+    MUTEX_DECL(battery_topic_lock);
+    CONDVAR_DECL(battery_topic_condvar);
+    battery_msg_t battery_topic_value;
+
+    messagebus_topic_init(&battery_topic,
+                          &battery_topic_lock,
+                          &battery_topic_condvar,
+                          &battery_topic_value,
+                          sizeof(battery_topic_value));
+
+    messagebus_advertise_topic(&bus, &battery_topic, "/battery_level");
+
     while (true) {
         adcAcquireBus(&ADCD2);
+
+        /* Starts a measurement and waits for it to complete. */
         adcStartConversion(&ADCD2, &group, adc_samples, DMA_BUFFER_SIZE);
         chBSemWait(&measurement_ready);
+
         adcReleaseBus(&ADCD2);
 
+        /* Converts the measurement to volts and publish the measurement on the
+         * bus. */
+        battery_msg_t msg;
+        msg.voltage = battery_value * ADC_GAIN * BATTERY_ADC_GAIN;
+
+        messagebus_topic_publish(&battery_topic, &msg, sizeof(msg));
+
+        /* Sleep for some time. */
         chThdSleepSeconds(2);
-
-        float val = battery_value * ADC_GAIN * BATTERY_ADC_GAIN;
-
-        printf("battery: %.2f [V]\r\n", val);
     }
 }
 
