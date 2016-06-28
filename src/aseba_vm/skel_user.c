@@ -15,6 +15,7 @@
 #include "motor_pwm.h"
 
 #include "sensors/range.h"
+#include "sensors/battery_level.h"
 
 /* Struct used to share Aseba parameters between C-style API and Aseba. */
 static parameter_t aseba_settings[SETTINGS_COUNT];
@@ -43,6 +44,7 @@ const AsebaVMDescription vmDescription = {
      {2, "_fwversion"},
      {1, "_productId"},
 
+     {1, "battery"},
      {1, "range"},
      {PROXIMITY_NB_CHANNELS, "proximity"},
      {1, "motor.left.pwm"},
@@ -124,16 +126,22 @@ void aseba_variables_init(parameter_namespace_t *aseba_ns)
 
 void aseba_read_variables_from_system(AsebaVMState *vm)
 {
-    range_msg_t range;
-    proximity_msg_t proximity;
-
     messagebus_topic_t *topic;
 
     vmVariables.id = vm->nodeId;
 
+    /* Read battery level */
+    topic = messagebus_find_topic(&bus, "/battery_level");
+    if (topic != NULL) {
+        battery_msg_t msg;
+        messagebus_topic_read(topic, &msg, sizeof(msg));
+        vmVariables.battery_mv = (int)(1000 * msg.voltage);
+    }
+
     /* Read range sensor */
     topic = messagebus_find_topic(&bus, "/range");
     if (topic != NULL) {
+        range_msg_t range;
         messagebus_topic_read(topic, &range, sizeof(range));
         vmVariables.range = (int)range.raw_mm;
     }
@@ -141,6 +149,7 @@ void aseba_read_variables_from_system(AsebaVMState *vm)
     /* Read proximity sensors. */
     topic = messagebus_find_topic(&bus, "/proximity");
     if (topic != NULL) {
+        proximity_msg_t proximity;
         messagebus_topic_read(topic, &proximity, sizeof(proximity));
         for (int i = 0; i < PROXIMITY_NB_CHANNELS; i++) {
             vmVariables.proximity[i] = proximity.values[i];

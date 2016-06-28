@@ -40,6 +40,7 @@ struct _vmVariables {
     sint16 productId;                   // Product ID
 
     // Variables
+    uint16 battery_mv;
     uint16 range;
     uint16 proximity[PROXIMITY_NB_CHANNELS];
     sint16 motor_left_pwm;
