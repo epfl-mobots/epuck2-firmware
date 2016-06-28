@@ -49,7 +49,7 @@ void battery_protection_start(void)
      * it never starves. */
     chThdCreateStatic(battery_protection_thd_wa,
                       sizeof(battery_protection_thd_wa),
-                      ABSPRIO,
+                      HIGHPRIO,
                       battery_protection_thd,
                       NULL);
 }

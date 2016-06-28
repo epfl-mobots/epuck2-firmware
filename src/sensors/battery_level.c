@@ -86,5 +86,5 @@ void battery_level_start(void)
 
     /* Since this is used for safety we run it at highest priority to make sure
      * it never starves. */
-    chThdCreateStatic(battery_thd_wa, sizeof(battery_thd_wa), ABSPRIO, battery_thd, NULL);
+    chThdCreateStatic(battery_thd_wa, sizeof(battery_thd_wa), HIGHPRIO, battery_thd, NULL);
 }
