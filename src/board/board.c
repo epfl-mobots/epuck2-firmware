@@ -130,3 +130,8 @@ void boardInit(void)
 {
     palSetPad(GPIOF, GPIOF_POWERON);
 }
+
+void board_shutdown(void)
+{
+    palClearPad(GPIOF, GPIOF_POWERON);
+}

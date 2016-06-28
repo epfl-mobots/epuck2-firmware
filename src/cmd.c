@@ -368,8 +368,14 @@ static void cmd_config_load(BaseSequentialStream *chp, int argc, char **argv)
     }
 }
 
+static void cmd_shutdown(BaseSequentialStream *chp, int argc, char **argv)
+{
+    (void) chp;
+    (void) argc;
+    (void) argv;
 
-
+    board_shutdown();
+}
 
 const ShellCommand shell_commands[] = {
     {"test", cmd_test},
@@ -388,6 +394,7 @@ const ShellCommand shell_commands[] = {
     {"config_save", cmd_config_save},
     {"config_load", cmd_config_load},
     {"config_erase", cmd_config_erase},
+    {"shutdown", cmd_shutdown},
 
     {NULL, NULL}
 };

@@ -1148,6 +1148,9 @@
 extern "C" {
 #endif
 void boardInit(void);
+
+/** Shutdowns the board. */
+void board_shutdown(void);
 #ifdef __cplusplus
 }
 #endif
