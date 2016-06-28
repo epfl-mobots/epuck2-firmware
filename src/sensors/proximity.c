@@ -29,31 +29,52 @@ static BSEMAPHORE_DECL(adc2_ready, true);
 static adcsample_t adc3_proximity_samples[PROXIMITY_NB_CHANNELS * DMA_BUFFER_SIZE];
 static adcsample_t adc2_proximity_samples[1 * DMA_BUFFER_SIZE];
 
-static void adc2_cb(ADCDriver *adcp, adcsample_t *samples, size_t n)
+static void adc_cb(ADCDriver *adcp, adcsample_t *samples, size_t n)
 {
-    memset(adc2_values, 0, sizeof(adc2_values));
+    (void) adcp;
+    (void) samples;
+    (void) n;
 
+    unsigned int *values = NULL;
+    binary_semaphore_t *sem = NULL;
+
+    /* First select the buffer and semaphore to store processing results in. */
+    if (adcp == &ADCD3) {
+        values = adc3_values;
+        sem = &adc3_ready;
+    } else if (adcp == &ADCD2) {
+        values = adc2_values;
+        sem = &adc2_ready;
+    } else {
+        chSysHalt("ADC callback: Unknown ADC");
+    }
+
+    /* Reset all samples to zero. */
+    memset(values, 0, adcp->grpp->num_channels * sizeof(unsigned int));
+
+    /* Compute the average over the different measurements. */
     for (size_t j = 0; j < n; j++) {
-        for (size_t i = 0; i < ADC2_NB_CHANNELS; i++) {
-            adc2_values[i] += samples[ADC2_NB_CHANNELS * j + i];
+        for (size_t i = 0; i < adcp->grpp->num_channels; i++) {
+            values[i] += samples[adcp->grpp->num_channels * j + i];
         }
     }
 
-    for (size_t i = 0; i < ADC2_NB_CHANNELS; i++) {
-        adc2_values[i] /= n;
+    for (size_t i = 0; i < adcp->grpp->num_channels; i++) {
+        values[i] /= n;
     }
 
+    /* Stops the automatic conversions and signal the proximity thread that the
+     * ADC measurements are done. */
     chSysLockFromISR();
-    adcStopConversionI(&ADCD2);
-    chBSemSignalI(&adc2_ready);
+    adcStopConversionI(adcp);
+    chBSemSignalI(sem);
     chSysUnlockFromISR();
-
 }
 
 static const ADCConversionGroup adcgrpcfg2 = {
     .circular = true,
     .num_channels = ADC2_NB_CHANNELS,
-    .end_cb = adc2_cb,
+    .end_cb = adc_cb,
     .error_cb = NULL,
 
     /* Discontinuous mode with 1 conversion per trigger. */
@@ -69,36 +90,11 @@ static const ADCConversionGroup adcgrpcfg2 = {
     .sqr3 = ADC_SQR3_SQ1_N(14), // IR_AN12
 };
 
-static void adc3_proximity_cb(ADCDriver *adcp, adcsample_t *samples, size_t n)
-{
-    (void) adcp;
-    (void) samples;
-    (void) n;
-
-    memset(adc3_values, 0, sizeof(adc3_values));
-
-    for (size_t j = 0; j < n; j++) {
-        for (size_t i = 0; i < PROXIMITY_NB_CHANNELS; i++) {
-            adc3_values[i] += samples[PROXIMITY_NB_CHANNELS * j + i];
-        }
-    }
-
-    for (size_t i = 0; i < PROXIMITY_NB_CHANNELS; i++) {
-        adc3_values[i] /= n;
-    }
-
-    palTogglePad(GPIOE, GPIOE_LED_STATUS);
-
-    chSysLockFromISR();
-    adcStopConversionI(&ADCD3);
-    chBSemSignalI(&adc3_ready);
-    chSysUnlockFromISR();
-}
 
 static const ADCConversionGroup adcgrpcfg3 = {
     .circular = true,
     .num_channels = PROXIMITY_NB_CHANNELS,
-    .end_cb = adc3_proximity_cb,
+    .end_cb = adc_cb,
     .error_cb = NULL,
 
     /* Discontinuous mode with 1 conversion per trigger. */
@@ -162,9 +158,6 @@ static THD_FUNCTION(proximity_thd, arg)
     adcStart(&ADCD3, NULL);
     adcStart(&ADCD2, NULL);
 
-    adcStartConversion(&ADCD3, &adcgrpcfg3, adc3_proximity_samples, DMA_BUFFER_SIZE);
-    adcStartConversion(&ADCD2, &adcgrpcfg2, adc2_proximity_samples, DMA_BUFFER_SIZE);
-
     /* Declares the topic on the bus. */
     messagebus_topic_t proximity_topic;
     MUTEX_DECL(proximity_topic_lock);
@@ -179,32 +172,28 @@ static THD_FUNCTION(proximity_thd, arg)
     messagebus_advertise_topic(&bus, &proximity_topic, "/proximity");
 
     while (true) {
-        unsigned int myvalues[PROXIMITY_NB_CHANNELS];
-
-        chBSemWait(&adc3_ready);
-        chBSemWait(&adc2_ready);
-
-        chSysLock();
-        memcpy(myvalues, adc3_values, sizeof(myvalues));
-        chSysUnlock();
-
-        proximity_msg_t msg;
-
-        for (int i = 0; i < PROXIMITY_NB_CHANNELS; i++) {
-            msg.values[i] = myvalues[i];
-        }
-
-        /* This sensor is on ADC2 so it is slightly different. */
-        chSysLock();
-        msg.values[8] = adc2_values[0];
-        chSysUnlock();
-
-        messagebus_topic_publish(&proximity_topic, &msg, sizeof(msg));
-
         /* Starts a new conversion. */
         adcStartConversion(&ADCD3, &adcgrpcfg3, adc3_proximity_samples, DMA_BUFFER_SIZE);
         adcStartConversion(&ADCD2, &adcgrpcfg2, adc2_proximity_samples, DMA_BUFFER_SIZE);
 
+        /* Wait for the conversions to be done. */
+        chBSemWait(&adc3_ready);
+        chBSemWait(&adc2_ready);
+
+        palTogglePad(GPIOE, GPIOE_LED_STATUS);
+
+        proximity_msg_t msg;
+
+        for (int i = 0; i < PROXIMITY_NB_CHANNELS; i++) {
+            /* The 8th sensor is the only one on ADC2. */
+            if (i == 8) {
+                msg.values[i] = adc2_values[0];
+            } else {
+                msg.values[i] = adc3_values[i];
+            }
+        }
+
+        messagebus_topic_publish(&proximity_topic, &msg, sizeof(msg));
     }
 }
 
