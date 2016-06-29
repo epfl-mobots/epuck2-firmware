@@ -32,7 +32,7 @@ To start the shell, open a terminal emulator and run
 ```bash
 sudo python -m serial.tools.miniterm /dev/ttyACM0
 ```
- assuming `/dev/ttyACM0` is where the discovery is connected
+ assuming `/dev/ttyACM0` is where the robot is connected.
 
 ### Changing node ID
 To change the node ID, open a shell to the device and enter the following commands:
