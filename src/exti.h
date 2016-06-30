@@ -9,7 +9,8 @@ extern "C" {
 
 extern event_source_t exti_events;
 
-void exti_setup(void);
+/** Starts the external interrupt processing service. */
+void exti_start(void);
 
 
 #ifdef __cplusplus

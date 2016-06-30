@@ -43,7 +43,7 @@ static const EXTConfig extcfg = {
 }
 };
 
-void exti_setup(void)
+void exti_start(void)
 {
     chEvtObjectInit(&exti_events);
     extStart(&EXTD1, &extcfg);

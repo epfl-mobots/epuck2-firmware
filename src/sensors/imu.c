@@ -74,8 +74,6 @@ static THD_FUNCTION(imu_reader_thd, arg)
 
 void imu_start(void)
 {
-    exti_setup();
-
     static THD_WORKING_AREA(imu_reader_thd_wa, 2048);
     chThdCreateStatic(imu_reader_thd_wa, sizeof(imu_reader_thd_wa), NORMALPRIO, imu_reader_thd,
                       NULL);
