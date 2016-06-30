@@ -69,6 +69,7 @@ const AsebaLocalEventDescription localEvents[] = {
     {"range", "New range measurement"},
     {"proximity", "New proximity measurement"},
     {"encoders", "New motor encoders measurement"},
+    {"imu", "New IMU (gyro and acc) measurement"},
     {NULL, NULL}
 };
 
@@ -120,6 +121,22 @@ static THD_FUNCTION(aseba_proximity_thd, p)
     }
 }
 
+/** This thread is responsible for handling new IMU events for Aseba. */
+static THD_FUNCTION(aseba_imu_thd, p)
+{
+    (void) p;
+    chRegSetThreadName(__FUNCTION__);
+
+    messagebus_topic_t *topic;
+
+    topic = messagebus_find_topic_blocking(&bus, "/imu");
+
+    while (true) {
+        messagebus_topic_wait(topic, NULL, 0);
+        SET_EVENT(EVENT_IMU);
+    }
+}
+
 
 void aseba_variables_init(parameter_namespace_t *aseba_ns)
 {
@@ -139,6 +156,9 @@ void aseba_variables_init(parameter_namespace_t *aseba_ns)
 
     static THD_WORKING_AREA(encoders_wa, 256);
     chThdCreateStatic(encoders_wa, sizeof(encoders_wa), NORMALPRIO, aseba_encoders_thd, NULL);
+
+    static THD_WORKING_AREA(imu_wa, 256);
+    chThdCreateStatic(imu_wa, sizeof(imu_wa), NORMALPRIO, aseba_imu_thd, NULL);
 
     /* Registers all Aseba settings in global namespace. */
     int i;
