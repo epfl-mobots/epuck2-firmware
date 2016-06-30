@@ -109,6 +109,7 @@ int main(void)
     range_start();
 
     proximity_start();
+    imu_start();
 
     // Initialise aseba parameters
     parameter_namespace_declare(&aseba_ns, &parameter_root, "aseba");

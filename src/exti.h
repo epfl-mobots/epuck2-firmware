@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#define EXTI_EVENT_MPU6000_INT     5
+#define EXTI_EVENT_MPU6000_INT     1
 
 extern event_source_t exti_events;
 

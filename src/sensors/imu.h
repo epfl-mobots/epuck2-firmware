@@ -1,25 +1,19 @@
 #ifndef IMU_H
 #define IMU_H
-
-#include <ch.h>
-#include <hal.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+/** Message containing one measurement from the IMU. */
+typedef struct {
+    float acceleration[3];
+    float roll_rate[3];
+} imu_msg_t;
+
+/** Starts the Inertial Motion Unit (IMU) publisher. */
 void imu_start(void);
-void imu_init(void);
-
-extern event_source_t imu_events;
-
-#define IMU_EVENT_READING        (1 << 0)
-
 
 #ifdef __cplusplus
 }
 #endif
-
-
-
 #endif /* IMU_H */

@@ -12,6 +12,7 @@
 #include "config_flash_storage.h"
 #include "sensors/proximity.h"
 #include "sensors/battery_level.h"
+#include "sensors/imu.h"
 #include "motor_pwm.h"
 #include "ff.h"
 #include "main.h"
@@ -67,6 +68,29 @@ static void cmd_encoders(BaseSequentialStream *chp, int argc, char *argv[])
     messagebus_topic_wait(encoders_topic, &values, sizeof(values));
 
     chprintf(chp, "left: %ld\r\nright: %ld\r\n", values.left, values.right);
+}
+
+static void cmd_imu(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    (void) argc;
+    (void) argv;
+
+    messagebus_topic_t *topic;
+    imu_msg_t msg;
+    topic = messagebus_find_topic(&bus, "/imu");
+
+    if (topic == NULL) {
+        chprintf(chp, "Could not find topic.\r\n");
+        return;
+    }
+
+    if (messagebus_topic_read(topic, &msg, sizeof(msg)) == false) {
+        chprintf(chp, "Topic was never published.\r\n");
+        return;
+    }
+
+    chprintf(chp, "gyro: %.2f %.2f %.2f\r\n", msg.roll_rate[0], msg.roll_rate[1], msg.roll_rate[2]);
+    chprintf(chp, "acc: %.2f %.2f %.2f\r\n", msg.acceleration[0], msg.acceleration[1], msg.acceleration[2]);
 }
 
 static void cmd_reboot(BaseSequentialStream *chp, int argc, char **argv)
@@ -367,6 +391,7 @@ const ShellCommand shell_commands[] = {
     {"topics", cmd_topics},
     {"pwm", cmd_motor},
     {"encoders", cmd_encoders},
+    {"imu", cmd_imu},
     {"reboot", cmd_reboot},
     {"test", cmd_test},
     {"sdcard", cmd_sdcard},
