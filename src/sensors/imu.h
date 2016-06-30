@@ -11,9 +11,6 @@ extern "C" {
 void imu_start(void);
 void imu_init(void);
 
-void imu_get_gyro(float *gyro);
-void imu_get_acc(float *acc);
-
 extern event_source_t imu_events;
 
 #define IMU_EVENT_READING        (1 << 0)

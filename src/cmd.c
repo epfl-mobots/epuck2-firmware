@@ -37,24 +37,6 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[])
     chThdWait(tp);
 }
 
-static void cmd_mpu6050(BaseSequentialStream *chp, int argc, char *argv[])
-{
-    (void)argc;
-    (void)argv;
-    float acc[3];
-    float gyro[3];
-    imu_get_gyro(gyro);
-    imu_get_acc(acc);
-    chprintf(chp,
-             "gyro: %f %f %f, acc %f %f %f\n",
-             gyro[0],
-             gyro[1],
-             gyro[2],
-             acc[0],
-             acc[1],
-             acc[2]);
-}
-
 static void cmd_motor(BaseSequentialStream *chp, int argc, char *argv[])
 {
     if (argc < 2) {
@@ -388,7 +370,6 @@ const ShellCommand shell_commands[] = {
     {"reboot", cmd_reboot},
     {"test", cmd_test},
     {"sdcard", cmd_sdcard},
-    {"mpu6050", cmd_mpu6050},
     {"config_tree", cmd_config_tree},
     {"config_set", cmd_config_set},
     {"config_save", cmd_config_save},
