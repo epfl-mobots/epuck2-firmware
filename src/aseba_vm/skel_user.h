@@ -25,6 +25,7 @@ enum AsebaLocalEvents {
     EVENT_RANGE=0, // New range measurement
     EVENT_PROXIMITY, // New proximity sensor measurement
     EVENT_ENCODERS, // New motor encoders measurement
+    EVENT_IMU, // New acceleration and gyro measurement
 };
 
 
@@ -52,6 +53,9 @@ struct _vmVariables {
     /* 32 bit encoders are stored in an MSB, LSB tuple. */
     sint16 motor_left_enc[2];
     sint16 motor_right_enc[2];
+
+    sint16 acceleration[3];
+    sint16 gyro[3];
 
     // Free space
     sint16 freeSpace[VM_VARIABLES_FREE_SPACE];

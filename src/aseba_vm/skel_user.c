@@ -17,6 +17,7 @@
 #include "sensors/range.h"
 #include "sensors/battery_level.h"
 #include "sensors/encoder.h"
+#include "sensors/imu.h"
 
 /* Struct used to share Aseba parameters between C-style API and Aseba. */
 static parameter_t aseba_settings[SETTINGS_COUNT];
@@ -55,6 +56,9 @@ const AsebaVMDescription vmDescription = {
 
      {2, "motor.left.enc"},
      {2, "motor.right.enc"},
+
+     {3, "acc"},
+     {3, "gyro"},
 
      {0, NULL}
 }
@@ -194,6 +198,18 @@ void aseba_read_variables_from_system(AsebaVMState *vm)
 
         vmVariables.motor_right_enc[0] = msg.right / INT16_MAX;
         vmVariables.motor_right_enc[1] = msg.right % INT16_MAX;
+    }
+
+    /* Read IMU. */
+    topic = messagebus_find_topic(&bus, "/imu");
+    if (topic != NULL) {
+        imu_msg_t msg;
+        messagebus_topic_read(topic, &msg, sizeof(msg));
+
+        for (int i = 0; i < 3; i++) {
+            vmVariables.acceleration[i] = msg.acceleration[i] * 1000;
+            vmVariables.gyro[i] = msg.roll_rate[i] * 1000;
+        }
     }
 
     /* Keep previous value of PWM. */
