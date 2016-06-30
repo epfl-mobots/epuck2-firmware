@@ -62,9 +62,9 @@ const AsebaVMDescription vmDescription = {
 
 // Event descriptions
 const AsebaLocalEventDescription localEvents[] = {
-    {"button", "User button clicked"},
     {"range", "New range measurement"},
     {"proximity", "New proximity measurement"},
+    {"encoders", "New motor encoders measurement"},
     {NULL, NULL}
 };
 
@@ -81,6 +81,22 @@ static THD_FUNCTION(aseba_range_thd, p)
     while (true) {
         messagebus_topic_wait(topic, NULL, 0);
         SET_EVENT(EVENT_RANGE);
+    }
+}
+
+/** This thread is responsible for handling new encoders events for Aseba. */
+static THD_FUNCTION(aseba_encoders_thd, p)
+{
+    (void) p;
+    chRegSetThreadName(__FUNCTION__);
+
+    messagebus_topic_t *topic;
+
+    topic = messagebus_find_topic_blocking(&bus, "/encoders");
+
+    while (true) {
+        messagebus_topic_wait(topic, NULL, 0);
+        SET_EVENT(EVENT_ENCODERS);
     }
 }
 
@@ -116,6 +132,9 @@ void aseba_variables_init(parameter_namespace_t *aseba_ns)
 
     static THD_WORKING_AREA(proximity_wa, 256);
     chThdCreateStatic(proximity_wa, sizeof(proximity_wa), NORMALPRIO, aseba_proximity_thd, NULL);
+
+    static THD_WORKING_AREA(encoders_wa, 256);
+    chThdCreateStatic(encoders_wa, sizeof(encoders_wa), NORMALPRIO, aseba_encoders_thd, NULL);
 
     /* Registers all Aseba settings in global namespace. */
     int i;
