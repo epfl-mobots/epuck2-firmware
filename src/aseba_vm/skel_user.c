@@ -16,6 +16,7 @@
 
 #include "sensors/range.h"
 #include "sensors/battery_level.h"
+#include "sensors/encoder.h"
 
 /* Struct used to share Aseba parameters between C-style API and Aseba. */
 static parameter_t aseba_settings[SETTINGS_COUNT];
@@ -51,6 +52,9 @@ const AsebaVMDescription vmDescription = {
      {PROXIMITY_NB_CHANNELS, "proximity.reflected"},
      {1, "motor.left.pwm"},
      {1, "motor.right.pwm"},
+
+     {2, "motor.left.enc"},
+     {2, "motor.right.enc"},
 
      {0, NULL}
 }
@@ -158,6 +162,19 @@ void aseba_read_variables_from_system(AsebaVMState *vm)
             vmVariables.proximity_ambient[i] = proximity.ambient[i];
             vmVariables.proximity_reflected[i] = proximity.reflected[i];
         }
+    }
+
+    /* Read encoders. */
+    topic = messagebus_find_topic(&bus, "/encoders");
+    if (topic != NULL) {
+        encoders_msg_t msg;
+        messagebus_topic_read(topic, &msg, sizeof(msg));
+
+        vmVariables.motor_left_enc[0] = msg.left / INT16_MAX;
+        vmVariables.motor_left_enc[1] = msg.left % INT16_MAX;
+
+        vmVariables.motor_right_enc[0] = msg.right / INT16_MAX;
+        vmVariables.motor_right_enc[1] = msg.right % INT16_MAX;
     }
 
     /* Keep previous value of PWM. */
