@@ -24,15 +24,6 @@ static THD_FUNCTION(range_reader_thd, arg)
     (void)arg;
     vl6180x_t vl6180x;
 
-
-    messagebus_topic_t range_topic;
-    MUTEX_DECL(range_topic_lock);
-    CONDVAR_DECL(range_topic_condvar);
-    range_msg_t range_topic_value;
-
-    range_msg_t range_sample;
-
-    static uint8_t temp;
     chRegSetThreadName("Range_reader");
 
     /* Power on the ToF sensor. */
@@ -48,19 +39,22 @@ static THD_FUNCTION(range_reader_thd, arg)
     i2cReleaseBus(vl6180x.i2c);
 
     /* Create the range topic. */
-    messagebus_topic_init(&range_topic, &range_topic_lock, &range_topic_condvar, &range_topic_value, sizeof(range_topic_value));
-    messagebus_advertise_topic(&bus, &range_topic, "/range");
+    TOPIC_DECL(range_topic, range_msg_t);
+    messagebus_advertise_topic(&bus, &range_topic.topic, "/range");
 
     while (TRUE) {
+        range_msg_t msg;
+        static uint8_t temp;
         // Read sensor
         i2cAcquireBus(vl6180x.i2c);
         vl6180x_measure_distance(&vl6180x, &temp);
         i2cReleaseBus(vl6180x.i2c);
 
-        range_sample.raw_mm = temp;
-        range_sample.raw = range_sample.raw_mm * MILLIMETER_TO_METER;
+        /* Publish it on the bus. */
+        msg.raw_mm = temp;
+        msg.raw = msg.raw_mm * MILLIMETER_TO_METER;
 
-        messagebus_topic_publish(&range_topic, &range_sample, sizeof(range_sample));
+        messagebus_topic_publish(&range_topic.topic, &msg, sizeof(msg));
     }
 }
 

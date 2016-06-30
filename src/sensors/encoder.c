@@ -44,17 +44,8 @@ static THD_FUNCTION(encoders_thd, arg)
     (void) arg;
     chRegSetThreadName(__FUNCTION__);
 
-    static  messagebus_topic_t encoders_topic;
-    static MUTEX_DECL(encoders_topic_lock);
-    static CONDVAR_DECL(encoders_topic_condvar);
-    static encoders_msg_t encoders_topic_value;
-
-    messagebus_topic_init(&encoders_topic,
-                          &encoders_topic_lock,
-                          &encoders_topic_condvar,
-                          &encoders_topic_value, sizeof(encoders_topic_value));
-
-    messagebus_advertise_topic(&bus, &encoders_topic, "/encoders");
+    TOPIC_DECL(encoders_topic, encoders_msg_t);
+    messagebus_advertise_topic(&bus, &encoders_topic.topic, "/encoders");
 
     rccEnableTIM1(FALSE);                           // enable timer 1 clock
     rccResetTIM1();
@@ -79,7 +70,7 @@ static THD_FUNCTION(encoders_thd, arg)
         values.left += encoder_tick_diff(left_old, left);
         values.right += encoder_tick_diff(right_old, right);
 
-        messagebus_topic_publish(&encoders_topic, &values, sizeof(values));
+        messagebus_topic_publish(&encoders_topic.topic, &values, sizeof(values));
 
         left_old = left;
         right_old = right;

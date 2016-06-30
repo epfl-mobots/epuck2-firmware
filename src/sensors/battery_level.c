@@ -46,18 +46,8 @@ static THD_FUNCTION(battery_thd, arg)
 {
     (void) arg;
 
-    messagebus_topic_t battery_topic;
-    MUTEX_DECL(battery_topic_lock);
-    CONDVAR_DECL(battery_topic_condvar);
-    battery_msg_t battery_topic_value;
-
-    messagebus_topic_init(&battery_topic,
-                          &battery_topic_lock,
-                          &battery_topic_condvar,
-                          &battery_topic_value,
-                          sizeof(battery_topic_value));
-
-    messagebus_advertise_topic(&bus, &battery_topic, "/battery_level");
+    TOPIC_DECL(battery_topic, battery_msg_t);
+    messagebus_advertise_topic(&bus, &battery_topic.topic, "/battery_level");
 
     while (true) {
         adcAcquireBus(&ADCD2);
@@ -73,7 +63,7 @@ static THD_FUNCTION(battery_thd, arg)
         battery_msg_t msg;
         msg.voltage = battery_value * ADC_GAIN * BATTERY_ADC_GAIN;
 
-        messagebus_topic_publish(&battery_topic, &msg, sizeof(msg));
+        messagebus_topic_publish(&battery_topic.topic, &msg, sizeof(msg));
 
         /* Sleep for some time. */
         chThdSleepSeconds(2);

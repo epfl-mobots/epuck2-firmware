@@ -190,17 +190,8 @@ static THD_FUNCTION(proximity_thd, arg)
     chRegSetThreadName(__FUNCTION__);
 
     /* Declares the topic on the bus. */
-    messagebus_topic_t proximity_topic;
-    MUTEX_DECL(proximity_topic_lock);
-    CONDVAR_DECL(proximity_topic_condvar);
-    proximity_msg_t proximity_topic_value;
-
-    messagebus_topic_init(&proximity_topic,
-                          &proximity_topic_lock,
-                          &proximity_topic_condvar,
-                          &proximity_topic_value,
-                          sizeof(proximity_topic_value));
-    messagebus_advertise_topic(&bus, &proximity_topic, "/proximity");
+    TOPIC_DECL(proximity_topic, proximity_msg_t);
+    messagebus_advertise_topic(&bus, &proximity_topic.topic, "/proximity");
 
     while (true) {
         proximity_msg_t msg;
@@ -217,7 +208,7 @@ static THD_FUNCTION(proximity_thd, arg)
 
         palTogglePad(GPIOE, GPIOE_LED_STATUS);
 
-        messagebus_topic_publish(&proximity_topic, &msg, sizeof(msg));
+        messagebus_topic_publish(&proximity_topic.topic, &msg, sizeof(msg));
     }
 }
 
