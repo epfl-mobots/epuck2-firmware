@@ -50,6 +50,9 @@ struct _vmVariables {
     sint16 motor_left_pwm;
     sint16 motor_right_pwm;
 
+    sint16 motor_left_current;
+    sint16 motor_right_current;
+
     /* 32 bit encoders are stored in an MSB, LSB tuple. */
     sint16 motor_left_enc[2];
     sint16 motor_right_enc[2];

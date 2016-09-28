@@ -17,6 +17,7 @@
 #include "sensors/range.h"
 #include "sensors/battery_level.h"
 #include "sensors/encoder.h"
+#include "sensors/motor_current.h"
 #include "sensors/imu.h"
 
 /* Struct used to share Aseba parameters between C-style API and Aseba. */
@@ -53,6 +54,9 @@ const AsebaVMDescription vmDescription = {
      {PROXIMITY_NB_CHANNELS, "proximity.reflected"},
      {1, "motor.left.pwm"},
      {1, "motor.right.pwm"},
+
+     {1, "motor.left.current"},
+     {1, "motor.right.current"},
 
      {2, "motor.left.enc"},
      {2, "motor.right.enc"},
@@ -230,6 +234,17 @@ void aseba_read_variables_from_system(AsebaVMState *vm)
             vmVariables.acceleration[i] = msg.acceleration[i] * 1000;
             vmVariables.gyro[i] = msg.roll_rate[i] * 1000;
         }
+    }
+
+    /* Read motor current */
+    topic = messagebus_find_topic(&bus, "/motors/current");
+    if (topic != NULL) {
+        motor_current_msg_t msg;
+        messagebus_topic_read(topic, &msg, sizeof(msg));
+
+        /* Convert current to mA. */
+        vmVariables.motor_left_current = msg.left * 1000;
+        vmVariables.motor_right_current = msg.right * 1000;
     }
 
     /* Keep previous value of PWM. */
