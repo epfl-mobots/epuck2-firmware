@@ -10,6 +10,22 @@
 
 #define LED_BRIGHNESS_MAX_VALUE 31
 
+/** Mapping from LED number to driver outputs. */
+static int led_output_mapping[] = {
+    16,
+    17,
+    4,
+    5,
+    6,
+    13,
+    14,
+    15,
+    0,
+    1,
+    2,
+    3,
+};
+
 static struct {
     messagebus_topic_t topic;
     mutex_t lock;
@@ -65,7 +81,9 @@ static THD_FUNCTION(body_led_thd, arg)
         body_led_msg_t msg;
         for (int i = 0; i < BODY_LED_COUNT; i++) {
             if (messagebus_topic_read(&led_topics[i].topic, &msg, sizeof(msg))) {
-                led_set(i, (int)(msg.value * LED_BRIGHNESS_MAX_VALUE));
+                int output = led_output_mapping[i];
+                int value = (int)(msg.value * LED_BRIGHNESS_MAX_VALUE);
+                led_set(output, value);
             }
         }
         chThdSleepMilliseconds(10);

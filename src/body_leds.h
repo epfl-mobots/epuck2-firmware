@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#define BODY_LED_COUNT 18
+#define BODY_LED_COUNT 12
 
 typedef struct {
     float value; /** Led value, between 0 and 1. */
