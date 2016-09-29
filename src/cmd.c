@@ -392,7 +392,7 @@ static void cmd_current(BaseSequentialStream *chp, int argc, char *argv[])
     motor_current_msg_t msg;
     messagebus_topic_t *topic;
 
-    topic = messagebus_find_topic_blocking(&bus, "/motor/current");
+    topic = messagebus_find_topic_blocking(&bus, "/motors/current");
     messagebus_topic_wait(topic, &msg, sizeof(msg));
 
     chprintf(chp, "left=%.2f\r\nright=%.2f\r\n", msg.left, msg.right);
