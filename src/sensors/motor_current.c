@@ -3,6 +3,16 @@
 #include "main.h"
 #include "motor_current.h"
 
+#define ADC_MAX 4096
+
+#if defined(MOT_CURRENT_USE_AD628)
+#define ADC_GAIN  (3.3 / (4096 * 0.33 * 5.15));
+#elif defined(MOT_CURRENT_USE_INA282)
+#define ADC_GAIN  (3.3 / (4096 * 0.033 * 50));
+#else
+#error "Please select your motor current consumption type in board.h"
+#endif
+
 #define MOTOR_NB_CHANNELS 2
 #define DMA_BUFFER_SIZE (128)
 static int32_t motor_value[MOTOR_NB_CHANNELS];
@@ -95,7 +105,9 @@ static THD_FUNCTION(adc_motor_current, arg)
         msg.right = motor_value[1];
         chSysUnlock();
 
-        // TODO: Convert it to amperes
+        /* Convert the current to amperes. */
+        msg.left = (msg.left - (ADC_MAX/2)) * ADC_GAIN;
+        msg.right = (msg.right - (ADC_MAX/2)) * ADC_GAIN;
 
         /* Publish them. */
         messagebus_topic_publish(&motor_current_topic, &msg, sizeof(msg));

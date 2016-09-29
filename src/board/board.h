@@ -44,6 +44,11 @@
  */
 #define BOARD_OTG_NOVBUSSENS 1
 
+/* Which current ADC schematic are we using ? */
+#define MOT_CURRENT_USE_AD628
+//#define MOT_CURRENT_USE_INA282
+
+
 /*
  * Board voltages.
  * Required for performance limits calculation.
