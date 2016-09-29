@@ -34,9 +34,9 @@ static void adc_motor_cb(ADCDriver *adcp, adcsample_t *adc_motor_samples, size_t
     chSysLockFromISR();
     motor_value[0] = accumulator[0];
     motor_value[1] = accumulator[1];
+    chBSemSignalI(&measurement_ready_sem);
     chSysUnlockFromISR();
 
-    chBSemSignalI(&measurement_ready_sem);
 }
 
 static void motor_current_topic_create(const char *name)
