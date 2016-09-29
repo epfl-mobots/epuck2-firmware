@@ -34,8 +34,6 @@ static void led_set(int led, int value)
     i2cReleaseBus(&I2CD1);
 }
 
-
-static THD_WORKING_AREA(body_led_thd_wa, 512);
 static THD_FUNCTION(body_led_thd, arg)
 {
     (void) arg;
@@ -66,15 +64,17 @@ static THD_FUNCTION(body_led_thd, arg)
     while (true) {
         body_led_msg_t msg;
         for (int i = 0; i < BODY_LED_COUNT; i++) {
-            messagebus_topic_read(&led_topics[i].topic, &msg, sizeof(msg));
-            led_set(i, (int)(msg.value * LED_BRIGHNESS_MAX_VALUE));
+            if (messagebus_topic_read(&led_topics[i].topic, &msg, sizeof(msg))) {
+                led_set(i, (int)(msg.value * LED_BRIGHNESS_MAX_VALUE));
+            }
         }
-        chThdSleepMilliseconds(100);
+        chThdSleepMilliseconds(10);
     }
 }
 
 void body_leds_start(void)
 {
+    static THD_WORKING_AREA(body_led_thd_wa, 1024);
     chThdCreateStatic(body_led_thd_wa,
                       sizeof(body_led_thd_wa),
                       NORMALPRIO,

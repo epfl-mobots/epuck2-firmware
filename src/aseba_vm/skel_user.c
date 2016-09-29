@@ -28,6 +28,7 @@ struct _vmVariables vmVariables;
 
 /* Used to detect if a PWM value has changed. */
 static sint16 motor_pwm_previous_left, motor_pwm_previous_right;
+static sint16 previous_leds[BODY_LED_COUNT];
 
 void AsebaVMResetCB(AsebaVMState *vm)
 {
@@ -35,6 +36,10 @@ void AsebaVMResetCB(AsebaVMState *vm)
 
     vmVariables.motor_right_pwm = 0;
     vmVariables.motor_left_pwm = 0;
+
+    for (int i = 0; i < BODY_LED_COUNT; i++) {
+        vmVariables.leds[i] = 0;
+    }
 }
 
 const AsebaVMDescription vmDescription = {
@@ -63,6 +68,7 @@ const AsebaVMDescription vmDescription = {
 
      {3, "acc"},
      {3, "gyro"},
+     {BODY_LED_COUNT, "leds"},
 
      {0, NULL}
 }
@@ -250,6 +256,11 @@ void aseba_read_variables_from_system(AsebaVMState *vm)
     /* Keep previous value of PWM. */
     motor_pwm_previous_left = vmVariables.motor_left_pwm;
     motor_pwm_previous_right = vmVariables.motor_right_pwm;
+
+    for (int i = 0; i < BODY_LED_COUNT; i++) {
+        previous_leds[i] = vmVariables.leds[i];
+    }
+
 }
 
 void aseba_write_variables_to_system(AsebaVMState *vm)
@@ -265,8 +276,21 @@ void aseba_write_variables_to_system(AsebaVMState *vm)
     if (vmVariables.motor_right_pwm != motor_pwm_previous_right) {
         motor_right_pwm_set(vmVariables.motor_right_pwm / 100.);
     }
-}
 
+    for (int i = 0; i < BODY_LED_COUNT; i++) {
+        if (vmVariables.leds[i] != previous_leds[i]) {
+            char name[32];
+            sprintf(name, "/body_leds/%d", i);
+
+            messagebus_topic_t *topic = messagebus_find_topic(&bus, name);
+            if (topic != NULL) {
+                body_led_msg_t msg;
+                msg.value = vmVariables.leds[i] / 100.;
+                messagebus_topic_publish(topic, &msg, sizeof(msg));
+            }
+        }
+    }
+}
 
 // Native functions
 static AsebaNativeFunctionDescription AsebaNativeDescription__system_reboot =
