@@ -1,4 +1,4 @@
-source:
+target.arm:
   - lwip/src/core/def.c
   - lwip/src/core/dhcp.c
   - lwip/src/core/dns.c
