@@ -3,7 +3,6 @@ dependency-dir: src
 include_directories:
     - src/board
     - fatfs/src/
-    - src/lwip_bindings
 
 depends:
     - cmp_mem_access

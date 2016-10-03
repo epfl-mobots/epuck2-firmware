@@ -49,3 +49,5 @@ source:
 include_directories:
   - lwip/src/include
   - lwip/src/include/ipv4
+  - config
+  - bindings
