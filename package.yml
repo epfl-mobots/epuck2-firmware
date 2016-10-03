@@ -3,6 +3,7 @@ dependency-dir: src
 include_directories:
     - src/board
     - fatfs/src/
+    - src/lwip_bindings
 
 depends:
     - cmp_mem_access
@@ -11,6 +12,7 @@ depends:
     - aseba_vm
     - chibios-syscalls
     - msgbus
+    - lwip
 
 source:
     - src/cmp/cmp.c
