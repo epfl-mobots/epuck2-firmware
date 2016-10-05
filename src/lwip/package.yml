@@ -45,6 +45,10 @@ target.arm:
   - lwip/src/api/netifapi.c
   - lwip/src/api/sockets.c
   - lwip/src/api/tcpip.c
+  - lwip/src/netif/slipif.c
+  - bindings/lwipthread.c
+  - bindings/serial_io.c
+  - bindings/arch/sys_arch.c
 
 include_directories:
   - lwip/src/include

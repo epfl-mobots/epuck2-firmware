@@ -17,15 +17,17 @@
 
 #define LWIP_SOCKET 0
 
+#define LWIP_ARP                        0
+#define LWIP_HAVE_LOOPIF                1
+
+#define LWIP_HAVE_SLIPIF                1
+#define SLIP_STREAM                     ((BaseSequentialStream *)&SDU1)
+
 #define DEFAULT_THREAD_STACK_SIZE       4096
 #define DEFAULT_RAW_RECVMBOX_SIZE       4
 #define DEFAULT_UDP_RECVMBOX_SIZE       4
 #define DEFAULT_TCP_RECVMBOX_SIZE       4
 #define DEFAULT_ACCEPTMBOX_SIZE         4
-
-#define LWIP_IPADDR(p)  IP4_ADDR(p, 192, 168, 3, 20)
-#define LWIP_GATEWAY(p) IP4_ADDR(p, 192, 168, 3, 1)
-#define LWIP_NETMASK(p) IP4_ADDR(p, 255, 255, 255, 0)
 
 /** Use newlib malloc() instead of memory pools. */
 #include <stdlib.h>

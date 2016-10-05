@@ -116,6 +116,7 @@ int main(void)
     imu_start();
     exti_start();
     motor_current_start();
+    ip_start();
 
 
     // Initialise aseba parameters

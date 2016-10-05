@@ -1,29 +1,10 @@
-#include <stdio.h>
+#include <ch.h>
+#include <hal.h>
 #include <lwip/ip.h>
 #include <netif/slipif.h>
-#include <unistd.h>
-#include <fcntl.h>
-
-#include "lwip/sio.h"
-
-
-
-/** Enables activity LEDs. */
-#ifndef __unix__
-#define ACTIVITY_LED_TOGGLE
-#endif
-
-#ifdef ACTIVITY_LED_TOGGLE
-/* Altera files, to toggle LEDs */
-#include <os_cfg.h>
-#include <io.h>
-#include <os_cpu.h>
-
-#define ACTIVITY_LED_TX 0
-#define ACTIVITY_LED_RX 1
-#endif
-
-int in, out;
+#include <lwip/sio.h>
+#include <lwip/opt.h>
+#include "usbconf.h"
 
 /**
  * Sends a single character to the serial device.
@@ -37,7 +18,7 @@ int in, out;
  */
 void sio_send(u8_t c, sio_fd_t fd)
 {
-    write(out, &c, 1);
+    chSequentialStreamPut(fd, c);
 }
 
 /**
@@ -51,6 +32,7 @@ void sio_send(u8_t c, sio_fd_t fd)
  */
 u32_t sio_read(sio_fd_t fd, u8_t *data, u32_t len)
 {
+    return chSequentialStreamRead(fd, data, len);
 }
 
 
@@ -77,4 +59,6 @@ u32_t sio_tryread(sio_fd_t fd, u8_t *data, u32_t len)
  */
 sio_fd_t sio_open(u8_t devnum)
 {
+    (void) devnum;
+    return (sio_fd_t)SLIP_STREAM;
 }

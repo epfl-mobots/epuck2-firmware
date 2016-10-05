@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <ch.h>
+#include <hal.h>
 
 /* Define generic types used in lwIP */
 typedef uint8_t u8_t;
@@ -32,6 +33,9 @@ typedef intptr_t mem_ptr_t;
 /* Diagnostic macros. */
 #define LWIP_PLATFORM_ASSERT(msg) chSysHalt(msg)
 #define LWIP_PLATFORM_DIAG(msg)
+
+#define __sio_fd_t_defined
+typedef BaseSequentialStream *sio_fd_t;
 
 
 #endif
