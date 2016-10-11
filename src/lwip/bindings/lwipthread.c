@@ -22,8 +22,6 @@ void ip_start(void)
 
     static struct netif slipif;
 
-    chRegSetThreadName("lwip");
-
     sys_sem_new(&lwip_init_done, 0);
 
     /* Initializes the thing.*/
@@ -38,7 +36,7 @@ void ip_start(void)
     IP4_ADDR(&gw, 192, 168, 3, 1);
     IP4_ADDR(&netmask, 255, 255, 255, 255);
 
-    /* TODO: Init interface. */
+    /* Init serial interface. */
     netif_add(&slipif, &ip, &netmask, &gw, NULL, slipif_init, tcpip_input);
     netif_set_default(&slipif);
     netif_set_up(&slipif);
