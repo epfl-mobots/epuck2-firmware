@@ -79,6 +79,11 @@ ifeq ($(USE_ASEBA_BOOTLOADER),)
 	USE_ASEBA_BOOTLOADER=no
 endif
 
+ifeq ($(USE_SERIAL_IP),)
+	USE_SERIAL_IP = no
+endif
+
+
 # Enables the use of FPU on Cortex-M4 (no, softfp, hard).
 ifeq ($(USE_FPU),)
   USE_FPU = hard
@@ -224,6 +229,10 @@ UDEFS += -DSTDOUT_SD=SDU1 -DSTDIN_SD=SDU1
 
 ifeq ($(USE_ASEBA_BOOTLOADER),yes)
 	UDEFS += -DCORTEX_VTOR_INIT=0x08020000
+endif
+
+ifeq ($(USE_SERIAL_IP),yes)
+	UDEFS += -DUSE_SERIAL_IP
 endif
 
 # Define ASM defines here

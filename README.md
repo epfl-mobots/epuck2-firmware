@@ -34,6 +34,28 @@ sudo python -m serial.tools.miniterm /dev/ttyACM0
 ```
  assuming `/dev/ttyACM0` is where the robot is connected.
 
+## Using IP networking
+
+Using the IP network is currently only supported over USB.
+This means that the shell won't be available if IP networking is enabled.
+
+To use IP networking you need to compile the code with the `USE_SERIAL_IP` option enabled (i.e. `make USE_SERIAL_IP=yes`).
+Then, you need to configure your computer to use the serial link as a network interface.
+On Linux (you might need to run the following commands as root or with `sudo`):
+
+```bash
+# In a first terminal
+slattach -v -p slip /dev/ttyACM0
+
+# In another terminal
+ifconfig sl0 192.168.3.1 netmask 255.255.255.255 pointopoint 192.168.3.2
+ifconfig sl0 up
+
+# Test the connection
+ping 192.168.3.2 # epuck2 has ip 192.168.3.2
+```
+
+
 ### Changing node ID
 To change the node ID, open a shell to the device and enter the following commands:
 
@@ -96,6 +118,8 @@ The code is split into several subsystems:
 * `exti.c` acts as the central hub for the GPIO interrupts on the robot and dispatches them to the correct tasks.
     For now it is only used by the IMU to indicate when a measurement is ready.
 * `motor_pwm.c` contains the code to drive the motors.
+* The `lwip` folder contains the IP stack used for communication with a PC.
+    It includes an IP over UART implementation (SLIP), but other medias could be added (Ethernet, CDC, Wifi, ...)
 
 `aseba_vm` contains all the porting code to run Aseba on this platform.
 * `skel_user.c` contains application-specific code, such as native functions, event definitions, etc.

@@ -25,3 +25,6 @@
 [submodule "src/msgbus"]
 	path = src/msgbus
 	url = https://git.wise-robotics.com/epuck2/msgbus.git
+[submodule "src/lwip/lwip"]
+	path = src/lwip/lwip
+	url = https://github.com/cvra/lwip

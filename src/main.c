@@ -106,7 +106,11 @@ int main(void)
     motor_pwm_start();
     encoder_start();
 
+#ifdef USE_SERIAL_IP
+    ip_start();
+#else
     shell_start();
+#endif
     blinker_start();
     body_leds_start();
 
