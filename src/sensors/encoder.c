@@ -8,7 +8,7 @@
 #define MAX_16BIT      ((1 << 16) - 1)
 #define MAX_16BIT_DIV2 32767
 
-#define TICKS_PER_RADIAN (12*100/(2*M_PI))
+#define TICKS_PER_RADIAN (12*100/(2*M_PI))  // 12 ticks times 100 reduction
 
 static void setup_timer(stm32_tim_t *tmr);
 
