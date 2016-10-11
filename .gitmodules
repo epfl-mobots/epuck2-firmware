@@ -28,3 +28,6 @@
 [submodule "src/lwip/lwip"]
 	path = src/lwip/lwip
 	url = https://github.com/cvra/lwip
+[submodule "src/pid"]
+	path = src/pid
+	url = https://github.com/cvra/pid.git
