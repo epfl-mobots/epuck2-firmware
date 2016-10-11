@@ -40,4 +40,6 @@ void ip_start(void)
 
     /* TODO: Init interface. */
     netif_add(&slipif, &ip, &netmask, &gw, NULL, slipif_init, tcpip_input);
+    netif_set_default(&slipif);
+    netif_set_up(&slipif);
 }
