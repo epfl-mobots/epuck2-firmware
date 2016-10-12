@@ -127,22 +127,22 @@ static const ADCConversionGroup adcgrpcfg3 = {
              ADC_SMPR1_SMP_AN15(PROXIMITY_ADC_SAMPLE_TIME),
 
     /* Channels are defined starting from front (range sensor) and turning
-     * counter clock wise. */
+     * clock wise. */
     /* Proximity sensors channels. */
-    .sqr3 = ADC_SQR3_SQ1_N(12) |
-            ADC_SQR3_SQ2_N(13) |
-            ADC_SQR3_SQ3_N(11) |
+    .sqr3 = ADC_SQR3_SQ1_N(5) |
+            ADC_SQR3_SQ2_N(6) |
+            ADC_SQR3_SQ3_N(15) |
             ADC_SQR3_SQ4_N(14) |
-            ADC_SQR3_SQ5_N(15) |
-            ADC_SQR3_SQ6_N(6),
-    .sqr2 = ADC_SQR2_SQ7_N(5) |
+            ADC_SQR3_SQ5_N(11) |
+            ADC_SQR3_SQ6_N(13),
+    .sqr2 = ADC_SQR2_SQ7_N(12) |
     /* Ground sensors channels. */
-            ADC_SQR2_SQ8_N(8) |
-            ADC_SQR2_SQ9_N(2) | /* IR_IN14 is on ADC2, this is only a dummy. */
-            ADC_SQR2_SQ10_N(10) |
-            ADC_SQR2_SQ11_N(4) |
-            ADC_SQR2_SQ12_N(7),
-    .sqr1 = ADC_SQR1_SQ13_N(9) |
+            ADC_SQR2_SQ8_N(9) |
+            ADC_SQR2_SQ9_N(7) |
+            ADC_SQR2_SQ10_N(4) |
+            ADC_SQR2_SQ11_N(10) |
+            ADC_SQR2_SQ12_N(2), /* IR_AN12 is on ADC2, this is only a dummy. */
+    .sqr1 = ADC_SQR1_SQ13_N(8) |
             ADC_SQR1_NUM_CH(PROXIMITY_NB_CHANNELS)
 };
 
