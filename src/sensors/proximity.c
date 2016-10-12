@@ -10,7 +10,7 @@
 #define PWM_CLK_FREQ 42000000
 #define PWM_FREQUENCY 1000
 #define PWM_CYCLE (PWM_CLK_FREQ / PWM_FREQUENCY)
-/* Max duty cycle is 0.071, 2x safety margin. */
+/* Max duty cycle for the IR emitter is IFmax/IFpeak = 0.071, 2x safety margin. */
 #define TCRT1000_DC 0.03
 #define ON_MEASUREMENT_POS 0.02
 #define OFF_MEASUREMENT_POS 0.5
