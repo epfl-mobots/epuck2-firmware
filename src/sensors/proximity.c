@@ -231,6 +231,8 @@ void proximity_start(void)
 
                      /* Channel 2N is used to generate TCRT1000 drive signals. */
                      {.mode = PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH, .callback = NULL},
+
+                     /* Channels 3N and 4N are not used. */
                      {.mode = PWM_OUTPUT_DISABLED, .callback = NULL},
                      {.mode = PWM_OUTPUT_DISABLED, .callback = NULL},
         },
