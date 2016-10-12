@@ -10,6 +10,9 @@
 
 #define TICKS_PER_RADIAN (12*100/(2*M_PI))  // 12 ticks times 100 reduction
 
+#define LOOP_FREQUENCY 100.0  // Hz
+#define VELOCITY_SMOOTHING_FACTOR 0.5
+
 static void setup_timer(stm32_tim_t *tmr);
 
 uint32_t encoder_get_left(void)
@@ -41,6 +44,11 @@ int encoder_tick_diff(uint32_t enc_old, uint32_t enc_new)
     }
 }
 
+static float iir_filter(float input, float previous_output, float smoothing_factor)
+{
+    return smoothing_factor * input + (1 - smoothing_factor) * previous_output;
+}
+
 
 static THD_FUNCTION(encoders_thd, arg)
 {
@@ -49,9 +57,10 @@ static THD_FUNCTION(encoders_thd, arg)
 
     TOPIC_DECL(encoders_topic, encoders_msg_t);
     messagebus_advertise_topic(&bus, &encoders_topic.topic, "/encoders");
-
     TOPIC_DECL(wheel_pos_topic, wheel_pos_msg_t);
     messagebus_advertise_topic(&bus, &wheel_pos_topic.topic, "/wheel_pos");
+    TOPIC_DECL(wheel_velocities_topic, wheel_velocities_msg_t);
+    messagebus_advertise_topic(&bus, &wheel_velocities_topic.topic, "/wheel_velocities");
 
     rccEnableTIM1(FALSE);                           // enable timer 1 clock
     rccResetTIM1();
@@ -61,32 +70,48 @@ static THD_FUNCTION(encoders_thd, arg)
     rccResetTIM2();
     setup_timer(STM32_TIM2);
 
-    uint32_t left_old, right_old;
-    encoders_msg_t values = {0, 0};
+    uint32_t left_encoder_old, right_encoder_old;
+    encoders_msg_t encoders = {0, 0};
     wheel_pos_msg_t wheel_positions = {0.f, 0.f};
+    wheel_velocities_msg_t wheel_velocities =  {0.f, 0.f};
 
-    left_old = encoder_get_left();
-    right_old = encoder_get_right();
+    left_encoder_old = encoder_get_left();
+    right_encoder_old = encoder_get_right();
 
     while (1) {
-        uint32_t left, right;
+        uint32_t left_encoder, right_encoder;
+        float left_velocity, right_velocity;
 
-        left = encoder_get_left();
-        right = encoder_get_right();
+        left_encoder = encoder_get_left();
+        right_encoder = encoder_get_right();
 
-        values.left += encoder_tick_diff(left_old, left);
-        values.right += encoder_tick_diff(right_old, right);
+        encoders.left += encoder_tick_diff(left_encoder_old, left_encoder);
+        encoders.right += encoder_tick_diff(right_encoder_old, right_encoder);
 
-        wheel_positions.left = (float)values.left / TICKS_PER_RADIAN;
-        wheel_positions.right = (float)values.right / TICKS_PER_RADIAN;
+        wheel_positions.left = (float)encoders.left / TICKS_PER_RADIAN;
+        wheel_positions.right = (float)encoders.right / TICKS_PER_RADIAN;
 
-        messagebus_topic_publish(&encoders_topic.topic, &values, sizeof(values));
+        left_velocity = (float)encoder_tick_diff(left_encoder_old, left_encoder)
+                        / TICKS_PER_RADIAN * LOOP_FREQUENCY;
+        right_velocity = (float)encoder_tick_diff(right_encoder_old, right_encoder)
+                         / TICKS_PER_RADIAN * LOOP_FREQUENCY;
+
+        wheel_velocities.left = iir_filter(left_velocity,
+                                           wheel_velocities.left,
+                                           VELOCITY_SMOOTHING_FACTOR);
+        wheel_velocities.right = iir_filter(right_velocity,
+                                            wheel_velocities.right,
+                                            VELOCITY_SMOOTHING_FACTOR);
+
+        messagebus_topic_publish(&encoders_topic.topic, &encoders, sizeof(encoders));
         messagebus_topic_publish(&wheel_pos_topic.topic, &wheel_positions,
                 sizeof(wheel_positions));
+        messagebus_topic_publish(&wheel_velocities_topic.topic, &wheel_velocities,
+                sizeof(wheel_velocities));
 
-        left_old = left;
-        right_old = right;
-        chThdSleepMilliseconds(10);
+        left_encoder_old = left_encoder;
+        right_encoder_old = right_encoder;
+        chThdSleepMilliseconds(1000 / LOOP_FREQUENCY);
     }
 }
 
@@ -106,6 +131,6 @@ static void setup_timer(stm32_tim_t *tmr)
 
 void encoder_start(void)
 {
-    static THD_WORKING_AREA(encoders_thd_wa, 512);
+    static THD_WORKING_AREA(encoders_thd_wa, 768);
     chThdCreateStatic(encoders_thd_wa, sizeof(encoders_thd_wa), NORMALPRIO, encoders_thd, NULL);
 }

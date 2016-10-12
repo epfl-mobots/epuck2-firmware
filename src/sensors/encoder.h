@@ -17,6 +17,11 @@ typedef struct {
     float right;
 } wheel_pos_msg_t;
 
+typedef struct {
+    float left;
+    float right;
+} wheel_velocities_msg_t;
+
 /*Encoder uses Timer 3 & 4*/
 void encoder_start(void);
 uint32_t encoder_get_right(void);
