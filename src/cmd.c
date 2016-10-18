@@ -86,6 +86,20 @@ static void cmd_wheel_pos(BaseSequentialStream *chp, int argc, char *argv[])
     chprintf(chp, "left: %f\r\nright: %f\r\n", values.left, values.right);
 }
 
+static void cmd_wheel_vel(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    (void) argc;
+    (void) argv;
+
+    messagebus_topic_t *wheel_velocities_topic;
+    wheel_velocities_msg_t values;
+
+    wheel_velocities_topic = messagebus_find_topic_blocking(&bus, "/wheel_velocities");
+    messagebus_topic_wait(wheel_velocities_topic, &values, sizeof(values));
+
+    chprintf(chp, "left: %f\r\nright: %f\r\n", values.left, values.right);
+}
+
 static void cmd_imu(BaseSequentialStream *chp, int argc, char *argv[])
 {
     (void) argc;
@@ -445,6 +459,7 @@ const ShellCommand shell_commands[] = {
     {"pwm", cmd_motor},
     {"encoders", cmd_encoders},
     {"wheel_pos", cmd_wheel_pos},
+    {"wheel_vel", cmd_wheel_vel},
     {"imu", cmd_imu},
     {"reboot", cmd_reboot},
     {"test", cmd_test},
