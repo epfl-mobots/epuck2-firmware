@@ -15,6 +15,7 @@
 
 
 #include "motor_pwm.h"
+#include "motor_pid.h"
 #include "sensors/proximity.h"
 #include "sensors/imu.h"
 #include "sensors/range.h"
@@ -121,6 +122,7 @@ int main(void)
     exti_start();
     motor_current_start();
 
+    motor_pid_start();
 
     // Initialise aseba parameters
     parameter_namespace_declare(&aseba_ns, &parameter_root, "aseba");
