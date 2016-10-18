@@ -15,6 +15,7 @@
 #include "sensors/imu.h"
 #include "sensors/motor_current.h"
 #include "motor_pwm.h"
+#include "motor_pid.h"
 #include "ff.h"
 #include "main.h"
 #include "body_leds.h"
@@ -449,12 +450,27 @@ static void cmd_current(BaseSequentialStream *chp, int argc, char *argv[])
     chprintf(chp, "left=%.2f\r\nright=%.2f\r\n", msg.left, msg.right);
 }
 
+static void cmd_voltage(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    (void) argc;
+    (void) argv;
+
+    motor_voltage_msg_t msg;
+    messagebus_topic_t *topic;
+
+    topic = messagebus_find_topic_blocking(&bus, "/motors/voltage");
+    messagebus_topic_read(topic, &msg, sizeof(msg));
+
+    chprintf(chp, "left=%.2f V\r\nright=%.2f V\r\n", msg.left, msg.right);
+}
+
 const ShellCommand shell_commands[] = {
     {"test", cmd_test},
     {"range", cmd_range},
     {"proximity", cmd_proximity},
     {"battery", cmd_battery},
     {"current", cmd_current},
+    {"voltage", cmd_voltage},
     {"topics", cmd_topics},
     {"pwm", cmd_motor},
     {"encoders", cmd_encoders},

@@ -5,6 +5,11 @@
 extern "C" {
 #endif
 
+typedef struct {
+    float left;
+    float right;
+} motor_voltage_msg_t;
+
 /** Starts the pid control loop. */
 void motor_pid_start(void);
 
