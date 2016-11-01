@@ -74,31 +74,32 @@ void motor_controller_init(motor_controller_t *controller, parameter_namespace_t
 
 float motor_controller_process(motor_controller_t *controller)
 {
-    float current = 0., velocity = 0., position;
-
     /* Update controller gains. */
     pid_param_update(&controller->position.params, &controller->position.pid);
     pid_param_update(&controller->velocity.params, &controller->velocity.pid);
     pid_param_update(&controller->current.params, &controller->current.pid);
 
+    /* Position control */
     if (controller->mode >= MOTOR_CONTROLLER_POSITION) {
-        position = safe_get_position(controller);
-        float pos_error = position - controller->position.setpoint;
-        controller->velocity.setpoint = pid_process(&controller->position.pid, pos_error);
+        float position = safe_get_position(controller);
+        controller->position.error = position - controller->position.setpoint;
+        controller->velocity.setpoint = pid_process(&controller->position.pid,
+                                                    controller->position.error);
     }
 
+    /* Velocity control */
     if (controller->mode >= MOTOR_CONTROLLER_VELOCITY) {
-        velocity = safe_get_velocity(controller);
-
-        float vel_error = velocity - controller->velocity.setpoint;
-
-        controller->current.setpoint = pid_process(&controller->velocity.pid, vel_error);
+        float velocity = safe_get_velocity(controller);
+        controller->velocity.error = velocity - controller->velocity.setpoint;
+        controller->current.setpoint = pid_process(&controller->velocity.pid,
+                                                   controller->velocity.error);
     }
 
-    current = safe_get_current(controller);
-    float current_error = current - controller->current.setpoint;
+    /* Current (torque) control. */
+    float current = safe_get_current(controller);
+    controller->current.error = current - controller->current.setpoint;
 
-    return pid_process(&controller->current.pid, current_error);
+    return pid_process(&controller->current.pid, controller->current.error);
 }
 
 static float safe_get_current(motor_controller_t *controller)

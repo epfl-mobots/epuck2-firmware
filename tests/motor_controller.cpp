@@ -147,7 +147,7 @@ TEST(ProcessReconfigures, ProcessUpdatesCurrentParameters)
     CHECK_EQUAL(12, controller.current.pid.kp);
 }
 
-TEST_GROUP(Process)
+TEST_GROUP(CurrentControl)
 {
     motor_controller_t controller;
     parameter_namespace_t ns;
@@ -156,55 +156,98 @@ TEST_GROUP(Process)
     {
         parameter_namespace_declare(&ns, NULL, "root");
         motor_controller_init(&controller, &ns);
+
+        controller.current.get = mock_get_current;
+        controller.current.get_arg = NULL;
+
+        controller.mode = motor_controller_t::MOTOR_CONTROLLER_CURRENT;
+        parameter_scalar_set(parameter_find(&ns, "/control/current/kp"), 10);
+
+        mock().expectOneCall("get_current").andReturnValue(1.);
+        controller.current.setpoint = 2;
     }
 };
 
-TEST(Process, CurrentControl)
+TEST(CurrentControl, Error)
 {
-    controller.current.get = mock_get_current;
-    controller.current.get_arg = NULL;
-
-    controller.mode = motor_controller_t::MOTOR_CONTROLLER_CURRENT;
-
-    parameter_scalar_set(parameter_find(&ns, "/control/current/kp"), 10);
-    mock().expectOneCall("get_current").andReturnValue(1.);
-    controller.current.setpoint = 2;
-
     auto voltage = motor_controller_process(&controller);
 
     CHECK_EQUAL(10, voltage);
 }
 
-TEST(Process, VelocityControl)
+TEST(CurrentControl, ErrorIsSet)
 {
-    controller.velocity.get = mock_get_speed;
-    controller.velocity.get_arg = NULL;
-    controller.mode = motor_controller_t::MOTOR_CONTROLLER_VELOCITY;
+    motor_controller_process(&controller);
+    CHECK_EQUAL(-1, controller.current.error);
+}
 
-    controller.velocity.setpoint = 2.;
-    mock().expectOneCall("get_speed").andReturnValue(1.);
+TEST_GROUP(VelocityControl)
+{
+    motor_controller_t controller;
+    parameter_namespace_t ns;
 
-    parameter_scalar_set(parameter_find(&ns, "/control/velocity/kp"), 20);
-    parameter_scalar_set(parameter_find(&ns, "/control/current/kp"), 1);
+    void setup()
+    {
+        parameter_namespace_declare(&ns, NULL, "root");
+        motor_controller_init(&controller, &ns);
+
+        parameter_scalar_set(parameter_find(&ns, "/control/velocity/kp"), 20);
+        parameter_scalar_set(parameter_find(&ns, "/control/current/kp"), 1);
+
+        controller.velocity.get = mock_get_speed;
+        controller.velocity.get_arg = NULL;
+        controller.mode = motor_controller_t::MOTOR_CONTROLLER_VELOCITY;
+
+        controller.velocity.setpoint = 2.;
+        mock().expectOneCall("get_speed").andReturnValue(1.);
+    }
+};
+
+TEST(VelocityControl, ErrorIsProcessed)
+{
     auto voltage = motor_controller_process(&controller);
 
     CHECK_EQUAL(20, voltage);
 }
 
-TEST(Process, PositionControl)
+TEST(VelocityControl, ErrorIsSet)
 {
-    controller.position.get = mock_get_pos;
-    controller.position.get_arg = NULL;
-    controller.mode = motor_controller_t::MOTOR_CONTROLLER_POSITION;
+    motor_controller_process(&controller);
+    CHECK_EQUAL(-1, controller.velocity.error);
+}
 
-    controller.position.setpoint = 2.;
-    mock().expectOneCall("get_pos").andReturnValue(1.);
+TEST_GROUP(PositionControl)
+{
+    motor_controller_t controller;
+    parameter_namespace_t ns;
 
-    parameter_scalar_set(parameter_find(&ns, "/control/position/kp"), 30);
-    parameter_scalar_set(parameter_find(&ns, "/control/velocity/kp"), 1);
-    parameter_scalar_set(parameter_find(&ns, "/control/current/kp"), 1);
+    void setup()
+    {
+        parameter_namespace_declare(&ns, NULL, "root");
+        motor_controller_init(&controller, &ns);
 
+        controller.position.get = mock_get_pos;
+        controller.position.get_arg = NULL;
+        controller.mode = motor_controller_t::MOTOR_CONTROLLER_POSITION;
+
+        controller.position.setpoint = 2.;
+        mock().expectOneCall("get_pos").andReturnValue(1.);
+
+        parameter_scalar_set(parameter_find(&ns, "/control/position/kp"), 30);
+        parameter_scalar_set(parameter_find(&ns, "/control/velocity/kp"), 1);
+        parameter_scalar_set(parameter_find(&ns, "/control/current/kp"), 1);
+    }
+};
+
+TEST(PositionControl, ErrorIsProcessed)
+{
     auto voltage = motor_controller_process(&controller);
 
     CHECK_EQUAL(30, voltage);
+}
+
+TEST(PositionControl, ErrorIsSet)
+{
+    motor_controller_process(&controller);
+    CHECK_EQUAL(-1, controller.position.error);
 }

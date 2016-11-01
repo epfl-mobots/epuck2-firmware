@@ -37,6 +37,7 @@ typedef struct {
         struct pid_param_s params;
         pid_ctrl_t pid;
         float setpoint;
+        float error;
         float (*get)(void *);
         void *get_arg;
     } position, velocity, current;
