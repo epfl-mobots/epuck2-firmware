@@ -31,6 +31,7 @@ target.arm:
     - src/encoder.c
     - src/motor_pwm.c
     - src/motor_pid.c
+    - src/pid/pid.c
     - src/body_leds.c
     - src/board/board.c
     - src/sensors/range.c
