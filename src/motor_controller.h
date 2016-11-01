@@ -1,5 +1,5 @@
-#ifndef MOTOR_PID_H
-#define MOTOR_PID_H
+#ifndef MOTOR_CONTROLLER_H
+#define MOTOR_CONTROLLER_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,7 +28,7 @@ typedef struct {
     parameter_t param_acc_limit;
 
     enum {
-        MOTOR_PID_CURRENT_CONTROL=0,
+        MOTOR_CONTROLLER_CURRENT=0,
     } mode;
 
     struct pid_param_s params_pos_pid, params_vel_pid, params_cur_pid;
@@ -43,11 +43,11 @@ typedef struct {
             void *arg;
         } get_current;
     } callbacks;
-} motor_pid_t;
+} motor_controller_t;
 
-void motor_pid_init(motor_pid_t *motor_pid, parameter_namespace_t *parent);
+void motor_controller_init(motor_controller_t *controller, parameter_namespace_t *parent);
 
-float motor_pid_process(motor_pid_t *motor_pid);
+float motor_controller_process(motor_controller_t *controller);
 
 #ifdef __cplusplus
 }

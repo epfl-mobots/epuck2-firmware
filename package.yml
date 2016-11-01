@@ -18,7 +18,7 @@ source:
     - src/cmp/cmp.c
     - src/config_flash_storage.c
     - src/sensors/vl6180x/vl6180x.c
-    - src/motor_pid.c
+    - src/motor_controller.c
 
 target.arm:
     - src/panic.c
@@ -46,7 +46,7 @@ tests:
     - tests/config_save_test.cpp
     - tests/flash_mock.cpp
     - tests/test_range_sensor.cpp
-    - tests/motor_pid.cpp
+    - tests/motor_controller.cpp
 
 templates:
     src/src.mk.jinja: 'src/src.mk'

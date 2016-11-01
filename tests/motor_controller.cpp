@@ -1,7 +1,7 @@
 #include <CppUTest/TestHarness.h>
 #include <CppUTestExt/MockSupport.h>
 #include "parameter/parameter.h"
-#include "motor_pid.h"
+#include "motor_controller.h"
 #include "pid/pid.h"
 
 /* Private functions, not hidden by static because used in testing */
@@ -12,12 +12,12 @@ void pid_param_update(struct pid_param_s *p, pid_ctrl_t *ctrl);
 TEST_GROUP(PIDConfigTestGroup)
 {
     parameter_namespace_t ns;
-    motor_pid_t motor_pid;
+    motor_controller_t controller;
 
     void setup()
     {
         parameter_namespace_declare(&ns, NULL, "root");
-        motor_pid_init(&motor_pid, &ns);
+        motor_controller_init(&controller, &ns);
     }
 };
 
@@ -51,7 +51,7 @@ TEST(PIDConfigTestGroup, CanChangeGains)
 
     parameter_scalar_set(parameter_find(&ns, "/control/velocity/kp"), 12);
 
-    pid_param_update(&motor_pid.params_vel_pid, &pid);
+    pid_param_update(&controller.params_vel_pid, &pid);
 
     CHECK_EQUAL(12, pid.kp);
 }
@@ -64,7 +64,7 @@ TEST(PIDConfigTestGroup, ChangingGainResetsIntegrator)
 
     parameter_scalar_set(parameter_find(&ns, "/control/velocity/kp"), 12);
 
-    pid_param_update(&motor_pid.params_vel_pid, &pid);
+    pid_param_update(&controller.params_vel_pid, &pid);
 
     CHECK_EQUAL(0, pid.integrator);
 }
@@ -117,60 +117,60 @@ TEST(MotorMockTestGroup, MockPositionWorks)
 
 TEST_GROUP(ProcessReconfigures)
 {
-    motor_pid_t pid;
+    motor_controller_t controller;
     parameter_namespace_t ns;
     void setup()
     {
         parameter_namespace_declare(&ns, NULL, "root");
-        motor_pid_init(&pid, &ns);
+        motor_controller_init(&controller, &ns);
     }
 };
 
 TEST(ProcessReconfigures, ProcessUpdatesVelocityParameters)
 {
     parameter_scalar_set(parameter_find(&ns, "/control/velocity/kp"), 12);
-    motor_pid_process(&pid);
-    CHECK_EQUAL(12, pid.vel_pid.kp);
+    motor_controller_process(&controller);
+    CHECK_EQUAL(12, controller.vel_pid.kp);
 }
 
 TEST(ProcessReconfigures, ProcessUpdatesPositionParameters)
 {
     parameter_scalar_set(parameter_find(&ns, "/control/position/kp"), 12);
-    motor_pid_process(&pid);
-    CHECK_EQUAL(12, pid.pos_pid.kp);
+    motor_controller_process(&controller);
+    CHECK_EQUAL(12, controller.pos_pid.kp);
 }
 
 TEST(ProcessReconfigures, ProcessUpdatesCurrentParameters)
 {
     parameter_scalar_set(parameter_find(&ns, "/control/current/kp"), 12);
-    motor_pid_process(&pid);
-    CHECK_EQUAL(12, pid.cur_pid.kp);
+    motor_controller_process(&controller);
+    CHECK_EQUAL(12, controller.cur_pid.kp);
 }
 
 TEST_GROUP(Process)
 {
-    motor_pid_t pid;
+    motor_controller_t controller;
     parameter_namespace_t ns;
 
     void setup()
     {
         parameter_namespace_declare(&ns, NULL, "root");
-        motor_pid_init(&pid, &ns);
+        motor_controller_init(&controller, &ns);
     }
 };
 
 TEST(Process, CurrentControl)
 {
-    pid.callbacks.get_current.fn = mock_get_current;
-    pid.callbacks.get_current.arg = NULL;
+    controller.callbacks.get_current.fn = mock_get_current;
+    controller.callbacks.get_current.arg = NULL;
 
-    pid.mode = motor_pid_t::MOTOR_PID_CURRENT_CONTROL;
+    controller.mode = motor_controller_t::MOTOR_CONTROLLER_CURRENT;
 
     parameter_scalar_set(parameter_find(&ns, "/control/current/kp"), 10);
     mock().expectOneCall("get_current").andReturnValue(1.);
-    pid.cur_setpoint = 2;
+    controller.cur_setpoint = 2;
 
-    auto voltage = motor_pid_process(&pid);
+    auto voltage = motor_controller_process(&controller);
 
     CHECK_EQUAL(10, voltage);
 }
