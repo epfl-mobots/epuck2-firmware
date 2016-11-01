@@ -7,18 +7,6 @@
 #include "parameter/parameter.h"
 #include <math.h>
 
-// control loop parameters
-static parameter_namespace_t param_ns_control;
-static parameter_t param_vel_limit;
-static parameter_t param_torque_limit;
-static parameter_t param_acc_limit;
-static parameter_namespace_t param_ns_pos_ctrl;
-static parameter_namespace_t param_ns_vel_ctrl;
-static parameter_namespace_t param_ns_cur_ctrl;
-static struct pid_param_s pos_pid_params;
-static struct pid_param_s vel_pid_params;
-static struct pid_param_s cur_pid_params;
-
 void pid_param_update(struct pid_param_s *p, pid_ctrl_t *ctrl)
 {
     if (parameter_changed(&p->kp) ||
@@ -34,27 +22,31 @@ void pid_param_update(struct pid_param_s *p, pid_ctrl_t *ctrl)
     }
 }
 
-static void pid_param_declare(struct pid_param_s *p, parameter_namespace_t *ns)
+static void pid_param_declare(struct pid_param_s *p)
 {
-    parameter_scalar_declare_with_default(&p->kp, ns, "kp", 0);
-    parameter_scalar_declare_with_default(&p->ki, ns, "ki", 0);
-    parameter_scalar_declare_with_default(&p->kd, ns, "kd", 0);
-    parameter_scalar_declare_with_default(&p->i_limit, ns, "i_limit", INFINITY);
+    parameter_scalar_declare_with_default(&p->kp, &p->ns, "kp", 0);
+    parameter_scalar_declare_with_default(&p->ki, &p->ns, "ki", 0);
+    parameter_scalar_declare_with_default(&p->kd, &p->ns, "kd", 0);
+    parameter_scalar_declare_with_default(&p->i_limit, &p->ns, "i_limit", INFINITY);
 }
 
-void declare_parameters(parameter_namespace_t *root)
+static void declare_parameters(motor_pid_t *motor_pid, parameter_namespace_t *root)
 {
-    parameter_namespace_declare(&param_ns_control, root, "control");
-    parameter_scalar_declare(&param_vel_limit, &param_ns_control, "velocity_limit");
-    parameter_scalar_declare(&param_torque_limit, &param_ns_control, "torque_limit");
-    parameter_scalar_declare(&param_acc_limit, &param_ns_control, "acceleration_limit");
+    parameter_namespace_declare(&motor_pid->param_ns_control, root, "control");
+    parameter_scalar_declare(&motor_pid->param_vel_limit, &motor_pid->param_ns_control, "velocity_limit");
+    parameter_scalar_declare(&motor_pid->param_torque_limit, &motor_pid->param_ns_control, "torque_limit");
+    parameter_scalar_declare(&motor_pid->param_acc_limit, &motor_pid->param_ns_control, "acceleration_limit");
 
-    parameter_namespace_declare(&param_ns_pos_ctrl, &param_ns_control, "position");
-    pid_param_declare(&pos_pid_params, &param_ns_pos_ctrl);
+    parameter_namespace_declare(&motor_pid->params_pos_pid.ns, &motor_pid->param_ns_control, "position");
+    parameter_namespace_declare(&motor_pid->params_vel_pid.ns, &motor_pid->param_ns_control, "velocity");
+    parameter_namespace_declare(&motor_pid->params_cur_pid.ns, &motor_pid->param_ns_control, "current");
 
-    parameter_namespace_declare(&param_ns_vel_ctrl, &param_ns_control, "velocity");
-    pid_param_declare(&vel_pid_params, &param_ns_vel_ctrl);
+    pid_param_declare(&motor_pid->params_pos_pid);
+    pid_param_declare(&motor_pid->params_vel_pid);
+    pid_param_declare(&motor_pid->params_cur_pid);
+}
 
-    parameter_namespace_declare(&param_ns_cur_ctrl, &param_ns_control, "current");
-    pid_param_declare(&cur_pid_params, &param_ns_cur_ctrl);
+void motor_pid_init(motor_pid_t *motor_pid, parameter_namespace_t *parent)
+{
+    declare_parameters(motor_pid, parent);
 }

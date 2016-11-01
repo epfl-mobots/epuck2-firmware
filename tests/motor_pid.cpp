@@ -7,16 +7,18 @@
 TEST_GROUP(PIDConfigTestGroup)
 {
     parameter_namespace_t ns;
+    motor_pid_t motor_pid;
 
     void setup()
     {
         parameter_namespace_declare(&ns, NULL, "root");
-        declare_parameters(&ns);
+        motor_pid_init(&motor_pid, &ns);
     }
 };
 
 TEST(PIDConfigTestGroup, CanConfigure)
 {
+
     /* Check that the parameters were all correctly declared. */
     CHECK_TRUE(parameter_find(&ns, "/control/velocity_limit"));
     CHECK_TRUE(parameter_find(&ns, "/control/torque_limit"));
@@ -41,13 +43,10 @@ TEST(PIDConfigTestGroup, CanConfigure)
 TEST(PIDConfigTestGroup, CanChangeGains)
 {
     pid_ctrl_t pid;
-    pid_param_s params;
 
     parameter_scalar_set(parameter_find(&ns, "/control/velocity/kp"), 12);
 
-    /* TODO Ugly hack */
-    params.kp = *parameter_find(&ns, "/control/velocity/kp");
-    pid_param_update(&params, &pid);
+    pid_param_update(&motor_pid.params_vel_pid, &pid);
 
     CHECK_EQUAL(12, pid.kp);
 }
@@ -55,16 +54,12 @@ TEST(PIDConfigTestGroup, CanChangeGains)
 TEST(PIDConfigTestGroup, ChangingGainResetsIntegrator)
 {
     pid_ctrl_t pid;
-    pid_param_s params;
 
     pid.integrator = 100;
 
-    declare_parameters(&ns);
     parameter_scalar_set(parameter_find(&ns, "/control/velocity/kp"), 12);
 
-    params.kp = *parameter_find(&ns, "/control/velocity/kp");
-
-    pid_param_update(&params, &pid);
+    pid_param_update(&motor_pid.params_vel_pid, &pid);
 
     CHECK_EQUAL(0, pid.integrator);
 }
