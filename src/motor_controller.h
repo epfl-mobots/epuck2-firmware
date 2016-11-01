@@ -30,19 +30,20 @@ typedef struct {
     enum {
         MOTOR_CONTROLLER_CURRENT=0,
         MOTOR_CONTROLLER_VELOCITY,
+        MOTOR_CONTROLLER_POSITION,
     } mode;
 
     struct pid_param_s params_pos_pid, params_vel_pid, params_cur_pid;
     pid_ctrl_t cur_pid, vel_pid, pos_pid;
 
-    float cur_setpoint, vel_setpoint;
+    float cur_setpoint, vel_setpoint, pos_setpoint;
 
 
     struct {
         struct {
             float (*fn)(void *);
             void *arg;
-        } get_current, get_velocity;
+        } get_current, get_velocity, get_position;
     } callbacks;
 } motor_controller_t;
 

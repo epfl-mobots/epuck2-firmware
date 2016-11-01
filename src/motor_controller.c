@@ -10,6 +10,7 @@
 
 static float safe_get_current(motor_controller_t *controller);
 static float safe_get_velocity(motor_controller_t *controller);
+static float safe_get_position(motor_controller_t *controller);
 
 void pid_param_update(struct pid_param_s *p, pid_ctrl_t *ctrl)
 {
@@ -73,12 +74,18 @@ void motor_controller_init(motor_controller_t *controller, parameter_namespace_t
 
 float motor_controller_process(motor_controller_t *controller)
 {
-    float current = 0., velocity = 0.;
+    float current = 0., velocity = 0., position;
 
     /* Update controller gains. */
     pid_param_update(&controller->params_pos_pid, &controller->pos_pid);
     pid_param_update(&controller->params_vel_pid, &controller->vel_pid);
     pid_param_update(&controller->params_cur_pid, &controller->cur_pid);
+
+    if (controller->mode >= MOTOR_CONTROLLER_POSITION) {
+        position = safe_get_position(controller);
+        float pos_error = position - controller->pos_setpoint;
+        controller->vel_setpoint = pid_process(&controller->pos_pid, pos_error);
+    }
 
     if (controller->mode >= MOTOR_CONTROLLER_VELOCITY) {
         velocity = safe_get_velocity(controller);
@@ -118,5 +125,18 @@ static float safe_get_velocity(motor_controller_t *controller)
     }
 
     return velocity;
+}
+
+static float safe_get_position(motor_controller_t *controller)
+{
+    float position = 0.;
+    float (*fn)(void *) = controller->callbacks.get_position.fn;
+    void *arg = controller->callbacks.get_position.arg;
+
+    if (fn) {
+        position = fn(arg);
+    }
+
+    return position;
 
 }
