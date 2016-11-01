@@ -51,7 +51,7 @@ TEST(PIDConfigTestGroup, CanChangeGains)
 
     parameter_scalar_set(parameter_find(&ns, "/control/velocity/kp"), 12);
 
-    pid_param_update(&controller.params_vel_pid, &pid);
+    pid_param_update(&controller.velocity.params, &pid);
 
     CHECK_EQUAL(12, pid.kp);
 }
@@ -64,7 +64,7 @@ TEST(PIDConfigTestGroup, ChangingGainResetsIntegrator)
 
     parameter_scalar_set(parameter_find(&ns, "/control/velocity/kp"), 12);
 
-    pid_param_update(&controller.params_vel_pid, &pid);
+    pid_param_update(&controller.velocity.params, &pid);
 
     CHECK_EQUAL(0, pid.integrator);
 }
@@ -130,21 +130,21 @@ TEST(ProcessReconfigures, ProcessUpdatesVelocityParameters)
 {
     parameter_scalar_set(parameter_find(&ns, "/control/velocity/kp"), 12);
     motor_controller_process(&controller);
-    CHECK_EQUAL(12, controller.vel_pid.kp);
+    CHECK_EQUAL(12, controller.velocity.pid.kp);
 }
 
 TEST(ProcessReconfigures, ProcessUpdatesPositionParameters)
 {
     parameter_scalar_set(parameter_find(&ns, "/control/position/kp"), 12);
     motor_controller_process(&controller);
-    CHECK_EQUAL(12, controller.pos_pid.kp);
+    CHECK_EQUAL(12, controller.position.pid.kp);
 }
 
 TEST(ProcessReconfigures, ProcessUpdatesCurrentParameters)
 {
     parameter_scalar_set(parameter_find(&ns, "/control/current/kp"), 12);
     motor_controller_process(&controller);
-    CHECK_EQUAL(12, controller.cur_pid.kp);
+    CHECK_EQUAL(12, controller.current.pid.kp);
 }
 
 TEST_GROUP(Process)
@@ -161,14 +161,14 @@ TEST_GROUP(Process)
 
 TEST(Process, CurrentControl)
 {
-    controller.callbacks.get_current.fn = mock_get_current;
-    controller.callbacks.get_current.arg = NULL;
+    controller.current.get = mock_get_current;
+    controller.current.get_arg = NULL;
 
     controller.mode = motor_controller_t::MOTOR_CONTROLLER_CURRENT;
 
     parameter_scalar_set(parameter_find(&ns, "/control/current/kp"), 10);
     mock().expectOneCall("get_current").andReturnValue(1.);
-    controller.cur_setpoint = 2;
+    controller.current.setpoint = 2;
 
     auto voltage = motor_controller_process(&controller);
 
@@ -177,11 +177,11 @@ TEST(Process, CurrentControl)
 
 TEST(Process, VelocityControl)
 {
-    controller.callbacks.get_velocity.fn = mock_get_speed;
-    controller.callbacks.get_velocity.arg = NULL;
+    controller.velocity.get = mock_get_speed;
+    controller.velocity.get_arg = NULL;
     controller.mode = motor_controller_t::MOTOR_CONTROLLER_VELOCITY;
 
-    controller.vel_setpoint = 2.;
+    controller.velocity.setpoint = 2.;
     mock().expectOneCall("get_speed").andReturnValue(1.);
 
     parameter_scalar_set(parameter_find(&ns, "/control/velocity/kp"), 20);
@@ -193,11 +193,11 @@ TEST(Process, VelocityControl)
 
 TEST(Process, PositionControl)
 {
-    controller.callbacks.get_position.fn = mock_get_pos;
-    controller.callbacks.get_position.arg = NULL;
+    controller.position.get = mock_get_pos;
+    controller.position.get_arg = NULL;
     controller.mode = motor_controller_t::MOTOR_CONTROLLER_POSITION;
 
-    controller.pos_setpoint = 2.;
+    controller.position.setpoint = 2.;
     mock().expectOneCall("get_pos").andReturnValue(1.);
 
     parameter_scalar_set(parameter_find(&ns, "/control/position/kp"), 30);
