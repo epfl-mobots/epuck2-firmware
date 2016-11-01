@@ -27,9 +27,22 @@ typedef struct {
     parameter_t param_torque_limit;
     parameter_t param_acc_limit;
 
+    enum {
+        MOTOR_PID_CURRENT_CONTROL=0,
+    } mode;
+
     struct pid_param_s params_pos_pid, params_vel_pid, params_cur_pid;
     pid_ctrl_t cur_pid, vel_pid, pos_pid;
 
+    float cur_setpoint;
+
+
+    struct {
+        struct {
+            float (*fn)(void *);
+            void *arg;
+        } get_current;
+    } callbacks;
 } motor_pid_t;
 
 void motor_pid_init(motor_pid_t *motor_pid, parameter_namespace_t *parent);

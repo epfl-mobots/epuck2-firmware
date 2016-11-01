@@ -146,3 +146,31 @@ TEST(ProcessReconfigures, ProcessUpdatesCurrentParameters)
     motor_pid_process(&pid);
     CHECK_EQUAL(12, pid.cur_pid.kp);
 }
+
+TEST_GROUP(Process)
+{
+    motor_pid_t pid;
+    parameter_namespace_t ns;
+
+    void setup()
+    {
+        parameter_namespace_declare(&ns, NULL, "root");
+        motor_pid_init(&pid, &ns);
+    }
+};
+
+TEST(Process, CurrentControl)
+{
+    pid.callbacks.get_current.fn = mock_get_current;
+    pid.callbacks.get_current.arg = NULL;
+
+    pid.mode = motor_pid_t::MOTOR_PID_CURRENT_CONTROL;
+
+    parameter_scalar_set(parameter_find(&ns, "/control/current/kp"), 10);
+    mock().expectOneCall("get_current").andReturnValue(1.);
+    pid.cur_setpoint = 2;
+
+    auto voltage = motor_pid_process(&pid);
+
+    CHECK_EQUAL(10, voltage);
+}

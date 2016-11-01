@@ -6,6 +6,7 @@
 #include "main.h"
 #include "parameter/parameter.h"
 #include <math.h>
+#include <string.h>
 
 void pid_param_update(struct pid_param_s *p, pid_ctrl_t *ctrl)
 {
@@ -48,6 +49,7 @@ static void declare_parameters(motor_pid_t *motor_pid, parameter_namespace_t *ro
 
 void motor_pid_init(motor_pid_t *motor_pid, parameter_namespace_t *parent)
 {
+    memset(motor_pid, 0, sizeof(motor_pid_t));
     declare_parameters(motor_pid, parent);
     pid_init(&motor_pid->cur_pid);
     pid_init(&motor_pid->vel_pid);
@@ -56,7 +58,19 @@ void motor_pid_init(motor_pid_t *motor_pid, parameter_namespace_t *parent)
 
 float motor_pid_process(motor_pid_t *motor_pid)
 {
+    /* Update controller gains. */
     pid_param_update(&motor_pid->params_pos_pid, &motor_pid->pos_pid);
     pid_param_update(&motor_pid->params_vel_pid, &motor_pid->vel_pid);
     pid_param_update(&motor_pid->params_cur_pid, &motor_pid->cur_pid);
+
+    float current = 0.;
+
+    /* Get current. */
+    if (motor_pid->callbacks.get_current.fn) {
+        current = motor_pid->callbacks.get_current.fn(motor_pid->callbacks.get_current.arg);
+    }
+
+    float current_error = current - motor_pid->cur_setpoint;
+
+    return pid_process(&motor_pid->cur_pid, current_error);
 }
