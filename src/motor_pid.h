@@ -28,12 +28,13 @@ typedef struct {
     parameter_t param_acc_limit;
 
     struct pid_param_s params_pos_pid, params_vel_pid, params_cur_pid;
+    pid_ctrl_t cur_pid, vel_pid, pos_pid;
 
 } motor_pid_t;
 
 void motor_pid_init(motor_pid_t *motor_pid, parameter_namespace_t *parent);
 
-void pid_param_update(struct pid_param_s *p, pid_ctrl_t *ctrl);
+float motor_pid_process(motor_pid_t *motor_pid);
 
 #ifdef __cplusplus
 }

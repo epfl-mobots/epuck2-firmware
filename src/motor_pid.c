@@ -49,4 +49,14 @@ static void declare_parameters(motor_pid_t *motor_pid, parameter_namespace_t *ro
 void motor_pid_init(motor_pid_t *motor_pid, parameter_namespace_t *parent)
 {
     declare_parameters(motor_pid, parent);
+    pid_init(&motor_pid->cur_pid);
+    pid_init(&motor_pid->vel_pid);
+    pid_init(&motor_pid->pos_pid);
+}
+
+float motor_pid_process(motor_pid_t *motor_pid)
+{
+    pid_param_update(&motor_pid->params_pos_pid, &motor_pid->pos_pid);
+    pid_param_update(&motor_pid->params_vel_pid, &motor_pid->vel_pid);
+    pid_param_update(&motor_pid->params_cur_pid, &motor_pid->cur_pid);
 }
