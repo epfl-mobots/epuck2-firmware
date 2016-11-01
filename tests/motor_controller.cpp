@@ -174,3 +174,19 @@ TEST(Process, CurrentControl)
 
     CHECK_EQUAL(10, voltage);
 }
+
+TEST(Process, VelocityControl)
+{
+    controller.callbacks.get_velocity.fn = mock_get_speed;
+    controller.callbacks.get_velocity.arg = NULL;
+    controller.mode = motor_controller_t::MOTOR_CONTROLLER_VELOCITY;
+
+    controller.vel_setpoint = 2.;
+    mock().expectOneCall("get_speed").andReturnValue(1.);
+
+    parameter_scalar_set(parameter_find(&ns, "/control/velocity/kp"), 20);
+    parameter_scalar_set(parameter_find(&ns, "/control/current/kp"), 1);
+    auto voltage = motor_controller_process(&controller);
+
+    CHECK_EQUAL(20, voltage);
+}

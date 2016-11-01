@@ -8,14 +8,17 @@
 #include <math.h>
 #include <string.h>
 
+static float safe_get_current(motor_controller_t *controller);
+static float safe_get_velocity(motor_controller_t *controller);
+
 void pid_param_update(struct pid_param_s *p, pid_ctrl_t *ctrl)
 {
     if (parameter_changed(&p->kp) ||
         parameter_changed(&p->ki) ||
         parameter_changed(&p->kd)) {
         pid_set_gains(ctrl, parameter_scalar_get(&p->kp),
-                            parameter_scalar_get(&p->ki),
-                            parameter_scalar_get(&p->kd));
+                      parameter_scalar_get(&p->ki),
+                      parameter_scalar_get(&p->kd));
         pid_reset_integral(ctrl);
     }
     if (parameter_changed(&p->i_limit)) {
@@ -34,13 +37,25 @@ static void pid_param_declare(struct pid_param_s *p)
 static void declare_parameters(motor_controller_t *controller, parameter_namespace_t *root)
 {
     parameter_namespace_declare(&controller->param_ns_control, root, "control");
-    parameter_scalar_declare(&controller->param_vel_limit, &controller->param_ns_control, "velocity_limit");
-    parameter_scalar_declare(&controller->param_torque_limit, &controller->param_ns_control, "torque_limit");
-    parameter_scalar_declare(&controller->param_acc_limit, &controller->param_ns_control, "acceleration_limit");
+    parameter_scalar_declare(&controller->param_vel_limit,
+                             &controller->param_ns_control,
+                             "velocity_limit");
+    parameter_scalar_declare(&controller->param_torque_limit,
+                             &controller->param_ns_control,
+                             "torque_limit");
+    parameter_scalar_declare(&controller->param_acc_limit,
+                             &controller->param_ns_control,
+                             "acceleration_limit");
 
-    parameter_namespace_declare(&controller->params_pos_pid.ns, &controller->param_ns_control, "position");
-    parameter_namespace_declare(&controller->params_vel_pid.ns, &controller->param_ns_control, "velocity");
-    parameter_namespace_declare(&controller->params_cur_pid.ns, &controller->param_ns_control, "current");
+    parameter_namespace_declare(&controller->params_pos_pid.ns,
+                                &controller->param_ns_control,
+                                "position");
+    parameter_namespace_declare(&controller->params_vel_pid.ns,
+                                &controller->param_ns_control,
+                                "velocity");
+    parameter_namespace_declare(&controller->params_cur_pid.ns,
+                                &controller->param_ns_control,
+                                "current");
 
     pid_param_declare(&controller->params_pos_pid);
     pid_param_declare(&controller->params_vel_pid);
@@ -58,19 +73,50 @@ void motor_controller_init(motor_controller_t *controller, parameter_namespace_t
 
 float motor_controller_process(motor_controller_t *controller)
 {
+    float current = 0., velocity = 0.;
+
     /* Update controller gains. */
     pid_param_update(&controller->params_pos_pid, &controller->pos_pid);
     pid_param_update(&controller->params_vel_pid, &controller->vel_pid);
     pid_param_update(&controller->params_cur_pid, &controller->cur_pid);
 
-    float current = 0.;
+    if (controller->mode >= MOTOR_CONTROLLER_VELOCITY) {
+        velocity = safe_get_velocity(controller);
 
-    /* Get current. */
-    if (controller->callbacks.get_current.fn) {
-        current = controller->callbacks.get_current.fn(controller->callbacks.get_current.arg);
+        float vel_error = velocity - controller->vel_setpoint;
+
+        controller->cur_setpoint = pid_process(&controller->vel_pid, vel_error);
     }
 
+    current = safe_get_current(controller);
     float current_error = current - controller->cur_setpoint;
 
     return pid_process(&controller->cur_pid, current_error);
+}
+
+static float safe_get_current(motor_controller_t *controller)
+{
+    float current = 0.;
+    float (*fn)(void *) = controller->callbacks.get_current.fn;
+    void *arg = controller->callbacks.get_current.arg;
+
+    if (fn) {
+        current = fn(arg);
+    }
+
+    return current;
+}
+
+static float safe_get_velocity(motor_controller_t *controller)
+{
+    float velocity = 0.;
+    float (*fn)(void *) = controller->callbacks.get_velocity.fn;
+    void *arg = controller->callbacks.get_velocity.arg;
+
+    if (fn) {
+        velocity = fn(arg);
+    }
+
+    return velocity;
+
 }
