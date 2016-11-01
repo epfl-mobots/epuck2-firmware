@@ -12,11 +12,13 @@ depends:
     - chibios-syscalls
     - msgbus
     - lwip
+    - pid
 
 source:
     - src/cmp/cmp.c
     - src/config_flash_storage.c
     - src/sensors/vl6180x/vl6180x.c
+    - src/motor_pid.c
 
 target.arm:
     - src/panic.c
@@ -30,8 +32,6 @@ target.arm:
     - src/exti.c
     - src/encoder.c
     - src/motor_pwm.c
-    - src/motor_pid.c
-    - src/pid/pid.c
     - src/body_leds.c
     - src/board/board.c
     - src/sensors/range.c
@@ -46,6 +46,7 @@ tests:
     - tests/config_save_test.cpp
     - tests/flash_mock.cpp
     - tests/test_range_sensor.cpp
+    - tests/motor_pid.cpp
 
 templates:
     src/src.mk.jinja: 'src/src.mk'
