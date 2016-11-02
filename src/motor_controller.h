@@ -23,9 +23,12 @@ struct pid_param_s {
 
 typedef struct {
     parameter_namespace_t param_ns_control;
-    parameter_t param_vel_limit;
-    parameter_t param_torque_limit;
-    parameter_t param_acc_limit;
+
+    struct {
+        parameter_t velocity;
+        parameter_t torque;
+        parameter_t acceleration;
+    } limits;
 
     enum {
         MOTOR_CONTROLLER_CURRENT=0,
