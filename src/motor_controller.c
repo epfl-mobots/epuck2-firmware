@@ -43,9 +43,10 @@ static void declare_parameters(motor_controller_t *controller, parameter_namespa
                                           &controller->limits.ns,
                                           "velocity",
                                           INFINITY);
-    parameter_scalar_declare(&controller->limits.torque,
-                             &controller->limits.ns,
-                             "torque");
+    parameter_scalar_declare_with_default(&controller->limits.current,
+                                          &controller->limits.ns,
+                                          "current",
+                                          INFINITY);
     parameter_scalar_declare(&controller->limits.acceleration,
                              &controller->limits.ns,
                              "acceleration");
@@ -106,6 +107,12 @@ float motor_controller_process(motor_controller_t *controller)
     }
 
     /* Current (torque) control. */
+    float max_current = parameter_scalar_get(&controller->limits.current);
+    if (controller->current.setpoint > max_current) {
+        controller->current.setpoint = max_current;
+    } else if (controller->current.setpoint < -max_current) {
+        controller->current.setpoint = -max_current;
+    }
     float current = safe_get_current(controller);
     controller->current.error = current - controller->current.setpoint;
 

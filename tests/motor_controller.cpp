@@ -26,7 +26,7 @@ TEST(PIDConfigTestGroup, CanConfigure)
 
     /* Check that the parameters were all correctly declared. */
     CHECK_TRUE(parameter_find(&ns, "/control/limits/velocity"));
-    CHECK_TRUE(parameter_find(&ns, "/control/limits/torque"));
+    CHECK_TRUE(parameter_find(&ns, "/control/limits/current"));
     CHECK_TRUE(parameter_find(&ns, "/control/limits/acceleration"));
 
     CHECK_TRUE(parameter_find(&ns, "/control/position/kp"));
@@ -152,6 +152,11 @@ TEST_GROUP(CurrentControl)
     motor_controller_t controller;
     parameter_namespace_t ns;
 
+    void mock_set_current(float current)
+    {
+        mock().expectOneCall("get_current").andReturnValue(current);
+    }
+
     void setup()
     {
         parameter_namespace_declare(&ns, NULL, "root");
@@ -162,14 +167,13 @@ TEST_GROUP(CurrentControl)
 
         controller.mode = motor_controller_t::MOTOR_CONTROLLER_CURRENT;
         parameter_scalar_set(parameter_find(&ns, "/control/current/kp"), 10);
-
-        mock().expectOneCall("get_current").andReturnValue(1.);
-        controller.current.setpoint = 2;
     }
 };
 
-TEST(CurrentControl, Error)
+TEST(CurrentControl, ErrorIsProcessed)
 {
+    controller.current.setpoint = 2;
+    mock_set_current(1.);
     auto voltage = motor_controller_process(&controller);
 
     CHECK_EQUAL(10, voltage);
@@ -177,8 +181,29 @@ TEST(CurrentControl, Error)
 
 TEST(CurrentControl, ErrorIsSet)
 {
+    controller.current.setpoint = 2;
+    mock_set_current(1.);
     motor_controller_process(&controller);
     CHECK_EQUAL(-1, controller.current.error);
+}
+
+TEST(CurrentControl, LimitIsEnforced)
+{
+    parameter_scalar_set(parameter_find(&ns, "/control/limits/current"), 1.5);
+    controller.current.setpoint = 2;
+    mock_set_current(1.);
+    auto voltage = motor_controller_process(&controller);
+    CHECK_EQUAL(5, voltage);
+}
+
+TEST(CurrentControl, NegativeValuesAreClampedToo)
+{
+    parameter_scalar_set(parameter_find(&ns, "/control/limits/current"), 1.5);
+    controller.current.setpoint = -2;
+    mock_set_current(-1.);
+    auto voltage = motor_controller_process(&controller);
+    CHECK_EQUAL(-5, voltage);
+
 }
 
 TEST_GROUP(VelocityControl)

@@ -27,7 +27,7 @@ typedef struct {
     struct {
         parameter_namespace_t ns;
         parameter_t velocity;
-        parameter_t torque;
+        parameter_t current;
         parameter_t acceleration;
     } limits;
 
