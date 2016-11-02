@@ -25,9 +25,9 @@ TEST(PIDConfigTestGroup, CanConfigure)
 {
 
     /* Check that the parameters were all correctly declared. */
-    CHECK_TRUE(parameter_find(&ns, "/control/velocity_limit"));
-    CHECK_TRUE(parameter_find(&ns, "/control/torque_limit"));
-    CHECK_TRUE(parameter_find(&ns, "/control/acceleration_limit"));
+    CHECK_TRUE(parameter_find(&ns, "/control/limits/velocity"));
+    CHECK_TRUE(parameter_find(&ns, "/control/limits/torque"));
+    CHECK_TRUE(parameter_find(&ns, "/control/limits/acceleration"));
 
     CHECK_TRUE(parameter_find(&ns, "/control/position/kp"));
     CHECK_TRUE(parameter_find(&ns, "/control/position/ki"));
@@ -228,7 +228,7 @@ TEST(VelocityControl, MaxVelocityIsEnforced)
 {
     mock_set_speed(1.);
     controller.velocity.setpoint = 2.;
-    parameter_scalar_set(parameter_find(&ns, "/control/velocity_limit"), 1.5);
+    parameter_scalar_set(parameter_find(&ns, "/control/limits/velocity"), 1.5);
 
     auto voltage = motor_controller_process(&controller);
     CHECK_EQUAL(10, voltage);
@@ -238,7 +238,7 @@ TEST(VelocityControl, NegativeVelocitiesAreCappedToo)
 {
     mock_set_speed(-1.);
     controller.velocity.setpoint = -2.;
-    parameter_scalar_set(parameter_find(&ns, "/control/velocity_limit"), 1.5);
+    parameter_scalar_set(parameter_find(&ns, "/control/limits/velocity"), 1.5);
 
     auto voltage = motor_controller_process(&controller);
     CHECK_EQUAL(-10, voltage);

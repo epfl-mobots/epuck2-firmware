@@ -25,6 +25,7 @@ typedef struct {
     parameter_namespace_t param_ns_control;
 
     struct {
+        parameter_namespace_t ns;
         parameter_t velocity;
         parameter_t torque;
         parameter_t acceleration;

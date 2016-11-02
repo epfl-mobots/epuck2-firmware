@@ -38,16 +38,17 @@ static void pid_param_declare(struct pid_param_s *p)
 static void declare_parameters(motor_controller_t *controller, parameter_namespace_t *root)
 {
     parameter_namespace_declare(&controller->param_ns_control, root, "control");
+    parameter_namespace_declare(&controller->limits.ns, &controller->param_ns_control, "limits");
     parameter_scalar_declare_with_default(&controller->limits.velocity,
-                                          &controller->param_ns_control,
-                                          "velocity_limit",
+                                          &controller->limits.ns,
+                                          "velocity",
                                           INFINITY);
     parameter_scalar_declare(&controller->limits.torque,
-                             &controller->param_ns_control,
-                             "torque_limit");
+                             &controller->limits.ns,
+                             "torque");
     parameter_scalar_declare(&controller->limits.acceleration,
-                             &controller->param_ns_control,
-                             "acceleration_limit");
+                             &controller->limits.ns,
+                             "acceleration");
 
     parameter_namespace_declare(&controller->position.params.ns,
                                 &controller->param_ns_control,
