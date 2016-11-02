@@ -38,9 +38,10 @@ static void pid_param_declare(struct pid_param_s *p)
 static void declare_parameters(motor_controller_t *controller, parameter_namespace_t *root)
 {
     parameter_namespace_declare(&controller->param_ns_control, root, "control");
-    parameter_scalar_declare(&controller->param_vel_limit,
-                             &controller->param_ns_control,
-                             "velocity_limit");
+    parameter_scalar_declare_with_default(&controller->param_vel_limit,
+                                          &controller->param_ns_control,
+                                          "velocity_limit",
+                                          INFINITY);
     parameter_scalar_declare(&controller->param_torque_limit,
                              &controller->param_ns_control,
                              "torque_limit");
@@ -85,6 +86,14 @@ float motor_controller_process(motor_controller_t *controller)
         controller->position.error = position - controller->position.setpoint;
         controller->velocity.setpoint = pid_process(&controller->position.pid,
                                                     controller->position.error);
+    }
+
+    /* Clamp velocity */
+    float max_velocity = parameter_scalar_get(&controller->param_vel_limit);
+    if (controller->velocity.setpoint > max_velocity) {
+        controller->velocity.setpoint = max_velocity;
+    } else if (controller->velocity.setpoint < -max_velocity) {
+        controller->velocity.setpoint = -max_velocity;
     }
 
     /* Velocity control */

@@ -186,6 +186,11 @@ TEST_GROUP(VelocityControl)
     motor_controller_t controller;
     parameter_namespace_t ns;
 
+    void mock_set_speed(float speed)
+    {
+        mock().expectOneCall("get_speed").andReturnValue(speed);
+    }
+
     void setup()
     {
         parameter_namespace_declare(&ns, NULL, "root");
@@ -198,13 +203,13 @@ TEST_GROUP(VelocityControl)
         controller.velocity.get_arg = NULL;
         controller.mode = motor_controller_t::MOTOR_CONTROLLER_VELOCITY;
 
-        controller.velocity.setpoint = 2.;
-        mock().expectOneCall("get_speed").andReturnValue(1.);
     }
 };
 
 TEST(VelocityControl, ErrorIsProcessed)
 {
+    mock_set_speed(1.);
+    controller.velocity.setpoint = 2.;
     auto voltage = motor_controller_process(&controller);
 
     CHECK_EQUAL(20, voltage);
@@ -212,8 +217,31 @@ TEST(VelocityControl, ErrorIsProcessed)
 
 TEST(VelocityControl, ErrorIsSet)
 {
+    mock_set_speed(1.);
+    controller.velocity.setpoint = 2.;
+
     motor_controller_process(&controller);
     CHECK_EQUAL(-1, controller.velocity.error);
+}
+
+TEST(VelocityControl, MaxVelocityIsEnforced)
+{
+    mock_set_speed(1.);
+    controller.velocity.setpoint = 2.;
+    parameter_scalar_set(parameter_find(&ns, "/control/velocity_limit"), 1.5);
+
+    auto voltage = motor_controller_process(&controller);
+    CHECK_EQUAL(10, voltage);
+}
+
+TEST(VelocityControl, NegativeVelocitiesAreCappedToo)
+{
+    mock_set_speed(-1.);
+    controller.velocity.setpoint = -2.;
+    parameter_scalar_set(parameter_find(&ns, "/control/velocity_limit"), 1.5);
+
+    auto voltage = motor_controller_process(&controller);
+    CHECK_EQUAL(-10, voltage);
 }
 
 TEST_GROUP(PositionControl)
