@@ -6,6 +6,8 @@ extern "C" {
 #endif
 
 
+/** Start wheel motor control. */
+void motor_pid_start(void);
 
 #ifdef __cplusplus
 }

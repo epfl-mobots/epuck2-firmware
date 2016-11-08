@@ -23,6 +23,7 @@
 #include "config_flash_storage.h"
 #include "sensors/motor_current.h"
 #include "body_leds.h"
+#include "motor_pid_thread.h"
 
 #include "aseba_vm/aseba_node.h"
 #include "aseba_vm/skel_user.h"
@@ -120,6 +121,7 @@ int main(void)
     imu_start();
     exti_start();
     motor_current_start();
+    motor_pid_start();
 
     // Initialise aseba parameters
     parameter_namespace_declare(&aseba_ns, &parameter_root, "aseba");

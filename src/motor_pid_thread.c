@@ -10,6 +10,7 @@
 
 #define CONTROL_FREQUENCY_HZ 100
 
+
 enum motor_enum {
     LEFT=0,
     RIGHT=1
@@ -142,6 +143,14 @@ static void set_input_functions(motor_controller_t *controller, enum motor_enum 
     controller->position.get_arg = (void *)mot;
 }
 
+static void wait_for_services(void)
+{
+    messagebus_find_topic_blocking(&bus, "/motors/current");
+    messagebus_find_topic_blocking(&bus, "/wheel_velocities");
+    messagebus_find_topic_blocking(&bus, "/wheel_pos");
+    messagebus_find_topic_blocking(&bus, "/battery_level");
+}
+
 static THD_FUNCTION(motor_pid_thd, arg)
 {
     (void) arg;
@@ -151,6 +160,7 @@ static THD_FUNCTION(motor_pid_thd, arg)
         parameter_namespace_t ns;
         float voltage;
     } left, right;
+
 
     parameter_namespace_declare(&left.ns, &parameter_root, "left_wheel");
     parameter_namespace_declare(&right.ns, &parameter_root, "right_wheel");
@@ -167,6 +177,9 @@ static THD_FUNCTION(motor_pid_thd, arg)
 
     TOPIC_DECL(motor_voltage_topic, motor_voltage_msg_t);
     messagebus_advertise_topic(&bus, &motor_voltage_topic.topic, "/motors/voltage");
+
+    /* Wait for needed services to come online. */
+    wait_for_services();
 
     while (true) {
         left.voltage = motor_controller_process(&left.controller);
