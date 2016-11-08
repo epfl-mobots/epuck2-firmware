@@ -155,6 +155,108 @@ TEST(ProcessReconfigures, ProcessUpdatesCurrentParameters)
     CHECK_EQUAL(12, controller.current.pid.kp);
 }
 
+TEST_GROUP(SetMode)
+{
+    motor_controller_t controller;
+    parameter_namespace_t ns;
+
+    void setup()
+    {
+        parameter_namespace_declare(&ns, NULL, "root");
+        motor_controller_init(&controller, &ns);
+
+        controller.current.get = mock_get_current;
+        controller.current.get_arg = NULL;
+        controller.velocity.get = mock_get_speed;
+        controller.velocity.get_arg = NULL;
+        controller.position.get = mock_get_pos;
+        controller.position.get_arg = NULL;
+
+        controller.current.setpoint = 1.0;
+        controller.velocity.setpoint = 2.0;
+        controller.position.setpoint = 3.0;
+    }
+};
+
+TEST(SetMode, FromPositionToCurrent)
+{
+    controller.mode = MOTOR_CONTROLLER_POSITION;
+
+    motor_controller_set_mode(&controller, MOTOR_CONTROLLER_CURRENT);
+
+    CHECK_EQUAL(MOTOR_CONTROLLER_CURRENT, controller.mode)
+    CHECK_EQUAL(1.0, controller.current.setpoint);
+    CHECK_EQUAL(2.0, controller.velocity.setpoint);
+    CHECK_EQUAL(3.0, controller.position.setpoint);
+}
+
+TEST(SetMode, FromPositionToVelocity)
+{
+    controller.mode = MOTOR_CONTROLLER_POSITION;
+
+    motor_controller_set_mode(&controller, MOTOR_CONTROLLER_VELOCITY);
+
+    CHECK_EQUAL(MOTOR_CONTROLLER_VELOCITY, controller.mode)
+    CHECK_EQUAL(1.0, controller.current.setpoint);
+    CHECK_EQUAL(2.0, controller.velocity.setpoint);
+    CHECK_EQUAL(3.0, controller.position.setpoint);
+}
+
+TEST(SetMode, FromVelocityToPosition)
+{
+    mock().expectOneCall("get_pos").andReturnValue(42.);
+
+    controller.mode = MOTOR_CONTROLLER_VELOCITY;
+
+    motor_controller_set_mode(&controller, MOTOR_CONTROLLER_POSITION);
+
+    CHECK_EQUAL(MOTOR_CONTROLLER_POSITION, controller.mode)
+    CHECK_EQUAL(1.0, controller.current.setpoint);
+    CHECK_EQUAL(2.0, controller.velocity.setpoint);
+    CHECK_EQUAL(42.0, controller.position.setpoint);
+}
+
+TEST(SetMode, FromCurrentToVelocity)
+{
+    mock().expectOneCall("get_speed").andReturnValue(32.);
+
+    controller.mode = MOTOR_CONTROLLER_CURRENT;
+
+    motor_controller_set_mode(&controller, MOTOR_CONTROLLER_VELOCITY);
+
+    CHECK_EQUAL(MOTOR_CONTROLLER_VELOCITY, controller.mode)
+    CHECK_EQUAL(1.0, controller.current.setpoint);
+    CHECK_EQUAL(32.0, controller.velocity.setpoint);
+    CHECK_EQUAL(3.0, controller.position.setpoint);
+}
+
+TEST(SetMode, FromCurrentToPosition)
+{
+    mock().expectOneCall("get_pos").andReturnValue(42.);
+    mock().expectOneCall("get_speed").andReturnValue(32.);
+
+    controller.mode = MOTOR_CONTROLLER_CURRENT;
+
+    motor_controller_set_mode(&controller, MOTOR_CONTROLLER_POSITION);
+
+    CHECK_EQUAL(MOTOR_CONTROLLER_POSITION, controller.mode)
+    CHECK_EQUAL(1.0, controller.current.setpoint);
+    CHECK_EQUAL(32.0, controller.velocity.setpoint);
+    CHECK_EQUAL(42.0, controller.position.setpoint);
+}
+
+TEST(SetMode, NoChange)
+{
+    controller.mode = MOTOR_CONTROLLER_POSITION;
+
+    motor_controller_set_mode(&controller, MOTOR_CONTROLLER_POSITION);
+
+    CHECK_EQUAL(MOTOR_CONTROLLER_POSITION, controller.mode)
+    CHECK_EQUAL(1.0, controller.current.setpoint);
+    CHECK_EQUAL(2.0, controller.velocity.setpoint);
+    CHECK_EQUAL(3.0, controller.position.setpoint);
+}
+
 TEST_GROUP(CurrentControl)
 {
     motor_controller_t controller;
@@ -173,7 +275,7 @@ TEST_GROUP(CurrentControl)
         controller.current.get = mock_get_current;
         controller.current.get_arg = NULL;
 
-        controller.mode = motor_controller_t::MOTOR_CONTROLLER_CURRENT;
+        motor_controller_set_mode(&controller, MOTOR_CONTROLLER_CURRENT);
         parameter_scalar_set(parameter_find(&ns, "/control/current/kp"), 10);
     }
 };
@@ -234,7 +336,9 @@ TEST_GROUP(VelocityControl)
 
         controller.velocity.get = mock_get_speed;
         controller.velocity.get_arg = NULL;
-        controller.mode = motor_controller_t::MOTOR_CONTROLLER_VELOCITY;
+
+        mock().expectOneCall("get_speed").andReturnValue(0.0);
+        motor_controller_set_mode(&controller, MOTOR_CONTROLLER_VELOCITY);
 
     }
 };
@@ -289,7 +393,7 @@ TEST_GROUP(PositionControl)
 
         controller.position.get = mock_get_pos;
         controller.position.get_arg = NULL;
-        controller.mode = motor_controller_t::MOTOR_CONTROLLER_POSITION;
+        controller.mode = MOTOR_CONTROLLER_POSITION;
 
         controller.position.setpoint = 2.;
         mock().expectOneCall("get_pos").andReturnValue(1.);
@@ -311,4 +415,37 @@ TEST(PositionControl, ErrorIsSet)
 {
     motor_controller_process(&controller);
     CHECK_EQUAL(-1, controller.position.error);
+}
+
+TEST_GROUP(LimitSymmetric)
+{
+    float limit = 100;
+};
+
+TEST(LimitSymmetric, InsideLimitPositive)
+{
+    float value = 42;
+
+    DOUBLES_EQUAL(value, motor_controller_limit_symmetric(value, limit), 1.0e-9);
+}
+
+TEST(LimitSymmetric, InsideLimitNegative)
+{
+    float value = -42;
+
+    DOUBLES_EQUAL(value, motor_controller_limit_symmetric(value, limit), 1.0e-9);
+}
+
+TEST(LimitSymmetric, OutsideLimit)
+{
+    float value = 250;
+
+    DOUBLES_EQUAL(limit, motor_controller_limit_symmetric(value, limit), 1.0e-9);
+}
+
+TEST(LimitSymmetric, OutsideLimitNegative)
+{
+    float value = -250;
+
+    DOUBLES_EQUAL(-limit, motor_controller_limit_symmetric(value, limit), 1.0e-9);
 }

@@ -156,3 +156,38 @@ static float safe_get_position(motor_controller_t *controller)
 
     return position;
 }
+
+float motor_controller_limit_symmetric(float value, float limit)
+{
+    if (value > limit) return limit;
+    else if (value < -limit) return -limit;
+    else return value;
+}
+
+void motor_controller_set_mode(motor_controller_t *controller,
+                               enum motor_controller_mode mode)
+{
+    switch (mode) {
+        case MOTOR_CONTROLLER_POSITION:
+            if (controller->mode < MOTOR_CONTROLLER_POSITION) {
+                controller->position.setpoint =
+                    controller->position.get(controller->position.get_arg);
+            }
+            if (controller->mode < MOTOR_CONTROLLER_VELOCITY) {
+                controller->velocity.setpoint =
+                    controller->velocity.get(controller->velocity.get_arg);
+            }
+            controller->mode = mode;
+            break;
+        case MOTOR_CONTROLLER_VELOCITY:
+            if (controller->mode < MOTOR_CONTROLLER_VELOCITY) {
+                controller->velocity.setpoint =
+                    controller->velocity.get(controller->velocity.get_arg);
+            }
+            controller->mode = mode;
+            break;
+        case MOTOR_CONTROLLER_CURRENT:
+            controller->mode = mode;
+            break;
+    }
+}
