@@ -57,6 +57,11 @@ float motor_controller_process(motor_controller_t *controller);
 
 void motor_controller_set_frequency(motor_controller_t *controller, float frequency);
 float motor_controller_limit_symmetric(float value, float limit);
+float motor_controller_pos_setpt_interpolation(float pos, float vel, float acc,
+                                               float delta_t);
+float motor_controller_vel_setpt_interpolation(float vel, float acc, float delta_t);
+float motor_controller_vel_ramp(float pos, float vel, float target_pos,
+                                float delta_t, float max_vel, float max_acc);
 
 #ifdef __cplusplus
 }

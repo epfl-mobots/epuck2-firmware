@@ -449,3 +449,192 @@ TEST(LimitSymmetric, OutsideLimitNegative)
 
     DOUBLES_EQUAL(-limit, motor_controller_limit_symmetric(value, limit), 1.0e-9);
 }
+
+TEST_GROUP(SetpointInterpolation)
+{
+
+};
+
+TEST(SetpointInterpolation, PositionConstant)
+{
+    float pos = 1;
+    float vel = 0;
+    float acc = 0;
+    float delta_t = 0.1;
+
+    DOUBLES_EQUAL(pos,
+                  motor_controller_pos_setpt_interpolation(pos, vel, acc, delta_t),
+                  1.0e-7);
+}
+
+TEST(SetpointInterpolation, PositionConstantVel)
+{
+    float pos = 1;
+    float vel = 2;
+    float acc = 0;
+    float delta_t = 0.1;
+
+    DOUBLES_EQUAL(1.2, pos + vel * delta_t, 1.0e-7);
+    DOUBLES_EQUAL(pos + vel * delta_t,
+                  motor_controller_pos_setpt_interpolation(pos, vel, acc, delta_t),
+                  1.0e-7);
+}
+
+TEST(SetpointInterpolation, PositionStart)
+{
+    float pos = 1;
+    float vel = 0;
+    float acc = 2;
+    float delta_t = 0.1;
+
+    DOUBLES_EQUAL(1.01, pos + acc * delta_t * delta_t / 2, 1.0e-7);
+    DOUBLES_EQUAL(pos + acc * delta_t * delta_t / 2,
+                  motor_controller_pos_setpt_interpolation(pos, vel, acc, delta_t),
+                  1.0e-7);
+}
+
+TEST(SetpointInterpolation, Position)
+{
+    float pos = 1;
+    float vel = 2;
+    float acc = 2;
+    float delta_t = 0.1;
+
+    DOUBLES_EQUAL(1.21,
+                  pos + vel * delta_t + acc * delta_t * delta_t / 2,
+                  1.0e-7);
+    DOUBLES_EQUAL(pos + vel * delta_t + acc * delta_t * delta_t / 2,
+                  motor_controller_pos_setpt_interpolation(pos, vel, acc, delta_t),
+                  1.0e-7);
+}
+
+
+TEST(SetpointInterpolation, Velocity)
+{
+    float vel = 1;
+    float acc = 2;
+    float delta_t = 0.1;
+
+
+    DOUBLES_EQUAL(1.2, vel + acc * delta_t, 1.0e-7);
+    DOUBLES_EQUAL(vel + acc * delta_t,
+                  motor_controller_vel_setpt_interpolation(vel, acc, delta_t),
+                  1.0e-7);
+}
+
+TEST_GROUP(SetpointVelocityRamp)
+{
+
+};
+
+TEST(SetpointVelocityRamp, Static)
+{
+    float pos = 1;
+    float vel = 0;
+    float target_pos = pos;
+    float delta_t = 0.1;
+    float max_vel = 3;
+    float max_acc = 2;
+
+    DOUBLES_EQUAL(0,
+                  motor_controller_vel_ramp(pos, vel, target_pos, delta_t, max_vel, max_acc),
+                  1.0e-7);
+}
+
+TEST(SetpointVelocityRamp, Cruising)
+{
+    float pos = 1;
+    float vel = 3;
+    float target_pos = 4;
+    float delta_t = 0.1;
+    float max_vel = 3;
+    float max_acc = 2;
+
+    DOUBLES_EQUAL(0,
+                  motor_controller_vel_ramp(pos, vel, target_pos, delta_t, max_vel, max_acc),
+                  1.0e-7);
+}
+
+TEST(SetpointVelocityRamp, Start)
+{
+    float pos = 1;
+    float vel = 0;
+    float target_pos = 2;
+    float delta_t = 0.1;
+    float max_vel = 3;
+    float max_acc = 2;
+
+    DOUBLES_EQUAL(max_acc,
+                  motor_controller_vel_ramp(pos, vel, target_pos, delta_t, max_vel, max_acc),
+                  1.0e-7);
+}
+
+TEST(SetpointVelocityRamp, Stopping)
+{
+    float pos = 1.9;
+    float vel = 2;
+    float target_pos = 2;
+    float delta_t = 0.1;
+    float max_vel = 3;
+    float max_acc = 2;
+
+    DOUBLES_EQUAL(-max_acc,
+                  motor_controller_vel_ramp(pos, vel, target_pos, delta_t, max_vel, max_acc),
+                  1.0e-7);
+}
+
+TEST(SetpointVelocityRamp, VeryClose)
+{
+    float pos = 0;
+    float delta_t = 0.1;
+    float max_acc = 2;
+    float vel = max_acc * delta_t / 2;
+    float target_pos = pos + max_acc * delta_t * delta_t / 2;
+    float max_vel = 3;
+
+    DOUBLES_EQUAL(- max_acc / 2,
+                  motor_controller_vel_ramp(pos, vel, target_pos, delta_t, max_vel, max_acc),
+                  1.0e-7);
+}
+
+TEST(SetpointVelocityRamp, GoingTheWrongWay)
+{
+    float pos = 1;
+    float vel = -2;
+    float target_pos = 2;
+    float delta_t = 0.1;
+    float max_vel = 3;
+    float max_acc = 2;
+
+    DOUBLES_EQUAL(max_acc,
+                  motor_controller_vel_ramp(pos, vel, target_pos, delta_t, max_vel, max_acc),
+                  1.0e-7);
+}
+
+TEST(SetpointVelocityRamp, Overshot)
+{
+    float target_pos = 1;
+    float delta_t = 0.1;
+    float max_acc = 2;
+    float pos = target_pos + max_acc * delta_t * delta_t / 2 * 0.9;
+    float vel = max_acc * delta_t / 2;
+    float max_vel = 3;
+
+    DOUBLES_EQUAL(- max_acc / 2,
+                  motor_controller_vel_ramp(pos, vel, target_pos, delta_t, max_vel, max_acc),
+                  1.0e-7);
+}
+
+TEST(SetpointVelocityRamp, TooFast)
+{
+    float target_pos = 2;
+    float delta_t = 0.1;
+    float max_acc = 2;
+    float pos = 1;
+    float vel = 4;
+    float max_vel = 3;
+
+    DOUBLES_EQUAL(- max_acc,
+                  motor_controller_vel_ramp(pos, vel, target_pos, delta_t, max_vel, max_acc),
+                  1.0e-7);
+}

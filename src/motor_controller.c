@@ -164,6 +164,46 @@ float motor_controller_limit_symmetric(float value, float limit)
     else return value;
 }
 
+float motor_controller_pos_setpt_interpolation(float pos, float vel, float acc,
+                                               float delta_t)
+{
+    return pos + vel * delta_t + acc / 2 * delta_t * delta_t;
+}
+
+float motor_controller_vel_setpt_interpolation(float vel, float acc, float delta_t)
+{
+    return vel + acc * delta_t;
+}
+
+float motor_controller_vel_ramp(float pos, float vel, float target_pos,
+                                float delta_t, float max_vel, float max_acc)
+{
+    // returns acceleration to be applied for the next delta_t
+    float breaking_dist = vel * vel / 2 / max_acc;  // distance needed to break with max_acc
+    float error = pos - target_pos;
+    float error_sign = copysignf(1.0, error);
+
+    if (error_sign != copysignf(1.0, vel)) {    // decreasing error with current vel
+        if (fabs(error) <= breaking_dist || fabs(error) <= max_acc * delta_t * delta_t / 2) {
+            // too close to break (or just close enough)
+            return - motor_controller_limit_symmetric(vel / delta_t, max_acc);
+        } else if (fabs(vel) >= max_vel) {
+            // maximal velocity reached -> just cruise
+            return 0;
+        } else {
+            // we can go faster
+            return - error_sign * max_acc;
+        }
+    } else {
+        // driving away from target position -> turn around
+        if (fabs(error) <= max_acc * delta_t * delta_t / 2) {
+            return - motor_controller_limit_symmetric(vel / delta_t, max_acc);
+        } else {
+            return - error_sign * max_acc;
+        }
+    }
+}
+
 void motor_controller_set_mode(motor_controller_t *controller,
                                enum motor_controller_mode mode)
 {
