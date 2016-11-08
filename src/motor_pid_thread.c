@@ -1,8 +1,10 @@
 #include <ch.h>
 #include <hal.h>
 #include "main.h"
-#include "motor_pid.h"
+#include "sensors/battery_level.h"
+#include "motor_pid_thread.h"
 #include "motor_controller.h"
+#include "motor_pwm.h"
 
 #define CONTROL_FREQUENCY_HZ 100
 
@@ -71,8 +73,8 @@ static THD_FUNCTION(motor_pid_thd, arg)
         float voltage;
     } left, right;
 
-    parameter_namespace_declare(&left.ns, &parameter_root);
-    parameter_namespace_declare(&right.ns, &parameter_root);
+    parameter_namespace_declare(&left.ns, &parameter_root, "left_wheel");
+    parameter_namespace_declare(&right.ns, &parameter_root, "right_wheel");
 
     motor_controller_init(&left.controller, &left.ns);
     motor_controller_init(&right.controller, &right.ns);
@@ -86,8 +88,8 @@ static THD_FUNCTION(motor_pid_thd, arg)
     /* TODO: set current/pos/vel getters */
 
     while (true) {
-        left.voltage = controller_process(&left.controller);
-        right.voltage = controller_process(&right.controller);
+        left.voltage = motor_controller_process(&left.controller);
+        right.voltage = motor_controller_process(&right.controller);
 
         left_wheel_voltage_set(&bus, left.voltage);
         right_wheel_voltage_set(&bus, right.voltage);

@@ -28,6 +28,7 @@ target.arm:
     - src/sensors/proximity.c
     - src/sensors/imu.c
     - src/sensors/motor_current.c
+    - src/sensors/motor_pid_thread.c
     - src/usbconf.c
     - src/exti.c
     - src/encoder.c
