@@ -25,7 +25,7 @@ enum motor_controller_mode {
     MOTOR_CONTROLLER_CURRENT=0,
     MOTOR_CONTROLLER_VELOCITY,
     MOTOR_CONTROLLER_POSITION,
-} mode;
+};
 
 typedef struct {
     parameter_namespace_t param_ns_control;
