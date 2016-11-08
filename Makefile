@@ -272,8 +272,9 @@ flash: build/$(PROJECT).elf
 	openocd -f oocd.cfg -c "program build/$(PROJECT).elf verify reset exit"
 
 format:
-	uncrustify -c uncrustify.cfg --replace --no-backup `find src -name "*.c"`
-	uncrustify -c uncrustify.cfg --replace --no-backup `find src -name "*.h"`
+	uncrustify -c uncrustify.cfg --replace --no-backup `git ls-tree --full-tree -r HEAD | grep -e "\.h$$" | cut -f 2`
+	uncrustify -c uncrustify.cfg --replace --no-backup `git ls-tree --full-tree -r HEAD | grep -e "\.c$$" | cut -f 2`
+	uncrustify -c uncrustify.cfg --replace --no-backup `git ls-tree --full-tree -r HEAD | grep -e "\.cpp$$" | cut -f 2`
 
 .PHONY: mem_info
 mem_info: $(PROJECT).elf
