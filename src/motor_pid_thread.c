@@ -2,11 +2,18 @@
 #include <hal.h>
 #include "main.h"
 #include "sensors/battery_level.h"
+#include "sensors/motor_current.h"
+#include "sensors/encoder.h"
 #include "motor_pid_thread.h"
 #include "motor_controller.h"
 #include "motor_pwm.h"
 
 #define CONTROL_FREQUENCY_HZ 100
+
+enum motor_enum {
+    LEFT=0,
+    RIGHT=1
+};
 
 void right_wheel_voltage_set(messagebus_t *bus, float voltage)
 {
@@ -62,6 +69,78 @@ void left_wheel_voltage_set(messagebus_t *bus, float voltage)
     }
 }
 
+static float get_current(void *arg)
+{
+    messagebus_topic_t *topic;
+    motor_current_msg_t msg;
+    topic = messagebus_find_topic(&bus, "/motors/current");
+
+    if (topic == NULL) {
+        return 0.;
+    }
+
+    if (messagebus_topic_read(topic, &msg, sizeof(msg)) == false) {
+        return 0.;
+    }
+
+    if ((int)arg == LEFT) {
+        return msg.left;
+    } else {
+        return msg.right;
+    }
+}
+
+static float get_velocity(void *arg)
+{
+    messagebus_topic_t *topic;
+    wheel_velocities_msg_t msg;
+    topic = messagebus_find_topic(&bus, "/wheel_velocities");
+
+    if (topic == NULL) {
+        return 0.;
+    }
+
+    if (messagebus_topic_read(topic, &msg, sizeof(msg)) == false) {
+        return 0.;
+    }
+
+    if ((int)arg == LEFT) {
+        return msg.left;
+    } else {
+        return msg.right;
+    }
+}
+
+static float get_position(void *arg)
+{
+    messagebus_topic_t *topic;
+    wheel_pos_msg_t msg;
+    topic = messagebus_find_topic(&bus, "/wheel_pos");
+
+    if (topic == NULL) {
+        return 0.;
+    }
+
+    if (messagebus_topic_read(topic, &msg, sizeof(msg)) == false) {
+        return 0.;
+    }
+
+    if ((int)arg == LEFT) {
+        return msg.left;
+    } else {
+        return msg.right;
+    }
+}
+
+static void set_input_functions(motor_controller_t *controller, enum motor_enum mot)
+{
+    controller->current.get = get_current;
+    controller->current.get_arg = (void *)mot;
+    controller->velocity.get = get_velocity;
+    controller->velocity.get_arg = (void *)mot;
+    controller->position.get = get_position;
+    controller->position.get_arg = (void *)mot;
+}
 
 static THD_FUNCTION(motor_pid_thd, arg)
 {
@@ -79,13 +158,15 @@ static THD_FUNCTION(motor_pid_thd, arg)
     motor_controller_init(&left.controller, &left.ns);
     motor_controller_init(&right.controller, &right.ns);
 
+    /* Set the intput output functions for the controllers. */
+    set_input_functions(&left.controller, LEFT);
+    set_input_functions(&right.controller, RIGHT);
+
     motor_controller_set_frequency(&left.controller, CONTROL_FREQUENCY_HZ);
     motor_controller_set_frequency(&right.controller, CONTROL_FREQUENCY_HZ);
 
     TOPIC_DECL(motor_voltage_topic, motor_voltage_msg_t);
     messagebus_advertise_topic(&bus, &motor_voltage_topic.topic, "/motors/voltage");
-
-    /* TODO: set current/pos/vel getters */
 
     while (true) {
         left.voltage = motor_controller_process(&left.controller);
