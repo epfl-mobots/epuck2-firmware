@@ -9,14 +9,15 @@ extern "C" {
 
 /** Macro to declare a topic and associated locking constructs. */
 #define TOPIC_DECL(name, type) struct { \
-    messagebus_topic_t topic; \
-    mutex_t lock; \
-    condition_variable_t condvar; \
-    type value; \
+        messagebus_topic_t topic; \
+        mutex_t lock; \
+        condition_variable_t condvar; \
+        type value; \
 } name = { \
-    .lock = _MUTEX_DATA(name.lock), \
-    .condvar = _CONDVAR_DATA(name.condvar), \
-    .topic = _MESSAGEBUS_TOPIC_DATA(name.topic, name.lock, name.condvar, &name.value, sizeof(type)), \
+        .lock = _MUTEX_DATA(name.lock), \
+        .condvar = _CONDVAR_DATA(name.condvar), \
+        .topic = \
+            _MESSAGEBUS_TOPIC_DATA(name.topic, name.lock, name.condvar, &name.value, sizeof(type)), \
 };
 
 /** Robot wide IPC bus. */

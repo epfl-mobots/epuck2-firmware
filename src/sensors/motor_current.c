@@ -106,8 +106,8 @@ static THD_FUNCTION(adc_motor_current, arg)
         chSysUnlock();
 
         /* Convert the current to amperes. */
-        msg.left = (msg.left - (ADC_MAX/2)) * ADC_GAIN;
-        msg.right = (msg.right - (ADC_MAX/2)) * ADC_GAIN;
+        msg.left = (msg.left - (ADC_MAX / 2)) * ADC_GAIN;
+        msg.right = (msg.right - (ADC_MAX / 2)) * ADC_GAIN;
 
         /* Publish them. */
         messagebus_topic_publish(&motor_current_topic, &msg, sizeof(msg));

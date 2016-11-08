@@ -8,7 +8,7 @@
 #define MAX_16BIT      ((1 << 16) - 1)
 #define MAX_16BIT_DIV2 32767
 
-#define TICKS_PER_RADIAN (12*100/(2*M_PI))  // 12 ticks times 100 reduction
+#define TICKS_PER_RADIAN (12 * 100 / (2 * M_PI))  // 12 ticks times 100 reduction
 
 #define LOOP_FREQUENCY 100.0  // Hz
 #define VELOCITY_SMOOTHING_FACTOR 0.5
@@ -105,9 +105,9 @@ static THD_FUNCTION(encoders_thd, arg)
 
         messagebus_topic_publish(&encoders_topic.topic, &encoders, sizeof(encoders));
         messagebus_topic_publish(&wheel_pos_topic.topic, &wheel_positions,
-                sizeof(wheel_positions));
+                                 sizeof(wheel_positions));
         messagebus_topic_publish(&wheel_velocities_topic.topic, &wheel_velocities,
-                sizeof(wheel_velocities));
+                                 sizeof(wheel_velocities));
 
         left_encoder_old = left_encoder;
         right_encoder_old = right_encoder;

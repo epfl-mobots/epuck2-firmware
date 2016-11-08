@@ -136,7 +136,7 @@ static const ADCConversionGroup adcgrpcfg3 = {
             ADC_SQR3_SQ5_N(15) |
             ADC_SQR3_SQ6_N(6),
     .sqr2 = ADC_SQR2_SQ7_N(5) |
-    /* Ground sensors channels. */
+            /* Ground sensors channels. */
             ADC_SQR2_SQ8_N(8) |
             ADC_SQR2_SQ9_N(2) | /* IR_IN14 is on ADC2, this is only a dummy. */
             ADC_SQR2_SQ10_N(10) |
@@ -233,7 +233,7 @@ void proximity_start(void)
                      {.mode = PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH, .callback = NULL},
                      {.mode = PWM_OUTPUT_DISABLED, .callback = NULL},
                      {.mode = PWM_OUTPUT_DISABLED, .callback = NULL},
-        },
+},
     };
 
     /* Init PWM */

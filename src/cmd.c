@@ -52,7 +52,7 @@ static void cmd_motor(BaseSequentialStream *chp, int argc, char *argv[])
 
     if (!strcmp("left", argv[0])) {
         motor_left_pwm_set(value);
-    } else if (!strcmp("right", argv[0]))   {
+    } else if (!strcmp("right", argv[0])) {
         motor_right_pwm_set(value);
     } else {
         chprintf(chp, "Unknown motor \"%s\".\r\n", argv[0]);
@@ -121,7 +121,11 @@ static void cmd_imu(BaseSequentialStream *chp, int argc, char *argv[])
     }
 
     chprintf(chp, "gyro: %.2f %.2f %.2f\r\n", msg.roll_rate[0], msg.roll_rate[1], msg.roll_rate[2]);
-    chprintf(chp, "acc: %.2f %.2f %.2f\r\n", msg.acceleration[0], msg.acceleration[1], msg.acceleration[2]);
+    chprintf(chp,
+             "acc: %.2f %.2f %.2f\r\n",
+             msg.acceleration[0],
+             msg.acceleration[1],
+             msg.acceleration[2]);
 }
 
 static void cmd_reboot(BaseSequentialStream *chp, int argc, char **argv)
@@ -253,7 +257,7 @@ static void show_config_tree(BaseSequentialStream *out, parameter_namespace_t *n
     tree_indent(out, indent);
     chprintf(out, "%s:\r\n", ns->id);
 
-    for (p=ns->parameter_list; p!=NULL; p=p->next) {
+    for (p = ns->parameter_list; p != NULL; p = p->next) {
         tree_indent(out, indent + 1);
         if (parameter_defined(p)) {
             switch (p->type) {
@@ -266,7 +270,7 @@ static void show_config_tree(BaseSequentialStream *out, parameter_namespace_t *n
                     break;
 
                 case _PARAM_TYPE_BOOLEAN:
-                    chprintf(out, "%s: %s\r\n", p->id, parameter_boolean_get(p)?"true":"false");
+                    chprintf(out, "%s: %s\r\n", p->id, parameter_boolean_get(p) ? "true" : "false");
                     break;
 
                 case _PARAM_TYPE_STRING:

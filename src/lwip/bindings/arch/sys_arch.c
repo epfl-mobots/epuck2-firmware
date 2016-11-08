@@ -47,7 +47,7 @@ void sys_sem_set_invalid(sys_sem_t *sem)
     sem->is_valid = false;
 }
 
-void sys_sem_free (sys_sem_t *sem)
+void sys_sem_free(sys_sem_t *sem)
 {
     /* Semaphores are stack allocated, so no need to do anything to free them. */
     (void) sem;
@@ -134,7 +134,7 @@ void sys_mbox_free(sys_mbox_t *mbox)
 }
 
 sys_thread_t sys_thread_new(const char *name, lwip_thread_fn thread,
-        void *arg, int stacksize, int prio)
+                            void *arg, int stacksize, int prio)
 {
     (void) name;
     sys_thread_t thd = chThdCreateFromHeap(NULL, stacksize, prio, (tfunc_t)thread, arg);

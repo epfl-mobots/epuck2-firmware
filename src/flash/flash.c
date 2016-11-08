@@ -4,25 +4,25 @@
 
 /* Flash registers. Copied here to avoid dependencies on either libopencm3 or
  * ChibiOS. */
-#define MMIO32(addr)		(*(volatile uint32_t *)(addr))
+#define MMIO32(addr)        (*(volatile uint32_t *)(addr))
 #define FLASH_MEM_INTERFACE_BASE 0x40023C00
-#define FLASH_ACR			MMIO32(FLASH_MEM_INTERFACE_BASE + 0x00)
-#define FLASH_KEYR			MMIO32(FLASH_MEM_INTERFACE_BASE + 0x04)
-#define FLASH_OPTKEYR		MMIO32(FLASH_MEM_INTERFACE_BASE + 0x08)
-#define FLASH_SR			MMIO32(FLASH_MEM_INTERFACE_BASE + 0x0C)
-#define FLASH_CR			MMIO32(FLASH_MEM_INTERFACE_BASE + 0x10)
+#define FLASH_ACR           MMIO32(FLASH_MEM_INTERFACE_BASE + 0x00)
+#define FLASH_KEYR          MMIO32(FLASH_MEM_INTERFACE_BASE + 0x04)
+#define FLASH_OPTKEYR       MMIO32(FLASH_MEM_INTERFACE_BASE + 0x08)
+#define FLASH_SR            MMIO32(FLASH_MEM_INTERFACE_BASE + 0x0C)
+#define FLASH_CR            MMIO32(FLASH_MEM_INTERFACE_BASE + 0x10)
 
 #define FLASH_KEY1 0x45670123
 #define FLASH_KEY2 0xCDEF89AB
 #define FLASH_CR_SNB_POS 3
-#define FLASH_CR_LOCK			(1 << 31)
+#define FLASH_CR_LOCK           (1 << 31)
 #define FLASH_CR_PSIZE          ((uint32_t)0x03 << 8)
-#define FLASH_CR_PG			    (1 << 0)
+#define FLASH_CR_PG             (1 << 0)
 #define FLASH_CR_SNB            ((uint32_t)0x000000F8)
 #define FLASH_CR_SER            ((uint32_t)0x00000002)
 #define FLASH_CR_STRT           ((uint32_t)0x00010000)
 
-#define FLASH_SR_BSY			(1 << 16)
+#define FLASH_SR_BSY            (1 << 16)
 
 uint8_t flash_addr_to_sector(void *p)
 {
@@ -66,7 +66,8 @@ static void flash_set_parallelism_8x(void)
 
 static void flash_wait_while_busy(void)
 {
-    while ((FLASH_SR & FLASH_SR_BSY) != 0);
+    while ((FLASH_SR & FLASH_SR_BSY) != 0) {
+    }
 }
 
 static void flash_write_byte(uint8_t *flash, uint8_t byte)

@@ -46,7 +46,7 @@
 
 /* Which current ADC schematic are we using ? */
 #define MOT_CURRENT_USE_AD628
-//#define MOT_CURRENT_USE_INA282
+// #define MOT_CURRENT_USE_INA282
 
 
 /*

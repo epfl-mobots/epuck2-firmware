@@ -18,11 +18,11 @@ static const PWMConfig pwmcfg1 = {
     .period = PWM_CYCLE,
     .callback = NULL,
     .channels = {
-        {PWM_OUTPUT_DISABLED, NULL},
-        {PWM_OUTPUT_DISABLED, NULL},
-        {PWM_OUTPUT_ACTIVE_HIGH, NULL},
-        {PWM_OUTPUT_ACTIVE_HIGH, NULL}
-    },
+                 {PWM_OUTPUT_DISABLED, NULL},
+                 {PWM_OUTPUT_DISABLED, NULL},
+                 {PWM_OUTPUT_ACTIVE_HIGH, NULL},
+                 {PWM_OUTPUT_ACTIVE_HIGH, NULL}
+},
     .cr2 = 0,
     .bdtr = 0,
     .dier = 0
@@ -33,11 +33,11 @@ static const PWMConfig pwmcfg2 = {
     .period = PWM_CYCLE,
     .callback = NULL,
     .channels = {
-        {.mode = PWM_OUTPUT_ACTIVE_HIGH, .callback = NULL},
-        {.mode = PWM_OUTPUT_ACTIVE_HIGH, .callback = NULL},
-        {.mode = PWM_OUTPUT_DISABLED, .callback = NULL},
-        {.mode = PWM_OUTPUT_DISABLED, .callback = NULL}
-    },
+                 {.mode = PWM_OUTPUT_ACTIVE_HIGH, .callback = NULL},
+                 {.mode = PWM_OUTPUT_ACTIVE_HIGH, .callback = NULL},
+                 {.mode = PWM_OUTPUT_DISABLED, .callback = NULL},
+                 {.mode = PWM_OUTPUT_DISABLED, .callback = NULL}
+},
     .cr2 = 0,
     .bdtr = 0,
     .dier = 0
