@@ -282,7 +282,7 @@ TEST_GROUP(CurrentControl)
 
 TEST(CurrentControl, ErrorIsProcessed)
 {
-    controller.current.setpoint = 2;
+    controller.current.target_setpoint = 2;
     mock_set_current(1.);
     auto voltage = motor_controller_process(&controller);
 
@@ -291,7 +291,7 @@ TEST(CurrentControl, ErrorIsProcessed)
 
 TEST(CurrentControl, ErrorIsSet)
 {
-    controller.current.setpoint = 2;
+    controller.current.target_setpoint = 2;
     mock_set_current(1.);
     motor_controller_process(&controller);
     CHECK_EQUAL(-1, controller.current.error);
@@ -300,7 +300,7 @@ TEST(CurrentControl, ErrorIsSet)
 TEST(CurrentControl, LimitIsEnforced)
 {
     parameter_scalar_set(parameter_find(&ns, "/control/limits/current"), 1.5);
-    controller.current.setpoint = 2;
+    controller.current.target_setpoint = 2;
     mock_set_current(1.);
     auto voltage = motor_controller_process(&controller);
     CHECK_EQUAL(5, voltage);
@@ -309,7 +309,7 @@ TEST(CurrentControl, LimitIsEnforced)
 TEST(CurrentControl, NegativeValuesAreClampedToo)
 {
     parameter_scalar_set(parameter_find(&ns, "/control/limits/current"), 1.5);
-    controller.current.setpoint = -2;
+    controller.current.target_setpoint = -2;
     mock_set_current(-1.);
     auto voltage = motor_controller_process(&controller);
     CHECK_EQUAL(-5, voltage);
@@ -346,16 +346,17 @@ TEST_GROUP(VelocityControl)
 TEST(VelocityControl, ErrorIsProcessed)
 {
     mock_set_speed(1.);
-    controller.velocity.setpoint = 2.;
+    controller.velocity.target_setpoint = 2.;
     auto voltage = motor_controller_process(&controller);
 
+    CHECK_EQUAL(2., controller.velocity.setpoint);
     CHECK_EQUAL(20, voltage);
 }
 
 TEST(VelocityControl, ErrorIsSet)
 {
     mock_set_speed(1.);
-    controller.velocity.setpoint = 2.;
+    controller.velocity.target_setpoint = 2.;
 
     motor_controller_process(&controller);
     CHECK_EQUAL(-1, controller.velocity.error);
@@ -364,7 +365,7 @@ TEST(VelocityControl, ErrorIsSet)
 TEST(VelocityControl, MaxVelocityIsEnforced)
 {
     mock_set_speed(1.);
-    controller.velocity.setpoint = 2.;
+    controller.velocity.target_setpoint = 2.;
     parameter_scalar_set(parameter_find(&ns, "/control/limits/velocity"), 1.5);
 
     auto voltage = motor_controller_process(&controller);
@@ -374,11 +375,22 @@ TEST(VelocityControl, MaxVelocityIsEnforced)
 TEST(VelocityControl, NegativeVelocitiesAreCappedToo)
 {
     mock_set_speed(-1.);
-    controller.velocity.setpoint = -2.;
+    controller.velocity.target_setpoint = -2.;
     parameter_scalar_set(parameter_find(&ns, "/control/limits/velocity"), 1.5);
 
     auto voltage = motor_controller_process(&controller);
     CHECK_EQUAL(-10, voltage);
+}
+
+TEST(VelocityControl, SetpointRamping)
+{
+    parameter_scalar_set(parameter_find(&ns, "/control/limits/acceleration"), 1.);
+    mock_set_speed(1.);
+    controller.velocity.setpoint = 1.;
+    controller.velocity.target_setpoint = 5.;
+    motor_controller_process(&controller);
+    CHECK_EQUAL(5., controller.velocity.target_setpoint);
+    CHECK_EQUAL(2., controller.velocity.setpoint);
 }
 
 TEST_GROUP(PositionControl)
@@ -391,21 +403,29 @@ TEST_GROUP(PositionControl)
         parameter_namespace_declare(&ns, NULL, "root");
         motor_controller_init(&controller, &ns);
 
+
+        controller.velocity.get = mock_get_speed;
+        controller.velocity.get_arg = NULL;
         controller.position.get = mock_get_pos;
         controller.position.get_arg = NULL;
-        controller.mode = MOTOR_CONTROLLER_POSITION;
-
-        controller.position.setpoint = 2.;
+        mock().expectOneCall("get_speed").andReturnValue(1.);
         mock().expectOneCall("get_pos").andReturnValue(1.);
+        motor_controller_set_mode(&controller, MOTOR_CONTROLLER_POSITION);
 
+        parameter_scalar_set(parameter_find(&ns, "/control/limits/velocity"), 1.);
+        parameter_scalar_set(parameter_find(&ns, "/control/limits/acceleration"), 1.);
         parameter_scalar_set(parameter_find(&ns, "/control/position/kp"), 30);
         parameter_scalar_set(parameter_find(&ns, "/control/velocity/kp"), 1);
         parameter_scalar_set(parameter_find(&ns, "/control/current/kp"), 1);
+
+        mock().expectOneCall("get_pos").andReturnValue(1.);
+        mock().expectOneCall("get_speed").andReturnValue(1.);
     }
 };
 
 TEST(PositionControl, ErrorIsProcessed)
 {
+    controller.position.target_setpoint = 2.;
     auto voltage = motor_controller_process(&controller);
 
     CHECK_EQUAL(30, voltage);
@@ -413,8 +433,18 @@ TEST(PositionControl, ErrorIsProcessed)
 
 TEST(PositionControl, ErrorIsSet)
 {
+    controller.position.target_setpoint = 2.;
     motor_controller_process(&controller);
     CHECK_EQUAL(-1, controller.position.error);
+}
+
+TEST(PositionControl, SetpointRamping)
+{
+    controller.position.target_setpoint = 5.;
+    parameter_scalar_set(parameter_find(&ns, "/control/limits/velocity"), 10.);
+    motor_controller_process(&controller);
+    CHECK_EQUAL(5.0, controller.position.target_setpoint)
+    CHECK_EQUAL(2.5, controller.position.setpoint)
 }
 
 TEST_GROUP(LimitSymmetric)

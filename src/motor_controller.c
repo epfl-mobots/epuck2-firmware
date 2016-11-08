@@ -45,9 +45,10 @@ static void declare_parameters(motor_controller_t *controller, parameter_namespa
                                           &controller->limits.ns,
                                           "current",
                                           INFINITY);
-    parameter_scalar_declare(&controller->limits.acceleration,
-                             &controller->limits.ns,
-                             "acceleration");
+    parameter_scalar_declare_with_default(&controller->limits.acceleration,
+                                          &controller->limits.ns,
+                                          "acceleration",
+                                          INFINITY);
 
     parameter_namespace_declare(&controller->position.params.ns,
                                 &controller->param_ns_control,
@@ -88,19 +89,42 @@ float motor_controller_process(motor_controller_t *controller)
     pid_param_update(&controller->current.params, &controller->current.pid);
 
     /* Position control */
+    float max_velocity = parameter_scalar_get(&controller->limits.velocity);
+    float max_acceleration = parameter_scalar_get(&controller->limits.acceleration);
+    float delta_t = 1.0/controller->position.pid.frequency;
+
     if (controller->mode >= MOTOR_CONTROLLER_POSITION) {
+        float desired_acceleration = motor_controller_vel_ramp(controller->position.setpoint,
+                                                               controller->velocity.setpoint,
+                                                               controller->position.target_setpoint,
+                                                               delta_t,
+                                                               max_velocity,
+                                                               max_acceleration);
+        controller->position.setpoint =
+                motor_controller_pos_setpt_interpolation(controller->position.setpoint,
+                                                         controller->velocity.setpoint,
+                                                         desired_acceleration,
+                                                         delta_t);
+        controller->velocity.setpoint =
+                motor_controller_vel_setpt_interpolation(controller->velocity.setpoint,
+                                                         desired_acceleration,
+                                                         delta_t);
         float position = safe_get_position(controller);
         controller->position.error = position - controller->position.setpoint;
-        controller->velocity.setpoint = pid_process(&controller->position.pid,
-                                                    controller->position.error);
+        controller->velocity.setpoint += pid_process(&controller->position.pid,
+                                                     controller->position.error);
     }
 
-    /* Clamp velocity */
-    float max_velocity = parameter_scalar_get(&controller->limits.velocity);
-    if (controller->velocity.setpoint > max_velocity) {
-        controller->velocity.setpoint = max_velocity;
-    } else if (controller->velocity.setpoint < -max_velocity) {
-        controller->velocity.setpoint = -max_velocity;
+    if (controller->mode == MOTOR_CONTROLLER_VELOCITY) {
+        /* Clamp velocity */
+        controller->velocity.target_setpoint =
+                motor_controller_limit_symmetric(controller->velocity.target_setpoint,
+                                                 max_velocity);
+        float delta_velocity = controller->velocity.target_setpoint
+                                - controller->velocity.setpoint;
+        delta_velocity = motor_controller_limit_symmetric(delta_velocity,
+                                                          delta_t * max_acceleration);
+        controller->velocity.setpoint += delta_velocity;
     }
 
     /* Velocity control */
@@ -113,11 +137,13 @@ float motor_controller_process(motor_controller_t *controller)
 
     /* Current (torque) control. */
     float max_current = parameter_scalar_get(&controller->limits.current);
-    if (controller->current.setpoint > max_current) {
-        controller->current.setpoint = max_current;
-    } else if (controller->current.setpoint < -max_current) {
-        controller->current.setpoint = -max_current;
+    if (controller->mode == MOTOR_CONTROLLER_CURRENT) {
+        controller->current.target_setpoint =
+                motor_controller_limit_symmetric(controller->current.target_setpoint,
+                                                 max_current);
+        controller->current.setpoint = controller->current.target_setpoint;
     }
+
     float current = safe_get_current(controller);
     controller->current.error = current - controller->current.setpoint;
 

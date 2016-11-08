@@ -187,22 +187,22 @@ static THD_FUNCTION(motor_pid_thd, arg)
     while (true) {
         wheels_setpoint_t msg;
         if (messagebus_topic_read(&wheels_setpoint_topic.topic, &msg, sizeof(msg))) {
-            left.controller.mode = msg.mode;
-            right.controller.mode = msg.mode;
+            motor_controller_set_mode(&left.controller, msg.mode);
+            motor_controller_set_mode(&right.controller, msg.mode);
             switch (msg.mode) {
                 case MOTOR_CONTROLLER_CURRENT:
-                    left.controller.current.setpoint = msg.left;
-                    right.controller.current.setpoint = msg.right;
+                    left.controller.current.target_setpoint = msg.left;
+                    right.controller.current.target_setpoint = msg.right;
                     break;
 
                 case MOTOR_CONTROLLER_VELOCITY:
-                    left.controller.velocity.setpoint = msg.left;
-                    right.controller.velocity.setpoint = msg.right;
+                    left.controller.velocity.target_setpoint = msg.left;
+                    right.controller.velocity.target_setpoint = msg.right;
                     break;
 
                 case MOTOR_CONTROLLER_POSITION:
-                    left.controller.position.setpoint = msg.left;
-                    right.controller.position.setpoint = msg.right;
+                    left.controller.position.target_setpoint = msg.left;
+                    right.controller.position.target_setpoint = msg.right;
                     break;
 
                 default:
