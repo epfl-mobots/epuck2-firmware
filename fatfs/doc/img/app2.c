@@ -1,12 +1,12 @@
 /*------------------------------------------------------------/
-/ Remove all contents of a directory
-/ This function works regardless of _FS_RPATH.
-/------------------------------------------------------------*/
+   / Remove all contents of a directory
+   / This function works regardless of _FS_RPATH.
+   /------------------------------------------------------------*/
 
 
-FRESULT empty_directory (
+FRESULT empty_directory(
     char* path      /* Working buffer filled with start directory */
-)
+    )
 {
     UINT i, j;
     FRESULT fr;
@@ -18,22 +18,32 @@ FRESULT empty_directory (
 #endif
     fr = f_opendir(&dir, path);
     if (fr == FR_OK) {
-        for (i = 0; path[i]; i++) ;
+        for (i = 0; path[i]; i++) {
+            ;
+        }
         path[i++] = '/';
-        for (;;) {
+        for (;; ) {
             fr = f_readdir(&dir, &fno);
-            if (fr != FR_OK || !fno.fname[0]) break;
-            if (fno.fname[0] == '.') continue;
+            if (fr != FR_OK || !fno.fname[0]) {
+                break;
+            }
+            if (fno.fname[0] == '.') {
+                continue;
+            }
             j = 0;
-            do
-                path[i+j] = fno.fname[j];
-            while (fno.fname[j++]);
+            do {
+                path[i + j] = fno.fname[j];
+            } while (fno.fname[j++]);
             if (fno.fattrib & AM_DIR) {
                 fr = empty_directory(path);
-                if (fr != FR_OK) break;
+                if (fr != FR_OK) {
+                    break;
+                }
             }
             fr = f_unlink(path);
-            if (fr != FR_OK) break;
+            if (fr != FR_OK) {
+                break;
+            }
         }
         path[--i] = '\0';
         closedir(&dir);
@@ -44,7 +54,7 @@ FRESULT empty_directory (
 
 
 
-int main (void)
+int main(void)
 {
     FRESULT fr;
     FATFS fs;
@@ -65,6 +75,3 @@ int main (void)
         return 0;
     }
 }
-
-
-
