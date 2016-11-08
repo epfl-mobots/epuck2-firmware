@@ -51,6 +51,8 @@ void motor_controller_init(motor_controller_t *controller, parameter_namespace_t
 
 float motor_controller_process(motor_controller_t *controller);
 
+void motor_controller_set_frequency(motor_controller_t *controller, float frequency);
+
 #ifdef __cplusplus
 }
 #endif

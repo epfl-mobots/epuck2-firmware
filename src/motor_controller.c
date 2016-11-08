@@ -75,6 +75,13 @@ void motor_controller_init(motor_controller_t *controller, parameter_namespace_t
     pid_init(&controller->position.pid);
 }
 
+void motor_controller_set_frequency(motor_controller_t *controller, float frequency)
+{
+    controller->position.pid.frequency = frequency;
+    controller->velocity.pid.frequency = frequency;
+    controller->current.pid.frequency = frequency;
+}
+
 float motor_controller_process(motor_controller_t *controller)
 {
     /* Update controller gains. */

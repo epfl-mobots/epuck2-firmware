@@ -69,6 +69,14 @@ TEST(PIDConfigTestGroup, ChangingGainResetsIntegrator)
     CHECK_EQUAL(0, pid.integrator);
 }
 
+TEST(PIDConfigTestGroup, CanSetFrequency)
+{
+    motor_controller_set_frequency(&controller, 100);
+    CHECK_EQUAL(100, controller.position.pid.frequency);
+    CHECK_EQUAL(100, controller.velocity.pid.frequency);
+    CHECK_EQUAL(100, controller.current.pid.frequency);
+}
+
 static float mock_get_current(void *param)
 {
     (void) param;
