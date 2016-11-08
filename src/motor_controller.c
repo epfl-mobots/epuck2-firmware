@@ -138,11 +138,11 @@ float motor_controller_process(motor_controller_t *controller)
     /* Current (torque) control. */
     float max_current = parameter_scalar_get(&controller->limits.current);
     if (controller->mode == MOTOR_CONTROLLER_CURRENT) {
-        controller->current.target_setpoint =
-                motor_controller_limit_symmetric(controller->current.target_setpoint,
-                                                 max_current);
         controller->current.setpoint = controller->current.target_setpoint;
     }
+    controller->current.setpoint =
+                motor_controller_limit_symmetric(controller->current.setpoint,
+                                                 max_current);
 
     float current = safe_get_current(controller);
     controller->current.error = current - controller->current.setpoint;

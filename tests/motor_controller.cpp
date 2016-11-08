@@ -447,6 +447,15 @@ TEST(PositionControl, SetpointRamping)
     CHECK_EQUAL(2.5, controller.position.setpoint)
 }
 
+TEST(PositionControl, EnsureCurrentLimit)
+{
+    parameter_scalar_set(parameter_find(&ns, "/control/limits/current"), 1.);
+    controller.position.target_setpoint = 2.;
+    auto voltage = motor_controller_process(&controller);
+
+    CHECK_EQUAL(1., voltage);
+}
+
 TEST_GROUP(LimitSymmetric)
 {
     float limit = 100;
