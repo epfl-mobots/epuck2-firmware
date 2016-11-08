@@ -1,6 +1,10 @@
 #include <ch.h>
 #include <hal.h>
+#include "main.h"
 #include "motor_pid.h"
+#include "motor_controller.h"
+
+#define CONTROL_FREQUENCY_HZ 100
 
 void right_wheel_voltage_set(messagebus_t *bus, float voltage)
 {
@@ -61,11 +65,34 @@ static THD_FUNCTION(motor_pid_thd, arg)
 {
     (void) arg;
 
+    struct {
+        motor_controller_t controller;
+        parameter_namespace_t ns;
+        float voltage;
+    } left, right;
+
+    parameter_namespace_declare(&left.ns, &parameter_root);
+    parameter_namespace_declare(&right.ns, &parameter_root);
+
+    motor_controller_init(&left.controller, &left.ns);
+    motor_controller_init(&right.controller, &right.ns);
+
+    motor_controller_set_frequency(&left.controller, CONTROL_FREQUENCY_HZ);
+    motor_controller_set_frequency(&right.controller, CONTROL_FREQUENCY_HZ);
+
     TOPIC_DECL(motor_voltage_topic, motor_voltage_msg_t);
     messagebus_advertise_topic(&bus, &motor_voltage_topic.topic, "/motors/voltage");
 
-    while (42) {
-        chThdSleepMilliseconds(100);
+    /* TODO: set current/pos/vel getters */
+
+    while (true) {
+        left.voltage = controller_process(&left.controller);
+        right.voltage = controller_process(&right.controller);
+
+        left_wheel_voltage_set(&bus, left.voltage);
+        right_wheel_voltage_set(&bus, right.voltage);
+
+        chThdSleepMilliseconds(1000 / CONTROL_FREQUENCY_HZ);
     }
 }
 
