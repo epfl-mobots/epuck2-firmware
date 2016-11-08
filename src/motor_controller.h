@@ -31,7 +31,7 @@ typedef struct {
         parameter_t acceleration;
     } limits;
 
-    enum {
+    enum motor_controller_mode {
         MOTOR_CONTROLLER_CURRENT=0,
         MOTOR_CONTROLLER_VELOCITY,
         MOTOR_CONTROLLER_POSITION,

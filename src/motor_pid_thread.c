@@ -178,10 +178,38 @@ static THD_FUNCTION(motor_pid_thd, arg)
     TOPIC_DECL(motor_voltage_topic, motor_voltage_msg_t);
     messagebus_advertise_topic(&bus, &motor_voltage_topic.topic, "/motors/voltage");
 
+    TOPIC_DECL(wheels_setpoint_topic, wheels_setpoint_t);
+    messagebus_advertise_topic(&bus, &wheels_setpoint_topic.topic, "/motors/setpoint");
+
     /* Wait for needed services to come online. */
     wait_for_services();
 
     while (true) {
+        wheels_setpoint_t msg;
+        if (messagebus_topic_read(&wheels_setpoint_topic.topic, &msg, sizeof(msg))) {
+            left.controller.mode = msg.mode;
+            right.controller.mode = msg.mode;
+            switch (msg.mode) {
+                case MOTOR_CONTROLLER_CURRENT:
+                    left.controller.current.setpoint = msg.left;
+                    right.controller.current.setpoint = msg.right;
+                    break;
+
+                case MOTOR_CONTROLLER_VELOCITY:
+                    left.controller.velocity.setpoint = msg.left;
+                    right.controller.velocity.setpoint = msg.right;
+                    break;
+
+                case MOTOR_CONTROLLER_POSITION:
+                    left.controller.position.setpoint = msg.left;
+                    right.controller.position.setpoint = msg.right;
+                    break;
+
+                default:
+                    chSysHalt("unknown control mode.");
+                    break;
+            }
+        }
         left.voltage = motor_controller_process(&left.controller);
         right.voltage = motor_controller_process(&right.controller);
 
