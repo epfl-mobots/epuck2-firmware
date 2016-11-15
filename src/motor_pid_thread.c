@@ -222,6 +222,6 @@ static THD_FUNCTION(motor_pid_thd, arg)
 
 void motor_pid_start(void)
 {
-    static THD_WORKING_AREA(motor_pid_thd_wa, 512);
+    static THD_WORKING_AREA(motor_pid_thd_wa, 8192);
     chThdCreateStatic(motor_pid_thd_wa, sizeof(motor_pid_thd_wa), NORMALPRIO, motor_pid_thd, NULL);
 }
