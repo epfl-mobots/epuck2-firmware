@@ -631,7 +631,7 @@ TEST(SetpointVelocityRamp, VeryClose)
     float target_pos = pos + max_acc * delta_t * delta_t / 2;
     float max_vel = 3;
 
-    DOUBLES_EQUAL(- max_acc / 2,
+    DOUBLES_EQUAL(-max_acc / 2,
                   motor_controller_vel_ramp(pos, vel, target_pos, delta_t, max_vel, max_acc),
                   1.0e-7);
 }
@@ -659,7 +659,7 @@ TEST(SetpointVelocityRamp, Overshot)
     float vel = max_acc * delta_t / 2;
     float max_vel = 3;
 
-    DOUBLES_EQUAL(- max_acc / 2,
+    DOUBLES_EQUAL(-max_acc / 2,
                   motor_controller_vel_ramp(pos, vel, target_pos, delta_t, max_vel, max_acc),
                   1.0e-7);
 }
@@ -673,7 +673,7 @@ TEST(SetpointVelocityRamp, TooFast)
     float vel = 4;
     float max_vel = 3;
 
-    DOUBLES_EQUAL(- max_acc,
+    DOUBLES_EQUAL(-max_acc,
                   motor_controller_vel_ramp(pos, vel, target_pos, delta_t, max_vel, max_acc),
                   1.0e-7);
 }

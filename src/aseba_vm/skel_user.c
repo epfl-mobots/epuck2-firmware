@@ -260,7 +260,6 @@ void aseba_read_variables_from_system(AsebaVMState *vm)
     for (int i = 0; i < BODY_LED_COUNT; i++) {
         previous_leds[i] = vmVariables.leds[i];
     }
-
 }
 
 void aseba_write_variables_to_system(AsebaVMState *vm)

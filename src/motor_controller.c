@@ -91,7 +91,7 @@ float motor_controller_process(motor_controller_t *controller)
     /* Position control */
     float max_velocity = parameter_scalar_get(&controller->limits.velocity);
     float max_acceleration = parameter_scalar_get(&controller->limits.acceleration);
-    float delta_t = 1.0/controller->position.pid.frequency;
+    float delta_t = 1.0 / controller->position.pid.frequency;
 
     if (controller->mode >= MOTOR_CONTROLLER_POSITION) {
         float desired_acceleration = motor_controller_vel_ramp(controller->position.setpoint,
@@ -101,14 +101,14 @@ float motor_controller_process(motor_controller_t *controller)
                                                                max_velocity,
                                                                max_acceleration);
         controller->position.setpoint =
-                motor_controller_pos_setpt_interpolation(controller->position.setpoint,
-                                                         controller->velocity.setpoint,
-                                                         desired_acceleration,
-                                                         delta_t);
+            motor_controller_pos_setpt_interpolation(controller->position.setpoint,
+                                                     controller->velocity.setpoint,
+                                                     desired_acceleration,
+                                                     delta_t);
         controller->velocity.setpoint =
-                motor_controller_vel_setpt_interpolation(controller->velocity.setpoint,
-                                                         desired_acceleration,
-                                                         delta_t);
+            motor_controller_vel_setpt_interpolation(controller->velocity.setpoint,
+                                                     desired_acceleration,
+                                                     delta_t);
         float position = safe_get_position(controller);
         controller->position.error = position - controller->position.setpoint;
         controller->velocity.setpoint += pid_process(&controller->position.pid,
@@ -118,10 +118,10 @@ float motor_controller_process(motor_controller_t *controller)
     if (controller->mode == MOTOR_CONTROLLER_VELOCITY) {
         /* Clamp velocity */
         controller->velocity.target_setpoint =
-                motor_controller_limit_symmetric(controller->velocity.target_setpoint,
-                                                 max_velocity);
+            motor_controller_limit_symmetric(controller->velocity.target_setpoint,
+                                             max_velocity);
         float delta_velocity = controller->velocity.target_setpoint
-                                - controller->velocity.setpoint;
+                               - controller->velocity.setpoint;
         delta_velocity = motor_controller_limit_symmetric(delta_velocity,
                                                           delta_t * max_acceleration);
         controller->velocity.setpoint += delta_velocity;
@@ -141,8 +141,8 @@ float motor_controller_process(motor_controller_t *controller)
         controller->current.setpoint = controller->current.target_setpoint;
     }
     controller->current.setpoint =
-                motor_controller_limit_symmetric(controller->current.setpoint,
-                                                 max_current);
+        motor_controller_limit_symmetric(controller->current.setpoint,
+                                         max_current);
 
     float current = safe_get_current(controller);
     controller->current.error = current - controller->current.setpoint;
@@ -185,9 +185,13 @@ static float safe_get_position(motor_controller_t *controller)
 
 float motor_controller_limit_symmetric(float value, float limit)
 {
-    if (value > limit) return limit;
-    else if (value < -limit) return -limit;
-    else return value;
+    if (value > limit) {
+        return limit;
+    } else if (value < -limit) {
+        return -limit;
+    } else                                          {
+        return value;
+    }
 }
 
 float motor_controller_pos_setpt_interpolation(float pos, float vel, float acc,
@@ -212,20 +216,20 @@ float motor_controller_vel_ramp(float pos, float vel, float target_pos,
     if (error_sign != copysignf(1.0, vel)) {    // decreasing error with current vel
         if (fabs(error) <= breaking_dist || fabs(error) <= max_acc * delta_t * delta_t / 2) {
             // too close to break (or just close enough)
-            return - motor_controller_limit_symmetric(vel / delta_t, max_acc);
+            return -motor_controller_limit_symmetric(vel / delta_t, max_acc);
         } else if (fabs(vel) >= max_vel) {
             // maximal velocity reached -> just cruise
             return 0;
         } else {
             // we can go faster
-            return - error_sign * max_acc;
+            return -error_sign * max_acc;
         }
     } else {
         // driving away from target position -> turn around
         if (fabs(error) <= max_acc * delta_t * delta_t / 2) {
-            return - motor_controller_limit_symmetric(vel / delta_t, max_acc);
+            return -motor_controller_limit_symmetric(vel / delta_t, max_acc);
         } else {
-            return - error_sign * max_acc;
+            return -error_sign * max_acc;
         }
     }
 }
@@ -245,6 +249,7 @@ void motor_controller_set_mode(motor_controller_t *controller,
             }
             controller->mode = mode;
             break;
+
         case MOTOR_CONTROLLER_VELOCITY:
             if (controller->mode < MOTOR_CONTROLLER_VELOCITY) {
                 controller->velocity.setpoint =
@@ -252,6 +257,7 @@ void motor_controller_set_mode(motor_controller_t *controller,
             }
             controller->mode = mode;
             break;
+
         case MOTOR_CONTROLLER_CURRENT:
             controller->mode = mode;
             break;
