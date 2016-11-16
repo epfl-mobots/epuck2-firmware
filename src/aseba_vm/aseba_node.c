@@ -68,12 +68,16 @@ static THD_FUNCTION(aseba_vm_thd, arg)
             continue;
         }
 
+        chSysLock();
         int event = ffs(events_flags) - 1;
+        chSysUnlock();
 
         // If a local event is pending, then execute it.
         if (event != -1) {
 
+            chSysLock();
             CLEAR_EVENT(event);
+            chSysUnlock();
 
             vmVariables.source = vmState.nodeId;
 

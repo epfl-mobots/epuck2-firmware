@@ -159,7 +159,10 @@ static THD_FUNCTION(aseba_range_thd, p)
 
     while (true) {
         messagebus_topic_wait(topic, NULL, 0);
+
+        chSysLock();
         SET_EVENT(EVENT_RANGE);
+        chSysUnlock();
     }
 }
 
@@ -175,7 +178,10 @@ static THD_FUNCTION(aseba_encoders_thd, p)
 
     while (true) {
         messagebus_topic_wait(topic, NULL, 0);
+
+        chSysLock();
         SET_EVENT(EVENT_ENCODERS);
+        chSysUnlock();
     }
 }
 
@@ -191,7 +197,9 @@ static THD_FUNCTION(aseba_proximity_thd, p)
 
     while (true) {
         messagebus_topic_wait(topic, NULL, 0);
+        chSysLock();
         SET_EVENT(EVENT_PROXIMITY);
+        chSysUnlock();
     }
 }
 
@@ -207,7 +215,9 @@ static THD_FUNCTION(aseba_imu_thd, p)
 
     while (true) {
         messagebus_topic_wait(topic, NULL, 0);
+        chSysLock();
         SET_EVENT(EVENT_IMU);
+        chSysUnlock();
     }
 }
 

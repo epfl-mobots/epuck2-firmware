@@ -19,11 +19,11 @@ extern "C" {
  * In your code, put "SET_EVENT(EVENT_NUMBER)" when you want to trigger an
  * event. This macro is interrupt-safe, you can call it anywhere you want.
  *
- * FIXME: On STM32 This is *not* IRQ safe.
+ * @note On STM32 This macro is not atomic. Calls to these macros should be
+ * wrapped in chSysLock/chSysUnlock.
  */
 #define SET_EVENT(event) (events_flags |= (1 << event))
 #define CLEAR_EVENT(event) (events_flags &= ~(1 << event))
-#define IS_EVENT(event) (events_flags & (1 << event))
 
 extern unsigned int events_flags;
 extern AsebaVMState vmState;
