@@ -331,6 +331,7 @@ static void cmd_config_set(BaseSequentialStream *chp, int argc, char **argv)
 {
     parameter_t *param;
     int value_i;
+    float value_f;
 
     if (argc != 2) {
         chprintf(chp, "Usage: config_set /parameter/url value.\r\n");
@@ -352,6 +353,15 @@ static void cmd_config_set(BaseSequentialStream *chp, int argc, char **argv)
                 chprintf(chp, "Invalid value for integer parameter.\r\n");
             }
             break;
+
+        case _PARAM_TYPE_SCALAR:
+            if (sscanf(argv[1], "%f", &value_f) == 1) {
+                parameter_scalar_set(param, value_f);
+            } else {
+                chprintf(chp, "Invalid value for scalar parameter.\r\n");
+            }
+            break;
+
 
         case _PARAM_TYPE_BOOLEAN:
             if (!strcmp(argv[1], "true")) {
