@@ -189,7 +189,7 @@ float motor_controller_limit_symmetric(float value, float limit)
         return limit;
     } else if (value < -limit) {
         return -limit;
-    } else                                          {
+    } else {
         return value;
     }
 }

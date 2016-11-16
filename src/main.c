@@ -127,6 +127,9 @@ int main(void)
     parameter_namespace_declare(&aseba_ns, &parameter_root, "aseba");
     aseba_declare_parameters(&aseba_ns);
 
+    /* Give enough time to make sure all services booted. */
+    chThdSleepMilliseconds(100);
+
     /* Load parameter tree from flash. */
     extern uint32_t _config_start;
     config_load(&parameter_root, &_config_start);

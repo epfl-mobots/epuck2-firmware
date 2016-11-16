@@ -155,6 +155,8 @@ static THD_FUNCTION(motor_pid_thd, arg)
 {
     (void) arg;
 
+    chRegSetThreadName(__FUNCTION__);
+
     struct {
         motor_controller_t controller;
         parameter_namespace_t ns;
@@ -167,6 +169,14 @@ static THD_FUNCTION(motor_pid_thd, arg)
 
     motor_controller_init(&left.controller, &left.ns);
     motor_controller_init(&right.controller, &right.ns);
+
+    /* Set default parameters. */
+    parameter_scalar_set(parameter_find(&left.ns, "control/current/kp"), 4.);
+    parameter_scalar_set(parameter_find(&right.ns, "control/current/kp"), 4.);
+    parameter_scalar_set(parameter_find(&left.ns, "control/current/ki"), 40.);
+    parameter_scalar_set(parameter_find(&right.ns, "control/current/ki"), 40.);
+    parameter_scalar_set(parameter_find(&left.ns, "control/current/i_limit"), 50.);
+    parameter_scalar_set(parameter_find(&right.ns, "control/current/i_limit"), 50.);
 
     /* Set the intput output functions for the controllers. */
     set_input_functions(&left.controller, LEFT);
