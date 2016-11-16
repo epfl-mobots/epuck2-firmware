@@ -80,6 +80,7 @@ const AsebaLocalEventDescription localEvents[] = {
     {"proximity", "New proximity measurement"},
     {"encoders", "New motor encoders measurement"},
     {"imu", "New IMU (gyro and acc) measurement"},
+    {"timer", "Periodic event"},
     {NULL, NULL}
 };
 
@@ -148,6 +149,18 @@ static THD_FUNCTION(aseba_imu_thd, p)
 }
 
 
+static void aseba_timer_cb(void *p)
+{
+    virtual_timer_t *vt = (virtual_timer_t *)p;
+
+    chSysLockFromISR();
+
+    SET_EVENT(EVENT_TIMER);
+    chVTSetI(vt, MS2ST(100), aseba_timer_cb, p);
+
+    chSysUnlockFromISR();
+}
+
 void aseba_variables_init(parameter_namespace_t *aseba_ns)
 {
     /* Initializes constant variables. */
@@ -169,6 +182,10 @@ void aseba_variables_init(parameter_namespace_t *aseba_ns)
 
     static THD_WORKING_AREA(imu_wa, 256);
     chThdCreateStatic(imu_wa, sizeof(imu_wa), NORMALPRIO, aseba_imu_thd, NULL);
+
+    /* Start the virtual timer */
+    static virtual_timer_t aseba_timer;
+    chVTSet(&aseba_timer, MS2ST(100), aseba_timer_cb, (void *)&aseba_timer);
 
     /* Registers all Aseba settings in global namespace. */
     int i;

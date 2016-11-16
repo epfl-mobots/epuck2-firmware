@@ -28,6 +28,7 @@ enum AsebaLocalEvents {
     EVENT_PROXIMITY, // New proximity sensor measurement
     EVENT_ENCODERS, // New motor encoders measurement
     EVENT_IMU, // New acceleration and gyro measurement
+    EVENT_TIMER, // Timer was fired
 };
 
 
