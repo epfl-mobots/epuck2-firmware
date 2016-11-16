@@ -20,6 +20,8 @@
 #include "sensors/motor_current.h"
 #include "sensors/imu.h"
 
+#include "motor_pid_thread.h"
+
 /* Struct used to share Aseba parameters between C-style API and Aseba. */
 static parameter_t aseba_settings[SETTINGS_COUNT];
 static char aseba_settings_name[SETTINGS_COUNT][10];
@@ -29,6 +31,9 @@ struct _vmVariables vmVariables;
 /* Used to detect if a PWM value has changed. */
 static sint16 motor_pwm_previous_left, motor_pwm_previous_right;
 static sint16 previous_leds[BODY_LED_COUNT];
+
+static sint16 motor_left_previous_current_setpoint;
+static sint16 motor_right_previous_current_setpoint;
 
 void AsebaVMResetCB(AsebaVMState *vm)
 {
@@ -69,6 +74,9 @@ const AsebaVMDescription vmDescription = {
      {3, "acc"},
      {3, "gyro"},
      {BODY_LED_COUNT, "leds"},
+
+     {1, "motor.left.setpoint.current"},
+     {1, "motor.right.setpoint.current"},
 
      {0, NULL}
 }
@@ -274,6 +282,17 @@ void aseba_read_variables_from_system(AsebaVMState *vm)
     motor_pwm_previous_left = vmVariables.motor_left_pwm;
     motor_pwm_previous_right = vmVariables.motor_right_pwm;
 
+    topic = messagebus_find_topic(&bus, "/motors/setpoint");
+    if (topic != NULL) {
+        wheels_setpoint_t msg;
+        messagebus_topic_read(topic, &msg, sizeof(msg));
+        vmVariables.motor_left_current_setpoint = msg.left * 1000;
+        vmVariables.motor_right_current_setpoint = msg.right * 1000;
+    }
+
+    motor_left_previous_current_setpoint = vmVariables.motor_left_current_setpoint;
+    motor_right_previous_current_setpoint = vmVariables.motor_right_current_setpoint;
+
     for (int i = 0; i < BODY_LED_COUNT; i++) {
         previous_leds[i] = vmVariables.leds[i];
     }
@@ -291,6 +310,18 @@ void aseba_write_variables_to_system(AsebaVMState *vm)
 
     if (vmVariables.motor_right_pwm != motor_pwm_previous_right) {
         motor_right_pwm_set(vmVariables.motor_right_pwm / 100.);
+    }
+
+    if (vmVariables.motor_left_current_setpoint != motor_left_previous_current_setpoint ||
+        vmVariables.motor_right_current_setpoint != motor_right_previous_current_setpoint) {
+        wheels_setpoint_t msg;
+        msg.mode = MOTOR_CONTROLLER_CURRENT;
+        msg.left = vmVariables.motor_left_current_setpoint / 1000.;
+        msg.right = vmVariables.motor_right_current_setpoint / 1000.;
+
+        messagebus_topic_t *topic = messagebus_find_topic(&bus, "/motors/setpoint");
+
+        messagebus_topic_publish(topic, &msg, sizeof(msg));
     }
 
     for (int i = 0; i < BODY_LED_COUNT; i++) {

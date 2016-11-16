@@ -66,6 +66,10 @@ struct _vmVariables {
     /* Led values as percentages. */
     uint16 leds[BODY_LED_COUNT];
 
+    /* Setpoints */
+    sint16 motor_left_current_setpoint;
+    sint16 motor_right_current_setpoint;
+
     // Free space
     sint16 freeSpace[VM_VARIABLES_FREE_SPACE];
 };
