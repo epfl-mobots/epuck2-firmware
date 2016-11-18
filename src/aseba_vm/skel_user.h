@@ -71,6 +71,8 @@ struct _vmVariables {
     sint16 motor_right_current_setpoint;
     sint16 motor_left_velocity_setpoint;
     sint16 motor_right_velocity_setpoint;
+    sint16 motor_left_position_setpoint;
+    sint16 motor_right_position_setpoint;
 
 
     // Free space
