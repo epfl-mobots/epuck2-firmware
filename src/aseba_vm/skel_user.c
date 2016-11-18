@@ -31,6 +31,9 @@ struct _vmVariables vmVariables;
 /* Used to test if something was changed within aseba. */
 struct _vmVariables previous_vars;
 
+/* Test if an Aseba variable changed during the VM step. */
+#define VM_VAR_CHANGED(var) (vmVariables.var != previous_vars.var)
+
 
 void AsebaVMResetCB(AsebaVMState *vm)
 {
@@ -297,17 +300,17 @@ void aseba_write_variables_to_system(AsebaVMState *vm)
 
     /* If the motor PWM changed, apply the new one. This is allows setting the
      * PWM from C without Aseba interfering. */
-    if (vmVariables.motor_left_pwm != previous_vars.motor_left_pwm) {
+    if (VM_VAR_CHANGED(motor_left_pwm)) {
         motor_left_pwm_set(vmVariables.motor_left_pwm / 100.);
     }
 
-    if (vmVariables.motor_right_pwm != previous_vars.motor_right_pwm) {
+    if (VM_VAR_CHANGED(motor_right_pwm)) {
         motor_right_pwm_set(vmVariables.motor_right_pwm / 100.);
     }
 
     /* Did the current setpoint change ? If yes, switch to current control mode. */
-    if (vmVariables.motor_left_current_setpoint != previous_vars.motor_left_current_setpoint ||
-        vmVariables.motor_right_current_setpoint != previous_vars.motor_right_current_setpoint) {
+    if (VM_VAR_CHANGED(motor_right_current_setpoint) ||
+        VM_VAR_CHANGED(motor_left_current_setpoint)) {
         wheels_setpoint_t msg;
         msg.mode = MOTOR_CONTROLLER_CURRENT;
 
@@ -321,8 +324,8 @@ void aseba_write_variables_to_system(AsebaVMState *vm)
     }
 
     /* Did the velocity setpoint change ? If yes, switch to velocity control mode. */
-    if (vmVariables.motor_left_velocity_setpoint != previous_vars.motor_left_velocity_setpoint ||
-        vmVariables.motor_right_velocity_setpoint != previous_vars.motor_right_velocity_setpoint) {
+    if (VM_VAR_CHANGED(motor_right_velocity_setpoint) ||
+        VM_VAR_CHANGED(motor_left_velocity_setpoint)) {
         wheels_setpoint_t msg;
         msg.mode = MOTOR_CONTROLLER_VELOCITY;
 
@@ -336,8 +339,8 @@ void aseba_write_variables_to_system(AsebaVMState *vm)
     }
 
     /* Did the position setpoint change ? If yes, switch to position control mode. */
-    if (vmVariables.motor_left_position_setpoint != previous_vars.motor_left_position_setpoint ||
-        vmVariables.motor_right_position_setpoint != previous_vars.motor_right_position_setpoint) {
+    if (VM_VAR_CHANGED(motor_right_position_setpoint) ||
+        VM_VAR_CHANGED(motor_left_position_setpoint)) {
         wheels_setpoint_t msg;
         msg.mode = MOTOR_CONTROLLER_POSITION;
 
@@ -353,7 +356,7 @@ void aseba_write_variables_to_system(AsebaVMState *vm)
 
 
     for (int i = 0; i < BODY_LED_COUNT; i++) {
-        if (vmVariables.leds[i] != previous_vars.leds[i]) {
+        if (VM_VAR_CHANGED(leds[i])) {
             char name[32];
             sprintf(name, "/body_leds/%d", i);
 
