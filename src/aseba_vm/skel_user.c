@@ -74,6 +74,8 @@ const AsebaVMDescription vmDescription = {
 
      {1, "motor.left.setpoint.current"},
      {1, "motor.right.setpoint.current"},
+     {1, "motor.left.setpoint.velocity"},
+     {1, "motor.right.setpoint.velocity"},
 
      {0, NULL}
 }
@@ -301,10 +303,13 @@ void aseba_write_variables_to_system(AsebaVMState *vm)
         motor_right_pwm_set(vmVariables.motor_right_pwm / 100.);
     }
 
+    /* Did the current setpoint change ? If yes, switch to current control mode. */
     if (vmVariables.motor_left_current_setpoint != previous_vars.motor_left_current_setpoint ||
         vmVariables.motor_right_current_setpoint != previous_vars.motor_right_current_setpoint) {
         wheels_setpoint_t msg;
         msg.mode = MOTOR_CONTROLLER_CURRENT;
+
+        /* Convert setpoints from mA to A. */
         msg.left = vmVariables.motor_left_current_setpoint / 1000.;
         msg.right = vmVariables.motor_right_current_setpoint / 1000.;
 
@@ -312,6 +317,22 @@ void aseba_write_variables_to_system(AsebaVMState *vm)
 
         messagebus_topic_publish(topic, &msg, sizeof(msg));
     }
+
+    /* Did the velocity setpoint change ? If yes, switch to velocity control mode. */
+    if (vmVariables.motor_left_velocity_setpoint != previous_vars.motor_left_velocity_setpoint ||
+        vmVariables.motor_right_velocity_setpoint != previous_vars.motor_right_velocity_setpoint) {
+        wheels_setpoint_t msg;
+        msg.mode = MOTOR_CONTROLLER_VELOCITY;
+
+        /* Convert setpoints from rad/s to deg/s */
+        msg.left = (3.14 / 180.) * vmVariables.motor_left_velocity_setpoint;
+        msg.right = (3.14 / 180.) * vmVariables.motor_right_velocity_setpoint;
+
+        messagebus_topic_t *topic = messagebus_find_topic(&bus, "/motors/setpoint");
+
+        messagebus_topic_publish(topic, &msg, sizeof(msg));
+    }
+
 
     for (int i = 0; i < BODY_LED_COUNT; i++) {
         if (vmVariables.leds[i] != previous_vars.leds[i]) {
