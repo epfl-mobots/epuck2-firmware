@@ -28,12 +28,9 @@ static char aseba_settings_name[SETTINGS_COUNT][10];
 
 struct _vmVariables vmVariables;
 
-/* Used to detect if a PWM value has changed. */
-static sint16 motor_pwm_previous_left, motor_pwm_previous_right;
-static sint16 previous_leds[BODY_LED_COUNT];
+/* Used to test if something was changed within aseba. */
+struct _vmVariables previous_vars;
 
-static sint16 motor_left_previous_current_setpoint;
-static sint16 motor_right_previous_current_setpoint;
 
 void AsebaVMResetCB(AsebaVMState *vm)
 {
@@ -278,10 +275,6 @@ void aseba_read_variables_from_system(AsebaVMState *vm)
         vmVariables.motor_right_current = msg.right * 1000;
     }
 
-    /* Keep previous value of PWM. */
-    motor_pwm_previous_left = vmVariables.motor_left_pwm;
-    motor_pwm_previous_right = vmVariables.motor_right_pwm;
-
     topic = messagebus_find_topic(&bus, "/motors/setpoint");
     if (topic != NULL) {
         wheels_setpoint_t msg;
@@ -290,12 +283,8 @@ void aseba_read_variables_from_system(AsebaVMState *vm)
         vmVariables.motor_right_current_setpoint = msg.right * 1000;
     }
 
-    motor_left_previous_current_setpoint = vmVariables.motor_left_current_setpoint;
-    motor_right_previous_current_setpoint = vmVariables.motor_right_current_setpoint;
-
-    for (int i = 0; i < BODY_LED_COUNT; i++) {
-        previous_leds[i] = vmVariables.leds[i];
-    }
+    /* Store previous state of variables. */
+    memcpy(&previous_vars, &vmVariables, sizeof(vmVariables));
 }
 
 void aseba_write_variables_to_system(AsebaVMState *vm)
@@ -304,16 +293,16 @@ void aseba_write_variables_to_system(AsebaVMState *vm)
 
     /* If the motor PWM changed, apply the new one. This is allows setting the
      * PWM from C without Aseba interfering. */
-    if (vmVariables.motor_left_pwm != motor_pwm_previous_left) {
+    if (vmVariables.motor_left_pwm != previous_vars.motor_left_pwm) {
         motor_left_pwm_set(vmVariables.motor_left_pwm / 100.);
     }
 
-    if (vmVariables.motor_right_pwm != motor_pwm_previous_right) {
+    if (vmVariables.motor_right_pwm != previous_vars.motor_right_pwm) {
         motor_right_pwm_set(vmVariables.motor_right_pwm / 100.);
     }
 
-    if (vmVariables.motor_left_current_setpoint != motor_left_previous_current_setpoint ||
-        vmVariables.motor_right_current_setpoint != motor_right_previous_current_setpoint) {
+    if (vmVariables.motor_left_current_setpoint != previous_vars.motor_left_current_setpoint ||
+        vmVariables.motor_right_current_setpoint != previous_vars.motor_right_current_setpoint) {
         wheels_setpoint_t msg;
         msg.mode = MOTOR_CONTROLLER_CURRENT;
         msg.left = vmVariables.motor_left_current_setpoint / 1000.;
@@ -325,7 +314,7 @@ void aseba_write_variables_to_system(AsebaVMState *vm)
     }
 
     for (int i = 0; i < BODY_LED_COUNT; i++) {
-        if (vmVariables.leds[i] != previous_leds[i]) {
+        if (vmVariables.leds[i] != previous_vars.leds[i]) {
             char name[32];
             sprintf(name, "/body_leds/%d", i);
 
