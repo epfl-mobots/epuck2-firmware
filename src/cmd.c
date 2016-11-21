@@ -468,6 +468,39 @@ static void cmd_voltage(BaseSequentialStream *chp, int argc, char *argv[])
     chprintf(chp, "left=%.2f V\r\nright=%.2f V\r\n", msg.left, msg.right);
 }
 
+__attribute__((optimize("O0"), noinline))
+static void stack_overflow(BaseSequentialStream *chp)
+{
+    chprintf(chp, ".\r\n");
+    stack_overflow(chp);
+}
+
+__attribute__((optimize("O0"), noinline))
+static void cmd_mpu_test(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    const char *usage = "Usage: mpu_test xn|nullptr|stack";
+    if (argc < 1) {
+        chprintf(chp, "%s\r\n", usage);
+        return;
+    }
+
+    if (!strcmp(argv[0], "xn")) {
+        /* Checks if jumping to non exec memory works. */
+        int a;
+        void (*f)(void) = (void *)&a;
+        f();
+    } else if (!strcmp(argv[0], "nullptr")) {
+        /* Checks if dereferencing NULL is caught */
+        int *a = NULL;
+        *a = 0;
+    } else if (!strcmp(argv[0], "stack")) {
+        /* Checks if stack overflow are caught. */
+        stack_overflow(chp);
+    } else {
+        chprintf(chp, "%s\r\n", usage);
+    }
+}
+
 const ShellCommand shell_commands[] = {
     {"test", cmd_test},
     {"range", cmd_range},
@@ -491,6 +524,7 @@ const ShellCommand shell_commands[] = {
     {"config_erase", cmd_config_erase},
     {"shutdown", cmd_shutdown},
     {"leds", cmd_leds},
+    {"mpu_test", cmd_mpu_test},
 
     {NULL, NULL}
 };
