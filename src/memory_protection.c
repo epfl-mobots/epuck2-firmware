@@ -138,5 +138,8 @@ void MemManage_Handler(void)
     }
 #endif
 
+    /* Force null termination of msg. */
+    msg[sizeof(msg) - 1] = '\0';
+
     chSysHalt(msg);
 }
