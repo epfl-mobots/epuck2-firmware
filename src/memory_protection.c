@@ -100,6 +100,8 @@ void MemManage_Handler(void)
 
     const char *thd_name;
 
+    mpu_disable();
+
     if (chRegGetThreadNameX(ch.rlist.r_current)) {
         thd_name = chRegGetThreadNameX(ch.rlist.r_current);
     } else {
