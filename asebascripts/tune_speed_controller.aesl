@@ -1,0 +1,39 @@
+<!DOCTYPE aesl-source>
+<network>
+
+
+<!--list of global events-->
+<event size="2" name="Velocity"/>
+
+
+<!--list of constants-->
+
+
+<!--show keywords state-->
+<keywords flag="true"/>
+
+
+<!--node Epuck 2-->
+<node nodeId="42" name="Epuck 2">var current = 0
+
+var max = 200
+
+motor.left.setpoint.velocity = 0
+motor.right.setpoint.velocity = 0
+
+
+onevent encoders
+	emit Velocity [motor.right.setpoint.velocity, motor.right.velocity]
+	#emit Velocity [motor.left.setpoint.current, motor.left.current, motor.left.setpoint.velocity, motor.left.velocity]
+	motor.right.setpoint.velocity = max
+
+
+onevent timer
+	current += 1
+	if  current == 15 then
+		current = 0
+		max = -max
+	end</node>
+
+
+</network>
