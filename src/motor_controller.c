@@ -95,23 +95,24 @@ float motor_controller_process(motor_controller_t *controller)
 
     if (controller->mode >= MOTOR_CONTROLLER_POSITION) {
         float desired_acceleration = motor_controller_vel_ramp(controller->position.setpoint,
-                                                               controller->velocity.setpoint,
+                                                               controller->velocity.target_setpoint,
                                                                controller->position.target_setpoint,
                                                                delta_t,
                                                                max_velocity,
                                                                max_acceleration);
         controller->position.setpoint =
             motor_controller_pos_setpt_interpolation(controller->position.setpoint,
-                                                     controller->velocity.setpoint,
+                                                     controller->velocity.target_setpoint,
                                                      desired_acceleration,
                                                      delta_t);
-        controller->velocity.setpoint =
-            motor_controller_vel_setpt_interpolation(controller->velocity.setpoint,
+        controller->velocity.target_setpoint =
+            motor_controller_vel_setpt_interpolation(controller->velocity.target_setpoint,
                                                      desired_acceleration,
                                                      delta_t);
         float position = safe_get_position(controller);
         controller->position.error = position - controller->position.setpoint;
-        controller->velocity.setpoint += pid_process(&controller->position.pid,
+        controller->velocity.setpoint = controller->velocity.target_setpoint +
+                                        pid_process(&controller->position.pid,
                                                      controller->position.error);
     }
 
@@ -242,9 +243,7 @@ void motor_controller_set_mode(motor_controller_t *controller,
             if (controller->mode < MOTOR_CONTROLLER_POSITION) {
                 controller->position.setpoint =
                     controller->position.get(controller->position.get_arg);
-            }
-            if (controller->mode < MOTOR_CONTROLLER_VELOCITY) {
-                controller->velocity.setpoint =
+                controller->velocity.target_setpoint =
                     controller->velocity.get(controller->velocity.get_arg);
             }
             controller->mode = mode;
