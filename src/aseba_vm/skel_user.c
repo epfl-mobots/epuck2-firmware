@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "ch.h"
 #include "hal.h"
@@ -85,6 +86,10 @@ const AsebaVMDescription vmDescription = {
 
      {1, "motor.left.current"},
      {1, "motor.right.current"},
+     {1, "motor.left.velocity"},
+     {1, "motor.right.velocity"},
+     {1, "motor.left.position"},
+     {1, "motor.right.position"},
 
      {2, "motor.left.enc"},
      {2, "motor.right.enc"},
@@ -327,6 +332,24 @@ void aseba_read_variables_from_system(AsebaVMState *vm)
         vmVariables.motor_left_current = msg.left * 1000;
         vmVariables.motor_right_current = msg.right * 1000;
     }
+
+    /* Read velocities */
+    topic = messagebus_find_topic(&bus, "/wheel_velocities");
+    if (topic != NULL) {
+        wheel_velocities_msg_t msg;
+        messagebus_topic_read(topic, &msg, sizeof(msg));
+        vmVariables.motor_left_velocity = msg.left * 180 / M_PI;
+        vmVariables.motor_right_velocity = msg.right * 180 / M_PI;
+    }
+
+    topic = messagebus_find_topic(&bus, "/wheel_pos");
+    if (topic != NULL) {
+        wheel_pos_msg_t msg;
+        messagebus_topic_read(topic, &msg, sizeof(msg));
+        vmVariables.motor_left_position = msg.left * 180 / M_PI;
+        vmVariables.motor_right_position = msg.right * 180 / M_PI;
+    }
+
 
     topic = messagebus_find_topic(&bus, "/motors/setpoint");
     if (topic != NULL) {
