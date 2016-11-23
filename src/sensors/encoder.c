@@ -85,15 +85,17 @@ static THD_FUNCTION(encoders_thd, arg)
         left_encoder = encoder_get_left();
         right_encoder = encoder_get_right();
 
-        encoders.left += encoder_tick_diff(left_encoder_old, left_encoder);
-        encoders.right += encoder_tick_diff(right_encoder_old, right_encoder);
+        /* We use -= because encoders are reversed. */
+        encoders.left  -= encoder_tick_diff(left_encoder_old, left_encoder);
+        encoders.right -= encoder_tick_diff(right_encoder_old, right_encoder);
 
         wheel_positions.left = (float)encoders.left / TICKS_PER_RADIAN;
         wheel_positions.right = (float)encoders.right / TICKS_PER_RADIAN;
 
-        left_velocity = (float)encoder_tick_diff(left_encoder_old, left_encoder)
+        /* Encoders are still reversed. */
+        left_velocity = -(float)encoder_tick_diff(left_encoder_old, left_encoder)
                         / TICKS_PER_RADIAN * LOOP_FREQUENCY;
-        right_velocity = (float)encoder_tick_diff(right_encoder_old, right_encoder)
+        right_velocity = -(float)encoder_tick_diff(right_encoder_old, right_encoder)
                          / TICKS_PER_RADIAN * LOOP_FREQUENCY;
 
         wheel_velocities.left = iir_filter(left_velocity,
