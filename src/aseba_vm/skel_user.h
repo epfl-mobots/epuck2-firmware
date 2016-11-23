@@ -74,6 +74,33 @@ struct _vmVariables {
     sint16 motor_left_position_setpoint;
     sint16 motor_right_position_setpoint;
 
+    /* Control parameters */
+    sint16 control_left_current_kp;
+    sint16 control_left_current_ki;
+    sint16 control_left_current_kd;
+    sint16 control_left_current_ilimit;
+    sint16 control_left_velocity_kp;
+    sint16 control_left_velocity_ki;
+    sint16 control_left_velocity_kd;
+    sint16 control_left_velocity_ilimit;
+    sint16 control_left_position_kp;
+    sint16 control_left_position_ki;
+    sint16 control_left_position_kd;
+    sint16 control_left_position_ilimit;
+
+    sint16 control_right_current_kp;
+    sint16 control_right_current_ki;
+    sint16 control_right_current_kd;
+    sint16 control_right_current_ilimit;
+    sint16 control_right_velocity_kp;
+    sint16 control_right_velocity_ki;
+    sint16 control_right_velocity_kd;
+    sint16 control_right_velocity_ilimit;
+    sint16 control_right_position_kp;
+    sint16 control_right_position_ki;
+    sint16 control_right_position_kd;
+    sint16 control_right_position_ilimit;
+
 
     // Free space
     sint16 freeSpace[VM_VARIABLES_FREE_SPACE];
