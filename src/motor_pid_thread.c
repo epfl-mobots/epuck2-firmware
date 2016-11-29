@@ -171,22 +171,25 @@ static THD_FUNCTION(motor_pid_thd, arg)
     motor_controller_init(&right.controller, &right.ns);
 
     /* Set default parameters. */
-    parameter_scalar_set(parameter_find(&left.ns, "control/current/kp"), 4.);
-    parameter_scalar_set(parameter_find(&right.ns, "control/current/kp"), 4.);
+    parameter_scalar_set(parameter_find(&left.ns, "control/current/kp"), 2.);
+    parameter_scalar_set(parameter_find(&right.ns, "control/current/kp"), 2.);
     parameter_scalar_set(parameter_find(&left.ns, "control/current/ki"), 40.);
     parameter_scalar_set(parameter_find(&right.ns, "control/current/ki"), 40.);
     parameter_scalar_set(parameter_find(&left.ns, "control/current/i_limit"), 50.);
     parameter_scalar_set(parameter_find(&right.ns, "control/current/i_limit"), 50.);
 
-    parameter_scalar_set(parameter_find(&left.ns, "control/velocity/kp"), 0.3);
-    parameter_scalar_set(parameter_find(&right.ns, "control/velocity/kp"), 0.3);
+    parameter_scalar_set(parameter_find(&left.ns, "control/velocity/kp"), 0.2);
+    parameter_scalar_set(parameter_find(&right.ns, "control/velocity/kp"), 0.2);
 
-    parameter_scalar_set(parameter_find(&right.ns, "control/limits/current"), 0.5);
-    parameter_scalar_set(parameter_find(&left.ns, "control/limits/current"), 0.5);
-    parameter_scalar_set(parameter_find(&right.ns, "control/limits/acceleration"), 4*3.14);
-    parameter_scalar_set(parameter_find(&left.ns, "control/limits/acceleration"), 4*3.14);
-    parameter_scalar_set(parameter_find(&right.ns, "control/limits/velocity"), 2*3.14);
-    parameter_scalar_set(parameter_find(&left.ns, "control/limits/velocity"), 2*3.14);
+    parameter_scalar_set(parameter_find(&left.ns, "control/velocity/kp"), 0.2);
+    parameter_scalar_set(parameter_find(&right.ns, "control/velocity/kp"), 0.2);
+
+    parameter_scalar_set(parameter_find(&right.ns, "control/limits/current"), 2.);
+    parameter_scalar_set(parameter_find(&left.ns, "control/limits/current"), 2.);
+    parameter_scalar_set(parameter_find(&right.ns, "control/limits/acceleration"), 10*3.14);
+    parameter_scalar_set(parameter_find(&left.ns, "control/limits/acceleration"), 10*3.14);
+    parameter_scalar_set(parameter_find(&right.ns, "control/limits/velocity"), 20*3.14);
+    parameter_scalar_set(parameter_find(&left.ns, "control/limits/velocity"), 20*3.14);
 
     /* Set the intput output functions for the controllers. */
     set_input_functions(&left.controller, LEFT);
