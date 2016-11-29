@@ -44,13 +44,13 @@ struct _vmVariables previous_vars;
 } while (0);
 
 #define WRITE_PARAM_FROM_VM(var, param) do { \
-    if (VM_VAR_CHANGED(var)) { \
-        parameter_t *p = parameter_find(&parameter_root, param); \
-        if (p == NULL) { \
-            chSysHalt("Cannot find " param); \
+        if (VM_VAR_CHANGED(var)) { \
+            parameter_t *p = parameter_find(&parameter_root, param); \
+            if (p == NULL) { \
+                chSysHalt("Cannot find " param); \
+            } \
+            parameter_scalar_set(p, (float)(vmVariables.var / 1000.)); \
         } \
-        parameter_scalar_set(p, (float)(vmVariables.var / 1000.)); \
-    }\
 } while (0);
 
 

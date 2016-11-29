@@ -186,10 +186,10 @@ static THD_FUNCTION(motor_pid_thd, arg)
 
     parameter_scalar_set(parameter_find(&right.ns, "control/limits/current"), 2.);
     parameter_scalar_set(parameter_find(&left.ns, "control/limits/current"), 2.);
-    parameter_scalar_set(parameter_find(&right.ns, "control/limits/acceleration"), 10*3.14);
-    parameter_scalar_set(parameter_find(&left.ns, "control/limits/acceleration"), 10*3.14);
-    parameter_scalar_set(parameter_find(&right.ns, "control/limits/velocity"), 20*3.14);
-    parameter_scalar_set(parameter_find(&left.ns, "control/limits/velocity"), 20*3.14);
+    parameter_scalar_set(parameter_find(&right.ns, "control/limits/acceleration"), 10 * 3.14);
+    parameter_scalar_set(parameter_find(&left.ns, "control/limits/acceleration"), 10 * 3.14);
+    parameter_scalar_set(parameter_find(&right.ns, "control/limits/velocity"), 20 * 3.14);
+    parameter_scalar_set(parameter_find(&left.ns, "control/limits/velocity"), 20 * 3.14);
 
     /* Set the intput output functions for the controllers. */
     set_input_functions(&left.controller, LEFT);

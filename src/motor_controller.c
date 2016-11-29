@@ -113,7 +113,7 @@ float motor_controller_process(motor_controller_t *controller)
         controller->position.error = position - controller->position.setpoint;
         controller->velocity.setpoint = controller->velocity.target_setpoint +
                                         pid_process(&controller->position.pid,
-                                                     controller->position.error);
+                                                    controller->position.error);
     }
 
     if (controller->mode == MOTOR_CONTROLLER_VELOCITY) {
