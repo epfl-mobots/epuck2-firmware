@@ -10,6 +10,15 @@ static float safe_get_current(motor_controller_t *controller);
 static float safe_get_velocity(motor_controller_t *controller);
 static float safe_get_position(motor_controller_t *controller);
 
+float motor_controller_limit_symmetric(float value, float limit);
+float motor_controller_pos_setpt_interpolation(float pos, float vel, float acc,
+                                               float delta_t);
+float motor_controller_vel_setpt_interpolation(float vel, float acc, float delta_t);
+float motor_controller_vel_ramp(float pos, float vel, float target_pos,
+                                float delta_t, float max_vel, float max_acc);
+
+
+
 void pid_param_update(struct pid_param_s *p, pid_ctrl_t *ctrl)
 {
     if (parameter_changed(&p->kp) ||

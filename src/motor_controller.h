@@ -13,6 +13,7 @@ typedef struct {
     float right;
 } motor_voltage_msg_t;
 
+/** A group of parameters related to a given PID controller. */
 struct pid_param_s {
     parameter_namespace_t ns;
     parameter_t kp;
@@ -27,9 +28,12 @@ enum motor_controller_mode {
     MOTOR_CONTROLLER_POSITION,
 };
 
+/** Cascade PID controller. */
 typedef struct {
+    /** Namespace grouping all parameters related to the controller. */
     parameter_namespace_t param_ns_control;
 
+    /** Subnamespace for the safety limits parameters. */
     struct {
         parameter_namespace_t ns;
         parameter_t velocity;
@@ -37,32 +41,47 @@ typedef struct {
         parameter_t acceleration;
     } limits;
 
+    /** The mode in which the controller operatres. */
     enum motor_controller_mode mode;
 
     struct {
+        /** Parameters for this controller. */
         struct pid_param_s params;
+
+        /** PID filter instance. */
         pid_ctrl_t pid;
-        float setpoint;
+
+        /** Setpoint in rad, rad/s or rad/s^2 */
         float target_setpoint;
+
+        /** Interpolated setpoint, respecting limits. */
+        float setpoint;
+
+        /** Error of the controller. */
         float error;
+
+        /** Callback used to get the input of the filter. */
         float (*get)(void *);
         void *get_arg;
     } position, velocity, current;
 } motor_controller_t;
 
+/** Inits a motor controller in a given parameter namespace. */
 void motor_controller_init(motor_controller_t *controller, parameter_namespace_t *parent);
 
+/** Sets the control mode for the given controller.
+ *
+ * @note This function switches mode in a safe manner (i.e. should not cause
+ * any unexpected motion).
+ */
 void motor_controller_set_mode(motor_controller_t *controller,
                                enum motor_controller_mode mode);
+
+/** Runs all the needed filter and returns the motor voltage to apply. */
 float motor_controller_process(motor_controller_t *controller);
 
+/** Sets the frequency of all the control loops. */
 void motor_controller_set_frequency(motor_controller_t *controller, float frequency);
-float motor_controller_limit_symmetric(float value, float limit);
-float motor_controller_pos_setpt_interpolation(float pos, float vel, float acc,
-                                               float delta_t);
-float motor_controller_vel_setpt_interpolation(float vel, float acc, float delta_t);
-float motor_controller_vel_ramp(float pos, float vel, float target_pos,
-                                float delta_t, float max_vel, float max_acc);
 
 #ifdef __cplusplus
 }
