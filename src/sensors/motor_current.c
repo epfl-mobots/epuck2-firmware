@@ -109,6 +109,9 @@ static THD_FUNCTION(adc_motor_current, arg)
         msg.left = (msg.left - (ADC_MAX / 2)) * ADC_GAIN;
         msg.right = (msg.right - (ADC_MAX / 2)) * ADC_GAIN;
 
+        /* Left current is reversed. */
+        msg.left = -msg.left;
+
         /* Publish them. */
         messagebus_topic_publish(&motor_current_topic, &msg, sizeof(msg));
     }

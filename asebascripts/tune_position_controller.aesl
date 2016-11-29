@@ -1,0 +1,38 @@
+<!DOCTYPE aesl-source>
+<network>
+
+
+<!--list of global events-->
+<event size="2" name="Position"/>
+
+
+<!--list of constants-->
+
+
+<!--show keywords state-->
+<keywords flag="true"/>
+
+
+<!--node Epuck 2-->
+<node nodeId="42" name="Epuck 2">var current = 0
+
+var max = 200
+
+motor.left.setpoint.velocity = 0
+motor.right.setpoint.velocity = 0
+
+
+onevent encoders
+	emit Position [motor.right.setpoint.position, motor.right.position]
+	motor.right.setpoint.position = max
+
+
+onevent timer
+	current += 1
+	if  current == 15 then
+		current = 0
+		max = -max
+	end</node>
+
+
+</network>

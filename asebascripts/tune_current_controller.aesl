@@ -1,0 +1,34 @@
+<!DOCTYPE aesl-source>
+<network>
+
+
+<!--list of global events-->
+<event size="2" name="Current"/>
+
+
+<!--list of constants-->
+
+
+<!--show keywords state-->
+<keywords flag="true"/>
+
+
+<!--node Epuck 2-->
+<node nodeId="42" name="Epuck 2">var current = 0
+
+var max = 100
+
+onevent encoders
+	emit Current [motor.left.setpoint.current, motor.left.current]
+		motor.left.setpoint.current = max
+
+
+onevent timer
+	current += 1
+	if  current == 10 then
+		current = 0
+		max = -max
+	end</node>
+
+
+</network>

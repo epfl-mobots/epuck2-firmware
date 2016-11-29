@@ -15,7 +15,6 @@
 
 
 #include "motor_pwm.h"
-#include "motor_pid.h"
 #include "sensors/proximity.h"
 #include "sensors/imu.h"
 #include "sensors/range.h"
@@ -24,6 +23,7 @@
 #include "config_flash_storage.h"
 #include "sensors/motor_current.h"
 #include "body_leds.h"
+#include "motor_pid_thread.h"
 
 #include "aseba_vm/aseba_node.h"
 #include "aseba_vm/skel_user.h"
@@ -121,12 +121,14 @@ int main(void)
     imu_start();
     exti_start();
     motor_current_start();
-
     motor_pid_start();
 
     // Initialise aseba parameters
     parameter_namespace_declare(&aseba_ns, &parameter_root, "aseba");
     aseba_declare_parameters(&aseba_ns);
+
+    /* Give enough time to make sure all services booted. */
+    chThdSleepMilliseconds(100);
 
     /* Load parameter tree from flash. */
     extern uint32_t _config_start;

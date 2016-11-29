@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "ch.h"
 #include "hal.h"
@@ -20,15 +21,38 @@
 #include "sensors/motor_current.h"
 #include "sensors/imu.h"
 
+#include "motor_pid_thread.h"
+
 /* Struct used to share Aseba parameters between C-style API and Aseba. */
 static parameter_t aseba_settings[SETTINGS_COUNT];
 static char aseba_settings_name[SETTINGS_COUNT][10];
 
 struct _vmVariables vmVariables;
 
-/* Used to detect if a PWM value has changed. */
-static sint16 motor_pwm_previous_left, motor_pwm_previous_right;
-static sint16 previous_leds[BODY_LED_COUNT];
+/* Used to test if something was changed within aseba. */
+struct _vmVariables previous_vars;
+
+/* Test if an Aseba variable changed during the VM step. */
+#define VM_VAR_CHANGED(var) (vmVariables.var != previous_vars.var)
+
+#define READ_PARAM_TO_VM(var, param) do { \
+        parameter_t *p = parameter_find(&parameter_root, param); \
+        if (p == NULL) { \
+            chSysHalt("Cannot find " param); \
+        } \
+        vmVariables.var = (int)(1000. * parameter_scalar_read(p)); \
+} while (0);
+
+#define WRITE_PARAM_FROM_VM(var, param) do { \
+        if (VM_VAR_CHANGED(var)) { \
+            parameter_t *p = parameter_find(&parameter_root, param); \
+            if (p == NULL) { \
+                chSysHalt("Cannot find " param); \
+            } \
+            parameter_scalar_set(p, (float)(vmVariables.var / 1000.)); \
+        } \
+} while (0);
+
 
 void AsebaVMResetCB(AsebaVMState *vm)
 {
@@ -62,6 +86,10 @@ const AsebaVMDescription vmDescription = {
 
      {1, "motor.left.current"},
      {1, "motor.right.current"},
+     {1, "motor.left.velocity"},
+     {1, "motor.right.velocity"},
+     {1, "motor.left.position"},
+     {1, "motor.right.position"},
 
      {2, "motor.left.enc"},
      {2, "motor.right.enc"},
@@ -69,6 +97,41 @@ const AsebaVMDescription vmDescription = {
      {3, "acc"},
      {3, "gyro"},
      {BODY_LED_COUNT, "leds"},
+
+     {1, "motor.left.setpoint.current"},
+     {1, "motor.right.setpoint.current"},
+     {1, "motor.left.setpoint.velocity"},
+     {1, "motor.right.setpoint.velocity"},
+     {1, "motor.left.setpoint.position"},
+     {1, "motor.right.setpoint.position"},
+
+     /* Control parameters */
+     {1, "_control.left.current.kp"},
+     {1, "_control.left.current.ki"},
+     {1, "_control.left.current.kd"},
+     {1, "_control.left.current.ilimit"},
+     {1, "_control.left.velocity.kp"},
+     {1, "_control.left.velocity.ki"},
+     {1, "_control.left.velocity.kd"},
+     {1, "_control.left.velocity.ilimit"},
+     {1, "_control.left.position.kp"},
+     {1, "_control.left.position.ki"},
+     {1, "_control.left.position.kd"},
+     {1, "_control.left.position.ilimit"},
+
+     {1, "_control.right.current.kp"},
+     {1, "_control.right.current.ki"},
+     {1, "_control.right.current.kd"},
+     {1, "_control.right.current.ilimit"},
+     {1, "_control.right.velocity.kp"},
+     {1, "_control.right.velocity.ki"},
+     {1, "_control.right.velocity.kd"},
+     {1, "_control.right.velocity.ilimit"},
+     {1, "_control.right.position.kp"},
+     {1, "_control.right.position.ki"},
+     {1, "_control.right.position.kd"},
+     {1, "_control.right.position.ilimit"},
+
 
      {0, NULL}
 }
@@ -80,6 +143,7 @@ const AsebaLocalEventDescription localEvents[] = {
     {"proximity", "New proximity measurement"},
     {"encoders", "New motor encoders measurement"},
     {"imu", "New IMU (gyro and acc) measurement"},
+    {"timer", "Periodic event"},
     {NULL, NULL}
 };
 
@@ -148,6 +212,18 @@ static THD_FUNCTION(aseba_imu_thd, p)
 }
 
 
+static void aseba_timer_cb(void *p)
+{
+    virtual_timer_t *vt = (virtual_timer_t *)p;
+
+    chSysLockFromISR();
+
+    SET_EVENT(EVENT_TIMER);
+    chVTSetI(vt, MS2ST(100), aseba_timer_cb, p);
+
+    chSysUnlockFromISR();
+}
+
 void aseba_variables_init(parameter_namespace_t *aseba_ns)
 {
     /* Initializes constant variables. */
@@ -169,6 +245,10 @@ void aseba_variables_init(parameter_namespace_t *aseba_ns)
 
     static THD_WORKING_AREA(imu_wa, 256);
     chThdCreateStatic(imu_wa, sizeof(imu_wa), NORMALPRIO, aseba_imu_thd, NULL);
+
+    /* Start the virtual timer */
+    static virtual_timer_t aseba_timer;
+    chVTSet(&aseba_timer, MS2ST(100), aseba_timer_cb, (void *)&aseba_timer);
 
     /* Registers all Aseba settings in global namespace. */
     int i;
@@ -253,14 +333,62 @@ void aseba_read_variables_from_system(AsebaVMState *vm)
         vmVariables.motor_right_current = msg.right * 1000;
     }
 
-    /* Keep previous value of PWM. */
-    motor_pwm_previous_left = vmVariables.motor_left_pwm;
-    motor_pwm_previous_right = vmVariables.motor_right_pwm;
-
-    for (int i = 0; i < BODY_LED_COUNT; i++) {
-        previous_leds[i] = vmVariables.leds[i];
+    /* Read velocities */
+    topic = messagebus_find_topic(&bus, "/wheel_velocities");
+    if (topic != NULL) {
+        wheel_velocities_msg_t msg;
+        messagebus_topic_read(topic, &msg, sizeof(msg));
+        vmVariables.motor_left_velocity = msg.left * 180 / M_PI;
+        vmVariables.motor_right_velocity = msg.right * 180 / M_PI;
     }
 
+    topic = messagebus_find_topic(&bus, "/wheel_pos");
+    if (topic != NULL) {
+        wheel_pos_msg_t msg;
+        messagebus_topic_read(topic, &msg, sizeof(msg));
+        vmVariables.motor_left_position = msg.left * 180 / M_PI;
+        vmVariables.motor_right_position = msg.right * 180 / M_PI;
+    }
+
+
+    topic = messagebus_find_topic(&bus, "/motors/setpoint");
+    if (topic != NULL) {
+        wheels_setpoint_t msg;
+        messagebus_topic_read(topic, &msg, sizeof(msg));
+        vmVariables.motor_left_current_setpoint = msg.left * 1000;
+        vmVariables.motor_right_current_setpoint = msg.right * 1000;
+    }
+
+    /* Read control parameters. */
+    READ_PARAM_TO_VM(control_left_current_kp, "/left_wheel/control/current/kp");
+    READ_PARAM_TO_VM(control_left_current_ki, "/left_wheel/control/current/ki");
+    READ_PARAM_TO_VM(control_left_current_kd, "/left_wheel/control/current/kd");
+    READ_PARAM_TO_VM(control_left_current_ilimit, "/left_wheel/control/current/i_limit");
+    READ_PARAM_TO_VM(control_left_velocity_kp, "/left_wheel/control/velocity/kp");
+    READ_PARAM_TO_VM(control_left_velocity_ki, "/left_wheel/control/velocity/ki");
+    READ_PARAM_TO_VM(control_left_velocity_kd, "/left_wheel/control/velocity/kd");
+    READ_PARAM_TO_VM(control_left_velocity_ilimit, "/left_wheel/control/velocity/i_limit");
+    READ_PARAM_TO_VM(control_left_position_kp, "/left_wheel/control/position/kp");
+    READ_PARAM_TO_VM(control_left_position_ki, "/left_wheel/control/position/ki");
+    READ_PARAM_TO_VM(control_left_position_kd, "/left_wheel/control/position/kd");
+    READ_PARAM_TO_VM(control_left_position_ilimit, "/left_wheel/control/position/i_limit");
+
+    READ_PARAM_TO_VM(control_right_current_kp, "/right_wheel/control/current/kp");
+    READ_PARAM_TO_VM(control_right_current_ki, "/right_wheel/control/current/ki");
+    READ_PARAM_TO_VM(control_right_current_kd, "/right_wheel/control/current/kd");
+    READ_PARAM_TO_VM(control_right_current_ilimit, "/right_wheel/control/current/i_limit");
+    READ_PARAM_TO_VM(control_right_velocity_kp, "/right_wheel/control/velocity/kp");
+    READ_PARAM_TO_VM(control_right_velocity_ki, "/right_wheel/control/velocity/ki");
+    READ_PARAM_TO_VM(control_right_velocity_kd, "/right_wheel/control/velocity/kd");
+    READ_PARAM_TO_VM(control_right_velocity_ilimit, "/right_wheel/control/velocity/i_limit");
+    READ_PARAM_TO_VM(control_right_position_kp, "/right_wheel/control/position/kp");
+    READ_PARAM_TO_VM(control_right_position_ki, "/right_wheel/control/position/ki");
+    READ_PARAM_TO_VM(control_right_position_kd, "/right_wheel/control/position/kd");
+    READ_PARAM_TO_VM(control_right_position_ilimit, "/right_wheel/control/position/i_limit");
+
+
+    /* Store previous state of variables. */
+    memcpy(&previous_vars, &vmVariables, sizeof(vmVariables));
 }
 
 void aseba_write_variables_to_system(AsebaVMState *vm)
@@ -269,16 +397,63 @@ void aseba_write_variables_to_system(AsebaVMState *vm)
 
     /* If the motor PWM changed, apply the new one. This is allows setting the
      * PWM from C without Aseba interfering. */
-    if (vmVariables.motor_left_pwm != motor_pwm_previous_left) {
+    if (VM_VAR_CHANGED(motor_left_pwm)) {
         motor_left_pwm_set(vmVariables.motor_left_pwm / 100.);
     }
 
-    if (vmVariables.motor_right_pwm != motor_pwm_previous_right) {
+    if (VM_VAR_CHANGED(motor_right_pwm)) {
         motor_right_pwm_set(vmVariables.motor_right_pwm / 100.);
     }
 
+    /* Did the current setpoint change ? If yes, switch to current control mode. */
+    if (VM_VAR_CHANGED(motor_right_current_setpoint) ||
+        VM_VAR_CHANGED(motor_left_current_setpoint)) {
+        wheels_setpoint_t msg;
+        msg.mode = MOTOR_CONTROLLER_CURRENT;
+
+        /* Convert setpoints from mA to A. */
+        msg.left = vmVariables.motor_left_current_setpoint / 1000.;
+        msg.right = vmVariables.motor_right_current_setpoint / 1000.;
+
+        messagebus_topic_t *topic = messagebus_find_topic(&bus, "/motors/setpoint");
+
+        messagebus_topic_publish(topic, &msg, sizeof(msg));
+    }
+
+    /* Did the velocity setpoint change ? If yes, switch to velocity control mode. */
+    if (VM_VAR_CHANGED(motor_right_velocity_setpoint) ||
+        VM_VAR_CHANGED(motor_left_velocity_setpoint)) {
+        wheels_setpoint_t msg;
+        msg.mode = MOTOR_CONTROLLER_VELOCITY;
+
+        /* Convert setpoints from deg/s to rads/s */
+        msg.left = (3.14 / 180.) * vmVariables.motor_left_velocity_setpoint;
+        msg.right = (3.14 / 180.) * vmVariables.motor_right_velocity_setpoint;
+
+        messagebus_topic_t *topic = messagebus_find_topic(&bus, "/motors/setpoint");
+
+        messagebus_topic_publish(topic, &msg, sizeof(msg));
+    }
+
+    /* Did the position setpoint change ? If yes, switch to position control mode. */
+    if (VM_VAR_CHANGED(motor_right_position_setpoint) ||
+        VM_VAR_CHANGED(motor_left_position_setpoint)) {
+        wheels_setpoint_t msg;
+        msg.mode = MOTOR_CONTROLLER_POSITION;
+
+        /* Convert setpoints from degs to rads */
+        msg.left = (3.14 / 180.) * vmVariables.motor_left_position_setpoint;
+        msg.right = (3.14 / 180.) * vmVariables.motor_right_position_setpoint;
+
+        messagebus_topic_t *topic = messagebus_find_topic(&bus, "/motors/setpoint");
+
+        messagebus_topic_publish(topic, &msg, sizeof(msg));
+    }
+
+
+
     for (int i = 0; i < BODY_LED_COUNT; i++) {
-        if (vmVariables.leds[i] != previous_leds[i]) {
+        if (VM_VAR_CHANGED(leds[i])) {
             char name[32];
             sprintf(name, "/body_leds/%d", i);
 
@@ -290,6 +465,35 @@ void aseba_write_variables_to_system(AsebaVMState *vm)
             }
         }
     }
+
+    /* Write back parameters. */
+    WRITE_PARAM_FROM_VM(control_left_current_kp, "/left_wheel/control/current/kp");
+    WRITE_PARAM_FROM_VM(control_left_current_ki, "/left_wheel/control/current/ki");
+    WRITE_PARAM_FROM_VM(control_left_current_kd, "/left_wheel/control/current/kd");
+    WRITE_PARAM_FROM_VM(control_left_current_ilimit, "/left_wheel/control/current/i_limit");
+    WRITE_PARAM_FROM_VM(control_left_velocity_kp, "/left_wheel/control/velocity/kp");
+    WRITE_PARAM_FROM_VM(control_left_velocity_ki, "/left_wheel/control/velocity/ki");
+    WRITE_PARAM_FROM_VM(control_left_velocity_kd, "/left_wheel/control/velocity/kd");
+    WRITE_PARAM_FROM_VM(control_left_velocity_ilimit, "/left_wheel/control/velocity/i_limit");
+    WRITE_PARAM_FROM_VM(control_left_position_kp, "/left_wheel/control/position/kp");
+    WRITE_PARAM_FROM_VM(control_left_position_ki, "/left_wheel/control/position/ki");
+    WRITE_PARAM_FROM_VM(control_left_position_kd, "/left_wheel/control/position/kd");
+    WRITE_PARAM_FROM_VM(control_left_position_ilimit, "/left_wheel/control/position/i_limit");
+
+    WRITE_PARAM_FROM_VM(control_right_current_kp, "/right_wheel/control/current/kp");
+    WRITE_PARAM_FROM_VM(control_right_current_ki, "/right_wheel/control/current/ki");
+    WRITE_PARAM_FROM_VM(control_right_current_kd, "/right_wheel/control/current/kd");
+    WRITE_PARAM_FROM_VM(control_right_current_ilimit, "/right_wheel/control/current/i_limit");
+    WRITE_PARAM_FROM_VM(control_right_velocity_kp, "/right_wheel/control/velocity/kp");
+    WRITE_PARAM_FROM_VM(control_right_velocity_ki, "/right_wheel/control/velocity/ki");
+    WRITE_PARAM_FROM_VM(control_right_velocity_kd, "/right_wheel/control/velocity/kd");
+    WRITE_PARAM_FROM_VM(control_right_velocity_ilimit, "/right_wheel/control/velocity/i_limit");
+    WRITE_PARAM_FROM_VM(control_right_position_kp, "/right_wheel/control/position/kp");
+    WRITE_PARAM_FROM_VM(control_right_position_ki, "/right_wheel/control/position/ki");
+    WRITE_PARAM_FROM_VM(control_right_position_kd, "/right_wheel/control/position/kd");
+    WRITE_PARAM_FROM_VM(control_right_position_ilimit, "/right_wheel/control/position/i_limit");
+
+
 }
 
 // Native functions

@@ -36,7 +36,6 @@ AsebaVMState vmState = {
     .breakpoints = {0}, .breakpointsCount = 0,
 };
 
-
 static THD_FUNCTION(aseba_vm_thd, arg)
 {
     (void)arg;

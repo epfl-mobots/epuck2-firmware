@@ -14,8 +14,7 @@
 #include "sensors/battery_level.h"
 #include "sensors/imu.h"
 #include "sensors/motor_current.h"
-#include "motor_pwm.h"
-#include "motor_pid.h"
+#include "motor_pid_thread.h"
 #include "ff.h"
 #include "main.h"
 #include "body_leds.h"
@@ -41,22 +40,38 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[])
     chThdWait(tp);
 }
 
-static void cmd_motor(BaseSequentialStream *chp, int argc, char *argv[])
+static void cmd_setpoint(BaseSequentialStream *chp, int argc, char *argv[])
 {
-    if (argc < 2) {
-        chprintf(chp, "Usage: pwm left|right percentage\r\n");
+    if (argc < 3) {
+        chprintf(chp, "Usage: setpoint cur|vel|pos left right\r\n");
         return;
     }
 
-    float value = atoi(argv[1]) / 100.;
+    wheels_setpoint_t setpoint;
 
-    if (!strcmp("left", argv[0])) {
-        motor_left_pwm_set(value);
-    } else if (!strcmp("right", argv[0])) {
-        motor_right_pwm_set(value);
-    } else {
-        chprintf(chp, "Unknown motor \"%s\".\r\n", argv[0]);
+    messagebus_topic_t *topic;
+    topic = messagebus_find_topic(&bus, "/motors/setpoint");
+
+    if (topic == NULL) {
+        chprintf(chp, "Cannot find setpoint topic.\r\n");
+        return;
     }
+
+    setpoint.left = atof(argv[1]);
+    setpoint.right = atof(argv[2]);
+
+    if (!strcmp("cur", argv[0]) || !strcmp("current", argv[0])) {
+        setpoint.mode = MOTOR_CONTROLLER_CURRENT;
+    } else if (!strcmp("vel", argv[0]) || !strcmp("velocity", argv[0])) {
+        setpoint.mode = MOTOR_CONTROLLER_VELOCITY;
+    } else if (!strcmp("pos", argv[0]) || !strcmp("position", argv[0])) {
+        setpoint.mode = MOTOR_CONTROLLER_POSITION;
+    } else {
+        chprintf(chp, "Unknown setpoint mode\r\n.");
+        return;
+    }
+
+    messagebus_topic_publish(topic, &setpoint, sizeof(setpoint));
 }
 
 static void cmd_encoders(BaseSequentialStream *chp, int argc, char *argv[])
@@ -316,6 +331,7 @@ static void cmd_config_set(BaseSequentialStream *chp, int argc, char **argv)
 {
     parameter_t *param;
     int value_i;
+    float value_f;
 
     if (argc != 2) {
         chprintf(chp, "Usage: config_set /parameter/url value.\r\n");
@@ -337,6 +353,15 @@ static void cmd_config_set(BaseSequentialStream *chp, int argc, char **argv)
                 chprintf(chp, "Invalid value for integer parameter.\r\n");
             }
             break;
+
+        case _PARAM_TYPE_SCALAR:
+            if (sscanf(argv[1], "%f", &value_f) == 1) {
+                parameter_scalar_set(param, value_f);
+            } else {
+                chprintf(chp, "Invalid value for scalar parameter.\r\n");
+            }
+            break;
+
 
         case _PARAM_TYPE_BOOLEAN:
             if (!strcmp(argv[1], "true")) {
@@ -454,29 +479,14 @@ static void cmd_current(BaseSequentialStream *chp, int argc, char *argv[])
     chprintf(chp, "left=%.2f\r\nright=%.2f\r\n", msg.left, msg.right);
 }
 
-static void cmd_voltage(BaseSequentialStream *chp, int argc, char *argv[])
-{
-    (void) argc;
-    (void) argv;
-
-    motor_voltage_msg_t msg;
-    messagebus_topic_t *topic;
-
-    topic = messagebus_find_topic_blocking(&bus, "/motors/voltage");
-    messagebus_topic_read(topic, &msg, sizeof(msg));
-
-    chprintf(chp, "left=%.2f V\r\nright=%.2f V\r\n", msg.left, msg.right);
-}
-
 const ShellCommand shell_commands[] = {
     {"test", cmd_test},
     {"range", cmd_range},
     {"proximity", cmd_proximity},
     {"battery", cmd_battery},
     {"current", cmd_current},
-    {"voltage", cmd_voltage},
     {"topics", cmd_topics},
-    {"pwm", cmd_motor},
+    {"setpoint", cmd_setpoint},
     {"encoders", cmd_encoders},
     {"wheel_pos", cmd_wheel_pos},
     {"wheel_vel", cmd_wheel_vel},
