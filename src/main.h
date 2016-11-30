@@ -18,7 +18,7 @@ extern "C" {
         .condvar = _CONDVAR_DATA(name.condvar), \
         .topic = \
             _MESSAGEBUS_TOPIC_DATA(name.topic, name.lock, name.condvar, &name.value, sizeof(type)), \
-};
+}
 
 /** Robot wide IPC bus. */
 extern messagebus_t bus;
