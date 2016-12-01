@@ -112,8 +112,15 @@ CSRC = $(STARTUPSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
-       $(TESTSRC) \
-       main.c audio.c ../src/audio_dac.c
+       $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
+       audio.c \
+       ../src/audio_dac.c \
+       ../fatfs/src/ff.c \
+       ../fatfs/src/option/unicode.c \
+       fatfs_diskio.c \
+       fatfs_syscall.c \
+       file.c \
+       main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -144,7 +151,8 @@ ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
 INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
-         $(CHIBIOS)/os/various ../src
+         $(CHIBIOS)/os/hal/lib/streams \
+         $(CHIBIOS)/os/various ../src ../fatfs/src
 
 #
 # Project, sources and paths

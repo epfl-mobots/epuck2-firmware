@@ -14,9 +14,9 @@
     limitations under the License.
 */
 
-#include "ch.h"
-#include "hal.h"
-#include "test.h"
+#include <ch.h>
+#include <hal.h>
+#include <chprintf.h>
 
 /*
  * This is a periodic thread that does absolutely nothing except flashing
@@ -35,8 +35,12 @@ static THD_FUNCTION(Thread1, arg) {
   }
 }
 
-static THD_WORKING_AREA(audio_thread, 1000);
+#include "file.h"
+
+static THD_WORKING_AREA(audio_thread, 4000);
 void audio_thread_main(void *);
+BaseSequentialStream *stdout;
+
 /*
  * Application entry point.
  */
@@ -59,6 +63,8 @@ int main(void) {
   sdStart(&SD2, NULL);
   palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
   palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
+  stdout = (BaseSequentialStream *)&SD2;
+  chprintf(stdout, "boot\n");
 
   /*
    * Creates the example thread.

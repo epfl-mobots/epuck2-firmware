@@ -4,6 +4,9 @@
 #include <stdbool.h>
 #include <math.h>
 #include <audio_dac.h>
+#include "file.h"
+#include <chprintf.h>
+extern BaseSequentialStream *stdout;
 
 #define DAC_SAMPLE_MAX ((1<<16) - 1)
 
@@ -56,29 +59,53 @@ bool data_callback(void *arg, dacsample_t *buffer, size_t len, size_t *samples_w
     return false;
 }
 
-#define DAC_BUFFER_SIZE 1000
+#define DAC_BUFFER_SIZE 10000
 void audio_thread_main(void *arg)
 {
     (void) arg;
     palSetPadMode(GPIOA, 4, PAL_MODE_INPUT_ANALOG);
 
     static dacsample_t buffer[DAC_BUFFER_SIZE];
-    struct callback_arg_s args;
-    args.sample_rate = 44100;
-    args.omega = (float) 440 / args.sample_rate;
 
-    args.time = 0;
-    args.func = sine;
+    sd_init();
 
-    while (true) {
+    sdcard_mount();
+    const char *file = "/sound.wav";
+    int res = sound_file_open(file);
+    if (res) {
+        chprintf(stdout, "cannot open file\n");
+    } else {
+        chprintf(stdout, "open %s\n", file);
+
         audio_dac_init();
-        audio_dac_play(data_callback, &args, args.sample_rate, buffer, DAC_BUFFER_SIZE);
+        audio_dac_play(sdc_callback, NULL, 44100, buffer, DAC_BUFFER_SIZE);
         audio_dac_deinit();
 
-        chThdSleepMilliseconds(500);
-        while(!palReadPad(GPIOA, GPIOA_BUTTON)) {
-            chThdSleepMilliseconds(100);
-        }
-        chThdSleepMilliseconds(500);
+        sound_file_close();
     }
+    chprintf(stdout, "SD: unmount\n");
+    sdcard_unmount();
+
+    while(1) {
+        chThdSleepMilliseconds(100);
+    }
+
+    // struct callback_arg_s args;
+    // args.sample_rate = 44100;
+    // args.omega = (float) 440 / args.sample_rate;
+
+    // args.time = 0;
+    // args.func = sine;
+
+    // while (true) {
+    //     audio_dac_init();
+    //     audio_dac_play(data_callback, &args, args.sample_rate, buffer, DAC_BUFFER_SIZE);
+    //     audio_dac_deinit();
+
+    //     chThdSleepMilliseconds(500);
+    //     while(!palReadPad(GPIOA, GPIOA_BUTTON)) {
+    //         chThdSleepMilliseconds(100);
+    //     }
+    //     chThdSleepMilliseconds(500);
+    // }
 }
