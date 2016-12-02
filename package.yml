@@ -42,6 +42,9 @@ target.arm:
     - src/flash/flash.c
     - src/sensors/vl6180x/vl6180x_chibios.c
     - fatfs/src/ff.c
+    - src/fatfs_diskio.c
+    - src/fatfs_syscall.c
+    - src/sdcard.c
 
 tests:
     - tests/config_save_test.cpp
