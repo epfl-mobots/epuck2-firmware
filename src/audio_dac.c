@@ -71,7 +71,7 @@ static void dac_stop_cb(DACDriver *dacp, const dacsample_t *prev, size_t n)
     (void)n;
 
     /* stop the DAC */
-    gptStopTimerI(&GPTD7);
+    gptStopTimerI(&GPTD6);
     dacStopConversionI(dacp);
 
     /* signal thread */
@@ -117,13 +117,13 @@ static dacsample_t *get_next_buffer(void)
 
 static void dac_start_timer(uint32_t sample_rate)
 {
-    static GPTConfig gpt7cfg1;
-    gpt7cfg1.frequency = 2*sample_rate;
-    gpt7cfg1.callback = NULL;
-    gpt7cfg1.cr2 = TIM_CR2_MMS_1; /* trigger output on timer update */
-    gpt7cfg1.dier = 0U;
-    gptStart(&GPTD7, &gpt7cfg1);
-    gptStartContinuous(&GPTD7, 2U);
+    static GPTConfig config;
+    config.frequency = STM32_TIMCLK1; /* run timer at full frequency */
+    config.callback = NULL;
+    config.cr2 = TIM_CR2_MMS_1; /* trigger output on timer update */
+    config.dier = 0U;
+    gptStart(&GPTD6, &config);
+    gptStartContinuous(&GPTD6, STM32_TIMCLK1 / sample_rate); /* rounded divider */
 }
 
 static void dac_single_conversion(uint32_t sample_rate, dacsample_t *buf, size_t len)
