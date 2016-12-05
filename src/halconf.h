@@ -44,13 +44,18 @@
 #define HAL_USE_ADC                 TRUE
 #endif
 
-#define HAL_USE_DAC                 FALSE
-
 /**
  * @brief   Enables the CAN subsystem.
  */
 #if !defined(HAL_USE_CAN) || defined(__DOXYGEN__)
 #define HAL_USE_CAN                 TRUE
+#endif
+
+/**
+ * @brief   Enables the DAC subsystem.
+ */
+#if !defined(HAL_USE_DAC) || defined(__DOXYGEN__)
+#define HAL_USE_DAC                 TRUE
 #endif
 
 /**
@@ -64,7 +69,7 @@
  * @brief   Enables the GPT subsystem.
  */
 #if !defined(HAL_USE_GPT) || defined(__DOXYGEN__)
-#define HAL_USE_GPT                 FALSE
+#define HAL_USE_GPT                 TRUE
 #endif
 
 /**
