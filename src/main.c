@@ -136,7 +136,7 @@ int main(void)
     config_load(&parameter_root, &_config_start);
 
     sdcard_start();
-    sdcard_mount();
+    sdcard_automount();
 
     // Initialise Aseba node (CAN and VM)
     aseba_vm_init();
@@ -144,6 +144,7 @@ int main(void)
     aseba_vm_start();
 
     while (TRUE) {
+        sdcard_automount();
         chThdSleepMilliseconds(1000);
     }
 }
