@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-extern bool fatfs_mounted;
+extern bool sdcard_mounted;
 
 void sdcard_start(void);
 void sdcard_mount(void);

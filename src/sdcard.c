@@ -4,7 +4,7 @@
 #include <ff.h>
 #include "sdcard.h"
 
-bool fatfs_mounted = false;
+bool sdcard_mounted = false;
 static FATFS SDC_FS;
 
 void sdcard_start(void)
@@ -19,7 +19,7 @@ void sdcard_start(void)
 void sdcard_mount(void)
 {
     FRESULT err;
-    fatfs_mounted = false;
+    sdcard_mounted = false;
 
     if(sdcConnect(&SDCD1) == HAL_FAILED) {
         return;
@@ -30,7 +30,7 @@ void sdcard_mount(void)
         sdcDisconnect(&SDCD1);
         return;
     } else {
-        fatfs_mounted = true;
+        sdcard_mounted = true;
     }
 }
 
@@ -38,17 +38,17 @@ void sdcard_unmount(void)
 {
     f_mount(NULL, "", 0); /* fatfs unmount */
     sdcDisconnect(&SDCD1);
-    fatfs_mounted = false;
+    sdcard_mounted = false;
 }
 
 void sdcard_automount(void)
 {
     if (sdcIsCardInserted(&SDCD1)) {
-        if (!fatfs_mounted) {
+        if (!sdcard_mounted) {
             sdcard_mount();
         }
     } else {
-        if (fatfs_mounted) {
+        if (sdcard_mounted) {
             sdcard_unmount();
         }
     }
