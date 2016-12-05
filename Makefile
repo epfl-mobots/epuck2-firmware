@@ -113,7 +113,6 @@ include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 # Other files.
 include $(CHIBIOS)/test/rt/test.mk
-include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
 
 include src/src.mk
 
@@ -137,8 +136,6 @@ CSRC += $(STARTUPSRC) \
         $(CHIBIOS)/os/various/shell.c \
         $(CHIBIOS)/os/hal/lib/streams/memstreams.c \
         $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
-		${CHIBIOS}/os/various/fatfs_bindings/fatfs_diskio.c \
-        ${CHIBIOS}/os/various/fatfs_bindings/fatfs_syscall.c \
         $(ASEBASRC)
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global

@@ -21,6 +21,7 @@
 #include "sensors/encoder.h"
 #include "sensors/battery_level.h"
 #include "config_flash_storage.h"
+#include "sdcard.h"
 #include "sensors/motor_current.h"
 #include "body_leds.h"
 #include "motor_pid_thread.h"
@@ -134,12 +135,16 @@ int main(void)
     extern uint32_t _config_start;
     config_load(&parameter_root, &_config_start);
 
+    sdcard_start();
+    sdcard_automount();
+
     // Initialise Aseba node (CAN and VM)
     aseba_vm_init();
     aseba_can_start(&vmState);
     aseba_vm_start();
 
     while (TRUE) {
+        sdcard_automount();
         chThdSleepMilliseconds(1000);
     }
 }
