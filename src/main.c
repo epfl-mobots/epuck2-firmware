@@ -138,6 +138,8 @@ int main(void)
     sdcard_start();
     sdcard_automount();
 
+    audio_start();
+
     // Initialise Aseba node (CAN and VM)
     aseba_vm_init();
     aseba_can_start(&vmState);
