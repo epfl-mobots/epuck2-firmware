@@ -16,7 +16,7 @@ static void dac_start_timer(uint32_t sample_rate);
 static void dac_single_conversion(uint32_t sample_rate, dacsample_t *buf, size_t len);
 static void dac_continuous_conversion(uint32_t sample_rate, dacsample_t *buf, size_t len);
 
-static const DACConfig dac1cfg1 = {
+static const DACConfig dac2cfg1 = {
     init: 0,
     datamode: DAC_DHRM_12BIT_LEFT
 };
@@ -60,7 +60,7 @@ static void dac_final_conversion_cb(DACDriver *dacp, const dacsample_t *prev, si
     dacgrpcfg1.end_cb = dac_single_conversion_cb;
 
     /* restart dac for single conversion with new length */
-    dacStartConversionI(&DACD1, &dacgrpcfg1, next_buffer, buffer_len);
+    dacStartConversionI(dacp, &dacgrpcfg1, next_buffer, buffer_len);
 
     /* no thread signaling until last conversion done */
 }
@@ -71,7 +71,7 @@ static void dac_stop_cb(DACDriver *dacp, const dacsample_t *prev, size_t n)
     (void)n;
 
     /* stop the DAC */
-    gptStopTimerI(&GPTD6);
+    gptStopTimerI(&GPTD7);
     dacStopConversionI(dacp);
 
     /* signal thread */
@@ -117,13 +117,13 @@ static dacsample_t *get_next_buffer(void)
 
 static void dac_start_timer(uint32_t sample_rate)
 {
-    static GPTConfig gpt6cfg1;
-    gpt6cfg1.frequency = 2*sample_rate;
-    gpt6cfg1.callback = NULL;
-    gpt6cfg1.cr2 = TIM_CR2_MMS_1; /* trigger output on timer update */
-    gpt6cfg1.dier = 0U;
-    gptStart(&GPTD6, &gpt6cfg1);
-    gptStartContinuous(&GPTD6, 2U);
+    static GPTConfig gpt7cfg1;
+    gpt7cfg1.frequency = 2*sample_rate;
+    gpt7cfg1.callback = NULL;
+    gpt7cfg1.cr2 = TIM_CR2_MMS_1; /* trigger output on timer update */
+    gpt7cfg1.dier = 0U;
+    gptStart(&GPTD7, &gpt7cfg1);
+    gptStartContinuous(&GPTD7, 2U);
 }
 
 static void dac_single_conversion(uint32_t sample_rate, dacsample_t *buf, size_t len)
@@ -132,7 +132,7 @@ static void dac_single_conversion(uint32_t sample_rate, dacsample_t *buf, size_t
 
     chBSemObjectInit(&dac_signal, true);
 
-    dacStartConversion(&DACD1, &dacgrpcfg1, buf, len*2);
+    dacStartConversion(&DACD2, &dacgrpcfg1, buf, len*2);
     dac_start_timer(sample_rate);
 
     chBSemWait(&dac_signal);
@@ -145,7 +145,7 @@ static void dac_continuous_conversion(uint32_t sample_rate, dacsample_t *buf, si
 
     chBSemObjectInit(&dac_signal, true);
 
-    dacStartConversion(&DACD1, &dacgrpcfg1, buf, len);
+    dacStartConversion(&DACD2, &dacgrpcfg1, buf, len);
     dac_start_timer(sample_rate);
 }
 
@@ -185,10 +185,10 @@ void audio_dac_init(void)
     dacgrpcfg1.end_cb = NULL;
     dacgrpcfg1.error_cb = error_cb;
     dacgrpcfg1.trigger = DAC_TRG(0);
-    dacStart(&DACD1, &dac1cfg1);
+    dacStart(&DACD2, &dac2cfg1);
 }
 
 void audio_dac_deinit(void)
 {
-    dacStop(&DACD1);
+    dacStop(&DACD2);
 }
