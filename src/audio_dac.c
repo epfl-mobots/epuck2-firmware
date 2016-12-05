@@ -30,6 +30,7 @@ static dacsample_t *dual_buffer;
 static void dac_continuous_conversion_cb(DACDriver *dacp, const dacsample_t *prev, size_t n)
 {
     (void)dacp;
+    chSysLockFromISR();
     /* set next buffer to be filled */
     if (prev == &dual_buffer[0]) {
         next_buffer = &dual_buffer[0];
@@ -39,6 +40,7 @@ static void dac_continuous_conversion_cb(DACDriver *dacp, const dacsample_t *pre
 
     /* signal thread */
     chBSemSignalI(&dac_signal);
+    chSysUnlockFromISR();
 }
 
 /* second last callback, called on half conversion */
@@ -56,6 +58,9 @@ static void dac_final_conversion_cb(DACDriver *dacp, const dacsample_t *prev, si
 {
     (void)prev;
     (void)n;
+    chSysLockFromISR();
+
+    /* start final conversion */
     dacStopConversionI(dacp);
     dacgrpcfg1.end_cb = dac_single_conversion_cb;
 
@@ -63,12 +68,15 @@ static void dac_final_conversion_cb(DACDriver *dacp, const dacsample_t *prev, si
     dacStartConversionI(dacp, &dacgrpcfg1, next_buffer, buffer_len);
 
     /* no thread signaling until last conversion done */
+
+    chSysUnlockFromISR();
 }
 
 static void dac_stop_cb(DACDriver *dacp, const dacsample_t *prev, size_t n)
 {
     (void)prev;
     (void)n;
+    chSysLockFromISR();
 
     /* stop the DAC */
     gptStopTimerI(&GPTD6);
@@ -76,6 +84,7 @@ static void dac_stop_cb(DACDriver *dacp, const dacsample_t *prev, size_t n)
 
     /* signal thread */
     chBSemSignalI(&dac_signal);
+    chSysUnlockFromISR();
 }
 
 static void error_cb(DACDriver *dacp, dacerror_t err)
