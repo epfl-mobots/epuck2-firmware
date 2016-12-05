@@ -20,9 +20,11 @@ void sdcard_mount(void)
 {
     FRESULT err;
     fatfs_mounted = false;
+
     if(sdcConnect(&SDCD1) == HAL_FAILED) {
         return;
     }
+
     err = f_mount(&SDC_FS, "", 0);
     if(err != FR_OK) {
         sdcDisconnect(&SDCD1);
@@ -41,7 +43,7 @@ void sdcard_unmount(void)
 
 void sdcard_automount(void)
 {
-    if (sdc_lld_is_card_inserted(&SDCD1)) {
+    if (sdcIsCardInserted(&SDCD1)) {
         if (!fatfs_mounted) {
             sdcard_mount();
         }
