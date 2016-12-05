@@ -15,7 +15,6 @@
 #include "sensors/imu.h"
 #include "sensors/motor_current.h"
 #include "motor_pid_thread.h"
-#include "ff.h"
 #include "main.h"
 #include "body_leds.h"
 
@@ -149,46 +148,6 @@ static void cmd_reboot(BaseSequentialStream *chp, int argc, char **argv)
     (void) argc;
     (void) argv;
     NVIC_SystemReset();
-}
-
-static void cmd_sdcard(BaseSequentialStream *chp, int argc, char **argv)
-{
-    (void) chp;
-    (void) argc;
-    (void) argv;
-
-    FRESULT err;
-    FATFS SDC_FS;
-
-    chprintf(chp, "Starting SDC driver...\r\n");
-    sdcStart(&SDCD1, NULL);
-    chThdSleepMilliseconds(500);
-
-    chprintf(chp, "Connecting to SDC...");
-    while (true) {
-        if (sdcConnect(&SDCD1) == 0) {
-            chprintf(chp, "OK");
-            break;
-        } else {
-            chprintf(chp, "FAILED");
-        }
-        chThdSleepMilliseconds(50);
-    }
-    chprintf(chp, "\r\n");
-
-    chThdSleepMilliseconds(500);
-
-    chprintf(chp, "Mouting card... ");
-    err = f_mount(&SDC_FS, "", 1);
-    if (err == FR_OK) {
-        chprintf(chp, "OK");
-    } else {
-        chprintf(chp, "FAILED (err code=%d)", err);
-    }
-
-    chprintf(chp, "\r\n");
-
-    sdcDisconnect(&SDCD1);
 }
 
 static void cmd_range(BaseSequentialStream *chp, int argc, char *argv[])
@@ -528,7 +487,6 @@ const ShellCommand shell_commands[] = {
     {"imu", cmd_imu},
     {"reboot", cmd_reboot},
     {"test", cmd_test},
-    {"sdcard", cmd_sdcard},
     {"config_tree", cmd_config_tree},
     {"config_set", cmd_config_set},
     {"config_save", cmd_config_save},
