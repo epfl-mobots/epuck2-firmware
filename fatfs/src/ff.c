@@ -1386,7 +1386,7 @@ DWORD create_chain(     /* 0:No free cluster, 1:Internal error, 0xFFFFFFFF:Disk 
         if (cs == 0) {
             break;                      /* Found a free cluster */
         }
-        if (cs == 0xFFFFFFFF || cs == 1) {/* An error occurred */
+        if (cs == 0xFFFFFFFF || cs == 1) { /* An error occurred */
             return cs;
         }
         if (ncl == scl) {
@@ -2380,7 +2380,7 @@ FRESULT create_name(
             dp->fn[i++] = (BYTE)(w >> 8);
         } else {                        /* Single byte character */
             if (!w || chk_chr("+,;=[]", w)) {   /* Replace illegal characters for SFN */
-                w = '_'; cf |= NS_LOSS | NS_LFN;/* Lossy conversion */
+                w = '_'; cf |= NS_LOSS | NS_LFN; /* Lossy conversion */
             } else {
                 if (IsUpper(w)) {       /* ASCII large capital */
                     b |= 2;
@@ -3374,7 +3374,7 @@ FRESULT f_write(
 #endif
             fp->dsect = sect;
         }
-        wcnt = SS(fp->fs) - ((UINT)fp->fptr % SS(fp->fs));/* Put partial sector into file I/O buffer */
+        wcnt = SS(fp->fs) - ((UINT)fp->fptr % SS(fp->fs)); /* Put partial sector into file I/O buffer */
         if (wcnt > btw) {
             wcnt = btw;
         }
@@ -4952,7 +4952,7 @@ FRESULT f_mkfs(
     /* Create BPB in the VBR */
     tbl = fs->win;                          /* Clear sector */
     mem_set(tbl, 0, SS(fs));
-    mem_cpy(tbl, "\xEB\xFE\x90" "MSDOS5.0", 11);/* Boot jump code, OEM name */
+    mem_cpy(tbl, "\xEB\xFE\x90" "MSDOS5.0", 11); /* Boot jump code, OEM name */
     i = SS(fs);                             /* Sector size */
     ST_WORD(tbl + BPB_BytsPerSec, i);
     tbl[BPB_SecPerClus] = (BYTE)au;         /* Sectors per cluster */

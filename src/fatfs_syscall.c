@@ -12,7 +12,7 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-*/
+ */
 
 /*------------------------------------------------------------------------*/
 /* Sample code of OS dependent controls for FatFs R0.08b                  */
@@ -32,54 +32,60 @@ static semaphore_t ff_sem[_VOLUMES];
 /*------------------------------------------------------------------------*/
 /* Create a Synchronization Object                                        */
 /*------------------------------------------------------------------------*/
-int ff_cre_syncobj(BYTE vol, _SYNC_t *sobj) {
+int ff_cre_syncobj(BYTE vol, _SYNC_t *sobj)
+{
 
-  *sobj = &ff_sem[vol];
-  chSemObjectInit(*sobj, 1);
-  return TRUE;
+    *sobj = &ff_sem[vol];
+    chSemObjectInit(*sobj, 1);
+    return TRUE;
 }
 
 /*------------------------------------------------------------------------*/
 /* Delete a Synchronization Object                                        */
 /*------------------------------------------------------------------------*/
-int ff_del_syncobj(_SYNC_t sobj) {
+int ff_del_syncobj(_SYNC_t sobj)
+{
 
-  chSemReset(sobj, 0);
-  return TRUE;
+    chSemReset(sobj, 0);
+    return TRUE;
 }
 
 /*------------------------------------------------------------------------*/
 /* Request Grant to Access the Volume                                     */
 /*------------------------------------------------------------------------*/
-int ff_req_grant(_SYNC_t sobj) {
+int ff_req_grant(_SYNC_t sobj)
+{
 
-  msg_t msg = chSemWaitTimeout(sobj, (systime_t)_FS_TIMEOUT);
-  return msg == MSG_OK;
+    msg_t msg = chSemWaitTimeout(sobj, (systime_t)_FS_TIMEOUT);
+    return msg == MSG_OK;
 }
 
 /*------------------------------------------------------------------------*/
 /* Release Grant to Access the Volume                                     */
 /*------------------------------------------------------------------------*/
-void ff_rel_grant(_SYNC_t sobj) {
+void ff_rel_grant(_SYNC_t sobj)
+{
 
-  chSemSignal(sobj);
+    chSemSignal(sobj);
 }
 #endif /* _FS_REENTRANT */
 
-#if _USE_LFN == 3	/* LFN with a working buffer on the heap */
+#if _USE_LFN == 3   /* LFN with a working buffer on the heap */
 /*------------------------------------------------------------------------*/
 /* Allocate a memory block                                                */
 /*------------------------------------------------------------------------*/
-void *ff_memalloc(UINT size) {
+void *ff_memalloc(UINT size)
+{
 
-  return malloc(size);
+    return malloc(size);
 }
 
 /*------------------------------------------------------------------------*/
 /* Free a memory block                                                    */
 /*------------------------------------------------------------------------*/
-void ff_memfree(void *mblock) {
+void ff_memfree(void *mblock)
+{
 
-  free(mblock);
+    free(mblock);
 }
 #endif /* _USE_LFN == 3 */
