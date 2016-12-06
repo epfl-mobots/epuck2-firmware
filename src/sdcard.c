@@ -21,12 +21,12 @@ void sdcard_mount(void)
     FRESULT err;
     sdcard_mounted = false;
 
-    if(sdcConnect(&SDCD1) == HAL_FAILED) {
+    if (sdcConnect(&SDCD1) == HAL_FAILED) {
         return;
     }
 
     err = f_mount(&SDC_FS, "", 0);
-    if(err != FR_OK) {
+    if (err != FR_OK) {
         sdcDisconnect(&SDCD1);
         return;
     } else {

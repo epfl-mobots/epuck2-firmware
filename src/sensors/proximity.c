@@ -225,15 +225,15 @@ void proximity_start(void)
         .dier = TIM_DIER_CC1DE,
         .callback = NULL,
         .channels = {
-                     /* Channel 1 is used to generate ADC triggers. It must be in output
-                      * mode, although it is not routed to any pin. */
-                     {.mode = PWM_OUTPUT_ACTIVE_HIGH, .callback = NULL},
+            /* Channel 1 is used to generate ADC triggers. It must be in output
+             * mode, although it is not routed to any pin. */
+            {.mode = PWM_OUTPUT_ACTIVE_HIGH, .callback = NULL},
 
-                     /* Channel 2N is used to generate TCRT1000 drive signals. */
-                     {.mode = PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH, .callback = NULL},
-                     {.mode = PWM_OUTPUT_DISABLED, .callback = NULL},
-                     {.mode = PWM_OUTPUT_DISABLED, .callback = NULL},
-},
+            /* Channel 2N is used to generate TCRT1000 drive signals. */
+            {.mode = PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH, .callback = NULL},
+            {.mode = PWM_OUTPUT_DISABLED, .callback = NULL},
+            {.mode = PWM_OUTPUT_DISABLED, .callback = NULL},
+        },
     };
 
     /* Init PWM */

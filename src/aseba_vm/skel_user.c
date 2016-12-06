@@ -69,72 +69,72 @@ void AsebaVMResetCB(AsebaVMState *vm)
 const AsebaVMDescription vmDescription = {
     BOARD_NAME,
     {
-     // {Number of element in array, Name displayed in aseba studio}
-     {1, "_id"},
-     {1, "event.source"},
-     {VM_VARIABLES_ARG_SIZE, "event.args"},
-     {2, "_fwversion"},
-     {1, "_productId"},
+        // {Number of element in array, Name displayed in aseba studio}
+        {1, "_id"},
+        {1, "event.source"},
+        {VM_VARIABLES_ARG_SIZE, "event.args"},
+        {2, "_fwversion"},
+        {1, "_productId"},
 
-     {1, "battery"},
-     {1, "range"},
-     {PROXIMITY_NB_CHANNELS, "proximity.delta"},
-     {PROXIMITY_NB_CHANNELS, "proximity.ambient"},
-     {PROXIMITY_NB_CHANNELS, "proximity.reflected"},
-     {1, "motor.left.pwm"},
-     {1, "motor.right.pwm"},
+        {1, "battery"},
+        {1, "range"},
+        {PROXIMITY_NB_CHANNELS, "proximity.delta"},
+        {PROXIMITY_NB_CHANNELS, "proximity.ambient"},
+        {PROXIMITY_NB_CHANNELS, "proximity.reflected"},
+        {1, "motor.left.pwm"},
+        {1, "motor.right.pwm"},
 
-     {1, "motor.left.current"},
-     {1, "motor.right.current"},
-     {1, "motor.left.velocity"},
-     {1, "motor.right.velocity"},
-     {1, "motor.left.position"},
-     {1, "motor.right.position"},
+        {1, "motor.left.current"},
+        {1, "motor.right.current"},
+        {1, "motor.left.velocity"},
+        {1, "motor.right.velocity"},
+        {1, "motor.left.position"},
+        {1, "motor.right.position"},
 
-     {2, "motor.left.enc"},
-     {2, "motor.right.enc"},
+        {2, "motor.left.enc"},
+        {2, "motor.right.enc"},
 
-     {3, "acc"},
-     {3, "gyro"},
-     {BODY_LED_COUNT, "leds"},
+        {3, "acc"},
+        {3, "gyro"},
+        {BODY_LED_COUNT, "leds"},
 
-     {1, "motor.left.setpoint.current"},
-     {1, "motor.right.setpoint.current"},
-     {1, "motor.left.setpoint.velocity"},
-     {1, "motor.right.setpoint.velocity"},
-     {1, "motor.left.setpoint.position"},
-     {1, "motor.right.setpoint.position"},
+        {1, "motor.left.setpoint.current"},
+        {1, "motor.right.setpoint.current"},
+        {1, "motor.left.setpoint.velocity"},
+        {1, "motor.right.setpoint.velocity"},
+        {1, "motor.left.setpoint.position"},
+        {1, "motor.right.setpoint.position"},
 
-     /* Control parameters */
-     {1, "_control.left.current.kp"},
-     {1, "_control.left.current.ki"},
-     {1, "_control.left.current.kd"},
-     {1, "_control.left.current.ilimit"},
-     {1, "_control.left.velocity.kp"},
-     {1, "_control.left.velocity.ki"},
-     {1, "_control.left.velocity.kd"},
-     {1, "_control.left.velocity.ilimit"},
-     {1, "_control.left.position.kp"},
-     {1, "_control.left.position.ki"},
-     {1, "_control.left.position.kd"},
-     {1, "_control.left.position.ilimit"},
+        /* Control parameters */
+        {1, "_control.left.current.kp"},
+        {1, "_control.left.current.ki"},
+        {1, "_control.left.current.kd"},
+        {1, "_control.left.current.ilimit"},
+        {1, "_control.left.velocity.kp"},
+        {1, "_control.left.velocity.ki"},
+        {1, "_control.left.velocity.kd"},
+        {1, "_control.left.velocity.ilimit"},
+        {1, "_control.left.position.kp"},
+        {1, "_control.left.position.ki"},
+        {1, "_control.left.position.kd"},
+        {1, "_control.left.position.ilimit"},
 
-     {1, "_control.right.current.kp"},
-     {1, "_control.right.current.ki"},
-     {1, "_control.right.current.kd"},
-     {1, "_control.right.current.ilimit"},
-     {1, "_control.right.velocity.kp"},
-     {1, "_control.right.velocity.ki"},
-     {1, "_control.right.velocity.kd"},
-     {1, "_control.right.velocity.ilimit"},
-     {1, "_control.right.position.kp"},
-     {1, "_control.right.position.ki"},
-     {1, "_control.right.position.kd"},
-     {1, "_control.right.position.ilimit"},
+        {1, "_control.right.current.kp"},
+        {1, "_control.right.current.ki"},
+        {1, "_control.right.current.kd"},
+        {1, "_control.right.current.ilimit"},
+        {1, "_control.right.velocity.kp"},
+        {1, "_control.right.velocity.ki"},
+        {1, "_control.right.velocity.kd"},
+        {1, "_control.right.velocity.ilimit"},
+        {1, "_control.right.position.kp"},
+        {1, "_control.right.position.ki"},
+        {1, "_control.right.position.kd"},
+        {1, "_control.right.position.ilimit"},
 
 
-     {0, NULL}
-}
+        {0, NULL}
+    }
 };
 
 // Event descriptions
@@ -502,8 +502,8 @@ static AsebaNativeFunctionDescription AsebaNativeDescription__system_reboot =
     "_system.reboot",
     "Reboot the microcontroller",
     {
-     {0, 0}
-}
+        {0, 0}
+    }
 };
 
 void AsebaNative__system_reboot(AsebaVMState *vm)
@@ -517,10 +517,10 @@ static AsebaNativeFunctionDescription AsebaNativeDescription__system_settings_re
     "_system.settings.read",
     "Read a setting",
     {
-     { 1, "address"},
-     { 1, "value"},
-     { 0, 0 }
-}
+        { 1, "address"},
+        { 1, "value"},
+        { 0, 0 }
+    }
 };
 
 static void AsebaNative__system_settings_read(AsebaVMState *vm)
@@ -539,10 +539,10 @@ static AsebaNativeFunctionDescription AsebaNativeDescription__system_settings_wr
     "_system.settings.write",
     "Write a setting",
     {
-     { 1, "address"},
-     { 1, "value"},
-     { 0, 0 }
-}
+        { 1, "address"},
+        { 1, "value"},
+        { 0, 0 }
+    }
 };
 
 static void AsebaNative__system_settings_write(AsebaVMState *vm)
@@ -565,8 +565,8 @@ static AsebaNativeFunctionDescription AsebaNativeDescription_settings_save =
     "_system.settings.flash",
     "Save settings into flash",
     {
-     {0, 0}
-}
+        {0, 0}
+    }
 };
 
 void AsebaNative_settings_save(AsebaVMState *vm)
@@ -591,8 +591,8 @@ static AsebaNativeFunctionDescription AsebaNativeDescription_settings_erase =
     "_system.settings.erase",
     "Restore settings to default value (erases flash)",
     {
-     {0, 0}
-}
+        {0, 0}
+    }
 };
 
 

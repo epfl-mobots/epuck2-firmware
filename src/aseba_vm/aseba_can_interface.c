@@ -52,7 +52,7 @@ void can_init(void)
         /* APB Clock is 42 Mhz
            42MHz / 2 / (1tq + 12tq + 8tq) = 1MHz => 1Mbit */
         .btr = (1 << 0)  /* Baudrate prescaler (10 bits) */
-               | (11 << 16)/* Time segment 1 (3 bits) */
+               | (11 << 16) /* Time segment 1 (3 bits) */
                | (7 << 20) /* Time segment 2 (3 bits) */
                | (0 << 24) /* Resync jump width (2 bits) */
     };
