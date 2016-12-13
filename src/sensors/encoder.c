@@ -62,13 +62,35 @@ static THD_FUNCTION(encoders_thd, arg)
     TOPIC_DECL(wheel_velocities_topic, wheel_velocities_msg_t);
     messagebus_advertise_topic(&bus, &wheel_velocities_topic.topic, "/wheel_velocities");
 
-    rccEnableTIM1(FALSE);                           // enable timer 1 clock
+    rccEnableTIM1(FALSE); // enable timer 1 clock
     rccResetTIM1();
     setup_timer(STM32_TIM1);
 
-    rccEnableTIM2(FALSE);                           // enable timer 2 clock
+    rccEnableTIM2(FALSE); // enable timer 2 clock
     rccResetTIM2();
     setup_timer(STM32_TIM2);
+
+    parameter_namespace_t encoders_ns;
+    struct {
+        parameter_namespace_t ns;
+        parameter_t is_inverted;
+    } left_params, right_params;
+
+    parameter_namespace_declare(&encoders_ns, &parameter_root, "encoders");
+    parameter_namespace_declare(&left_params.ns, &encoders_ns, "left");
+    parameter_namespace_declare(&right_params.ns, &encoders_ns, "right");
+
+    parameter_boolean_declare_with_default(&left_params.is_inverted,
+                                           &left_params.ns,
+                                           "is_inverted",
+                                           false);
+    parameter_boolean_declare_with_default(&right_params.is_inverted,
+                                           &right_params.ns,
+                                           "is_inverted",
+                                           false);
+
+
+
 
     uint32_t left_encoder_old, right_encoder_old;
     encoders_msg_t encoders = {0, 0};
@@ -81,22 +103,30 @@ static THD_FUNCTION(encoders_thd, arg)
     while (1) {
         uint32_t left_encoder, right_encoder;
         float left_velocity, right_velocity;
+        int delta_left, delta_right;
 
         left_encoder = encoder_get_left();
         right_encoder = encoder_get_right();
 
-        /* We use -= because encoders are reversed. */
-        encoders.left  -= encoder_tick_diff(left_encoder_old, left_encoder);
-        encoders.right -= encoder_tick_diff(right_encoder_old, right_encoder);
+        /* Add encoders to accumulator, taking overflow into account. */
+        delta_left  = encoder_tick_diff(left_encoder_old, left_encoder);
+        delta_right = encoder_tick_diff(right_encoder_old, right_encoder);
+        if (parameter_boolean_get(&left_params.is_inverted)) {
+            delta_left = -delta_left;
+        }
+        if (parameter_boolean_get(&right_params.is_inverted)) {
+            delta_right = -delta_right;
+        }
 
-        wheel_positions.left = (float)encoders.left / TICKS_PER_RADIAN;
+        encoders.left  += delta_left;
+        encoders.right += delta_right;
+
+        wheel_positions.left  = (float)encoders.left / TICKS_PER_RADIAN;
         wheel_positions.right = (float)encoders.right / TICKS_PER_RADIAN;
 
         /* Encoders are still reversed. */
-        left_velocity = -(float)encoder_tick_diff(left_encoder_old, left_encoder)
-                        / TICKS_PER_RADIAN * LOOP_FREQUENCY;
-        right_velocity = -(float)encoder_tick_diff(right_encoder_old, right_encoder)
-                         / TICKS_PER_RADIAN * LOOP_FREQUENCY;
+        left_velocity  = (float)delta_left / TICKS_PER_RADIAN * LOOP_FREQUENCY;
+        right_velocity = (float)delta_right / TICKS_PER_RADIAN * LOOP_FREQUENCY;
 
         wheel_velocities.left = iir_filter(left_velocity,
                                            wheel_velocities.left,
