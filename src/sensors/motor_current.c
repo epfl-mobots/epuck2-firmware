@@ -86,6 +86,26 @@ static THD_FUNCTION(adc_motor_current, arg)
     (void)arg;
     chRegSetThreadName(__FUNCTION__);
 
+    static parameter_namespace_t current_ns;
+
+    static struct {
+        parameter_namespace_t ns;
+        parameter_t is_inverted;
+    } left_params, right_params;
+
+    parameter_namespace_declare(&current_ns, &parameter_root, "current_sense");
+    parameter_namespace_declare(&left_params.ns, &current_ns, "left");
+    parameter_namespace_declare(&right_params.ns, &current_ns, "right");
+
+    parameter_boolean_declare_with_default(&left_params.is_inverted,
+                                           &left_params.ns,
+                                           "is_inverted",
+                                           false);
+    parameter_boolean_declare_with_default(&right_params.is_inverted,
+                                           &right_params.ns,
+                                           "is_inverted",
+                                           false);
+
     /* First create the topic on which the motor currents will be published. */
     motor_current_topic_create("/motors/current");
 
@@ -109,8 +129,13 @@ static THD_FUNCTION(adc_motor_current, arg)
         msg.left = (msg.left - (ADC_MAX / 2)) * ADC_GAIN;
         msg.right = (msg.right - (ADC_MAX / 2)) * ADC_GAIN;
 
-        /* Left current is reversed. */
-        msg.left = -msg.left;
+        /* Invert current measurements if required. */
+        if (parameter_boolean_get(&left_params.is_inverted)) {
+            msg.left = -msg.left;
+        }
+        if (parameter_boolean_get(&right_params.is_inverted)) {
+            msg.right = -msg.right;
+        }
 
         /* Publish them. */
         messagebus_topic_publish(&motor_current_topic, &msg, sizeof(msg));
@@ -119,7 +144,7 @@ static THD_FUNCTION(adc_motor_current, arg)
 
 void motor_current_start(void)
 {
-    static THD_WORKING_AREA(adc_motor_current_wa, 128);
+    static THD_WORKING_AREA(adc_motor_current_wa, 256);
     chThdCreateStatic(adc_motor_current_wa,
                       sizeof(adc_motor_current_wa),
                       HIGHPRIO,
