@@ -1,5 +1,7 @@
 #include <ch.h>
 #include <hal.h>
+#include <parameter/parameter.h>
+#include "main.h"
 #include "motor_pwm.h"
 
 #define PWM_CLK_FREQ 42000000
@@ -43,9 +45,28 @@ static const PWMConfig pwmcfg2 = {
     .dier = 0
 };
 
+static parameter_namespace_t encoders_ns;
+static struct {
+    parameter_namespace_t ns;
+    parameter_t is_inverted;
+} left_params, right_params;
+
 
 void motor_pwm_start(void)
 {
+    parameter_namespace_declare(&encoders_ns, &parameter_root, "motors");
+    parameter_namespace_declare(&left_params.ns, &encoders_ns, "left");
+    parameter_namespace_declare(&right_params.ns, &encoders_ns, "right");
+
+    parameter_boolean_declare_with_default(&left_params.is_inverted,
+                                           &left_params.ns,
+                                           "is_inverted",
+                                           false);
+    parameter_boolean_declare_with_default(&right_params.is_inverted,
+                                           &right_params.ns,
+                                           "is_inverted",
+                                           false);
+
     pwmStart(&PWMD3, &pwmcfg1);
     pwmStart(&PWMD4, &pwmcfg2);
 }
@@ -57,6 +78,10 @@ void motor_right_pwm_set(float duty_cycle)
         duty_cycle = PWM_LIMIT;
     } else if (duty_cycle < -PWM_LIMIT) {
         duty_cycle = -PWM_LIMIT;
+    }
+
+    if (parameter_boolean_get(&right_params.is_inverted)) {
+        duty_cycle = -duty_cycle;
     }
 
     if (duty_cycle <= 0) {
@@ -77,11 +102,15 @@ void motor_left_pwm_set(float duty_cycle)
         duty_cycle = -PWM_LIMIT;
     }
 
+    if (parameter_boolean_get(&left_params.is_inverted)) {
+        duty_cycle = -duty_cycle;
+    }
+
     if (duty_cycle <= 0) {
-        pwmEnableChannel(&PWMD3, MOT0_PHASE_A, (pwmcnt_t)(PWM_CYCLE * -duty_cycle));
-        pwmEnableChannel(&PWMD3, MOT0_PHASE_B, (pwmcnt_t)0);
-    } else {
         pwmEnableChannel(&PWMD3, MOT0_PHASE_A, (pwmcnt_t)0);
-        pwmEnableChannel(&PWMD3, MOT0_PHASE_B, (pwmcnt_t)(PWM_CYCLE * duty_cycle));
+        pwmEnableChannel(&PWMD3, MOT0_PHASE_B, (pwmcnt_t)(PWM_CYCLE * -duty_cycle));
+    } else {
+        pwmEnableChannel(&PWMD3, MOT0_PHASE_A, (pwmcnt_t)(PWM_CYCLE * duty_cycle));
+        pwmEnableChannel(&PWMD3, MOT0_PHASE_B, (pwmcnt_t)0);
     }
 }
