@@ -709,3 +709,64 @@ TEST(SetpointVelocityRamp, TooFast)
                   motor_controller_vel_ramp(pos, vel, target_pos, delta_t, max_vel, max_acc),
                   1.0e-7);
 }
+
+TEST_GROUP(ControlerFrequencyScaler)
+{
+    parameter_namespace_t ns;
+    motor_controller_t controller;
+
+    void setup()
+    {
+        parameter_namespace_declare(&ns, NULL, "root");
+        motor_controller_init(&controller, &ns);
+
+        controller.current.get = mock_get_current;
+        controller.current.get_arg = NULL;
+        controller.velocity.get = mock_get_speed;
+        controller.velocity.get_arg = NULL;
+        controller.position.get = mock_get_pos;
+        controller.position.get_arg = NULL;
+    }
+};
+
+TEST(ControlerFrequencyScaler, FrequencyIsSet)
+{
+    motor_controller_set_prescaler(&controller, 10, 20);
+    motor_controller_set_frequency(&controller, 100);
+    CHECK_EQUAL(5, controller.position.pid.frequency);
+    CHECK_EQUAL(10, controller.velocity.pid.frequency);
+}
+
+TEST(ControlerFrequencyScaler, DividerIsTakenIntoAccountForVelocityControl)
+{
+    motor_controller_set_prescaler(&controller, 2, 3);
+    controller.velocity.target_setpoint = 2;
+
+    mock().expectOneCall("get_speed").andReturnValue(0.);
+    motor_controller_set_mode(&controller, MOTOR_CONTROLLER_VELOCITY);
+
+    CHECK_EQUAL(0., controller.velocity.error);
+
+    // First update, should not update the velocity control
+    mock().expectOneCall("get_current").andReturnValue(0.);
+    motor_controller_process(&controller);
+
+    // Second update, will update the velocity control
+    mock().expectOneCall("get_speed").andReturnValue(0.);
+    mock().expectOneCall("get_current").andReturnValue(0.);
+    motor_controller_process(&controller);
+}
+
+TEST(ControlerFrequencyScaler, DividerIsTakenIntoAccountForPositionControl)
+{
+    motor_controller_set_prescaler(&controller, 2, 2);
+    controller.position.target_setpoint = 2;
+
+    mock().expectOneCall("get_speed").andReturnValue(0.);
+    mock().expectOneCall("get_pos").andReturnValue(0.);
+    motor_controller_set_mode(&controller, MOTOR_CONTROLLER_POSITION);
+
+    // First update, should not update the position control
+    mock().expectOneCall("get_current").andReturnValue(0.);
+    motor_controller_process(&controller);
+}

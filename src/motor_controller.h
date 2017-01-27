@@ -63,6 +63,12 @@ typedef struct {
         /** Callback used to get the input of the filter. */
         float (*get)(void *);
         void *get_arg;
+
+        /** Control frequency divider. */
+        int divider;
+
+        /** Simple counter used for the divider calculation. */
+        int divider_counter;
     } position, velocity, current;
 } motor_controller_t;
 
@@ -82,6 +88,17 @@ float motor_controller_process(motor_controller_t *controller);
 
 /** Sets the frequency of all the control loops. */
 void motor_controller_set_frequency(motor_controller_t *controller, float frequency);
+
+/** Sets the frequency prescalers for velocity and position control loops.
+ *
+ * This function sets the divider used for the velocity and position control
+ * loops. For example a velocity divider of 5 with a frequency of 100 Hz means
+ * the current control will process at 100 Hz but the velocity loop will run at
+ * 20 Hz.
+ *
+ * @note Must be called before motor_controller_set_frequency.
+ */
+void motor_controller_set_prescaler(motor_controller_t *controller, int velocity_divider, int position_divider);
 
 #ifdef __cplusplus
 }

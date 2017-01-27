@@ -208,6 +208,9 @@ static THD_FUNCTION(motor_pid_thd, arg)
     set_input_functions(&left.controller, LEFT);
     set_input_functions(&right.controller, RIGHT);
 
+    motor_controller_set_prescaler(&left.controller, 10, 10);
+    motor_controller_set_prescaler(&right.controller, 10, 10);
+
     motor_controller_set_frequency(&left.controller, CONTROL_FREQUENCY_HZ);
     motor_controller_set_frequency(&right.controller, CONTROL_FREQUENCY_HZ);
 

@@ -81,13 +81,22 @@ void motor_controller_init(motor_controller_t *controller, parameter_namespace_t
     pid_init(&controller->current.pid);
     pid_init(&controller->velocity.pid);
     pid_init(&controller->position.pid);
+
+    controller->velocity.divider = 1;
+    controller->position.divider = 1;
 }
 
 void motor_controller_set_frequency(motor_controller_t *controller, float frequency)
 {
-    controller->position.pid.frequency = frequency;
-    controller->velocity.pid.frequency = frequency;
-    controller->current.pid.frequency = frequency;
+    pid_set_frequency(&controller->position.pid, frequency / controller->position.divider);
+    pid_set_frequency(&controller->velocity.pid, frequency / controller->velocity.divider);
+    pid_set_frequency(&controller->current.pid, frequency);
+}
+
+void motor_controller_set_prescaler(motor_controller_t *controller, int velocity_divider, int position_divider)
+{
+    controller->position.divider = position_divider;
+    controller->velocity.divider = velocity_divider;
 }
 
 float motor_controller_process(motor_controller_t *controller)
@@ -100,9 +109,12 @@ float motor_controller_process(motor_controller_t *controller)
     /* Position control */
     float max_velocity = parameter_scalar_get(&controller->limits.velocity);
     float max_acceleration = parameter_scalar_get(&controller->limits.acceleration);
-    float delta_t = 1.0 / controller->position.pid.frequency;
 
-    if (controller->mode >= MOTOR_CONTROLLER_POSITION) {
+    controller->position.divider_counter ++;
+    if (controller->mode >= MOTOR_CONTROLLER_POSITION &&
+        controller->position.divider_counter >= controller->position.divider) {
+        controller->position.divider_counter = 0;
+        float delta_t = 1.0 / controller->position.pid.frequency;
         float desired_acceleration = motor_controller_vel_ramp(controller->position.setpoint,
                                                                controller->velocity.target_setpoint,
                                                                controller->position.target_setpoint,
@@ -126,6 +138,7 @@ float motor_controller_process(motor_controller_t *controller)
     }
 
     if (controller->mode == MOTOR_CONTROLLER_VELOCITY) {
+        float delta_t = 1.0 / controller->velocity.pid.frequency;
         /* Clamp velocity */
         controller->velocity.target_setpoint =
             motor_controller_limit_symmetric(controller->velocity.target_setpoint,
@@ -138,7 +151,10 @@ float motor_controller_process(motor_controller_t *controller)
     }
 
     /* Velocity control */
-    if (controller->mode >= MOTOR_CONTROLLER_VELOCITY) {
+    controller->velocity.divider_counter ++;
+    if (controller->mode >= MOTOR_CONTROLLER_VELOCITY &&
+        controller->velocity.divider_counter >= controller->velocity.divider) {
+        controller->velocity.divider_counter = 0;
         float velocity = safe_get_velocity(controller);
         controller->velocity.error = velocity - controller->velocity.setpoint;
         controller->current.setpoint = pid_process(&controller->velocity.pid,
