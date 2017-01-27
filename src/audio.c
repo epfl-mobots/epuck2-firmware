@@ -13,18 +13,18 @@ static bool file_read_cb(void *arg, dacsample_t *buffer, size_t len, size_t *sam
 {
     FIL *file = (FIL *)arg;
     UINT n;
-    FRESULT res = f_read(file, buffer, len*2, &n);
+    FRESULT res = f_read(file, buffer, len * 2, &n);
     if (res != FR_OK) {
         /* read error, stop conversion */
         *samples_written = 0;
         return true;
     }
     size_t i;
-    for (i = 0; i < n/2; i++) {
+    for (i = 0; i < n / 2; i++) {
         buffer[i] += -INT16_MIN;
     }
-    *samples_written = n/2;
-    if (n != len*2) {
+    *samples_written = n / 2;
+    if (n != len * 2) {
         /* end of file */
         return true;
     } else {
@@ -36,8 +36,8 @@ void audio_thd_main(void *arg)
 {
     (void) arg;
 
-    while(1) {
-        while(!sdcard_mounted) {
+    while (1) {
+        while (!sdcard_mounted) {
             chThdSleepMilliseconds(100);
         }
 
