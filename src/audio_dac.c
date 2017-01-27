@@ -141,7 +141,7 @@ static void dac_single_conversion(uint32_t sample_rate, dacsample_t *buf, size_t
 
     chBSemObjectInit(&dac_signal, true);
 
-    dacStartConversion(&DACD2, &dacgrpcfg1, buf, len*2);
+    dacStartConversion(&DACD2, &dacgrpcfg1, buf, len * 2);
     dac_start_timer(sample_rate);
 
     chBSemWait(&dac_signal);
@@ -158,7 +158,11 @@ static void dac_continuous_conversion(uint32_t sample_rate, dacsample_t *buf, si
     dac_start_timer(sample_rate);
 }
 
-void audio_dac_play(audio_callback_t data_cb, void *cb_arg, uint32_t sample_rate, dacsample_t *buffer, size_t len)
+void audio_dac_play(audio_callback_t data_cb,
+                    void *cb_arg,
+                    uint32_t sample_rate,
+                    dacsample_t *buffer,
+                    size_t len)
 {
     size_t samples;
     bool last;
@@ -180,7 +184,7 @@ void audio_dac_play(audio_callback_t data_cb, void *cb_arg, uint32_t sample_rate
         dacsample_t* buf;
         buf = get_next_buffer();
         samples = 0;
-        last = data_cb(cb_arg, buf, len/2, &samples);
+        last = data_cb(cb_arg, buf, len / 2, &samples);
         if (last) {
             dac_final_conversion(buf, samples);
             break;
