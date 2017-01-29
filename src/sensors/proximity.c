@@ -206,8 +206,6 @@ static THD_FUNCTION(proximity_thd, arg)
             msg.delta[i] = msg.reflected[i] - msg.ambient[i];
         }
 
-        palTogglePad(GPIOE, GPIOE_LED_STATUS);
-
         messagebus_topic_publish(&proximity_topic.topic, &msg, sizeof(msg));
     }
 }
