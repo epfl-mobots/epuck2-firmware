@@ -515,7 +515,7 @@ static void cmd_mpu_test(BaseSequentialStream *chp, int argc, char *argv[])
     }
 }
 
-const ShellCommand shell_commands[] = {
+static ShellCommand shell_commands[] = {
     {"test", cmd_test},
     {"range", cmd_range},
     {"proximity", cmd_proximity},
@@ -541,15 +541,31 @@ const ShellCommand shell_commands[] = {
     {NULL, NULL}
 };
 
+/** Helper function used to sort the commands by name. */
+static int compare_shell_commands(const void *ap, const void *bp)
+{
+    const ShellCommand *a = (ShellCommand *)ap;
+    const ShellCommand *b = (ShellCommand *)bp;
+
+    return strcmp(a->sc_name, b->sc_name);
+}
+
 static THD_FUNCTION(shell_spawn_thd, p)
 {
     (void) p;
     thread_t *shelltp = NULL;
 
-    static const ShellConfig shell_cfg = {
+    static ShellConfig shell_cfg = {
         (BaseSequentialStream *)&SDU1,
         shell_commands
     };
+
+    /* Sort the commands by name. */
+    qsort(shell_commands,
+          /* Ignore the last element, which is NULL. */
+          (sizeof(shell_commands) / sizeof(ShellCommand)) - 1,
+          sizeof(ShellCommand),
+          compare_shell_commands);
 
     shellInit();
 
