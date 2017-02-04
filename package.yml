@@ -45,8 +45,8 @@ target.arm:
     - src/fatfs_diskio.c
     - src/fatfs_syscall.c
     - src/sdcard.c
-    - src/audio_dac.c
-    - src/audio.c
+    - src/audio/audio_dac.c
+    - src/audio/audio_thread.c
 
 tests:
     - tests/config_save_test.cpp
