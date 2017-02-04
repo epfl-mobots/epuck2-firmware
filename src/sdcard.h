@@ -5,8 +5,6 @@
 extern "C" {
 #endif
 
-extern bool sdcard_mounted;
-
 void sdcard_start(void);
 void sdcard_mount(void);
 void sdcard_unmount(void);

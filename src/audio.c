@@ -37,13 +37,10 @@ void audio_thd_main(void *arg)
     (void) arg;
 
     while (1) {
-        while (!sdcard_mounted) {
-            chThdSleepMilliseconds(100);
-        }
-
         static FIL file;
         FRESULT res = f_open(&file, "/sound.wav", FA_READ);
         if (res != FR_OK) {
+            chThdSleepMilliseconds(100);
             continue;
         }
 
