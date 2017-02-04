@@ -2,9 +2,9 @@
 #include <hal.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <audio_dac.h>
 #include <ff.h>
 #include "sdcard.h"
+#include "audio/audio_dac.h"
 
 #define DAC_BUFFER_SIZE 1000
 static dacsample_t buffer[DAC_BUFFER_SIZE];
