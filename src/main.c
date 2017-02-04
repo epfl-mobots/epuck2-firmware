@@ -25,6 +25,7 @@
 #include "sensors/motor_current.h"
 #include "body_leds.h"
 #include "motor_pid_thread.h"
+#include "audio.h"
 
 #include "aseba_vm/aseba_node.h"
 #include "aseba_vm/skel_user.h"
