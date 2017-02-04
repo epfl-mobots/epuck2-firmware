@@ -145,6 +145,7 @@ const AsebaLocalEventDescription localEvents[] = {
     {"encoders", "New motor encoders measurement"},
     {"imu", "New IMU (gyro and acc) measurement"},
     {"timer", "Periodic event"},
+    {"sound.finished", "A sound finished playing"},
     {NULL, NULL}
 };
 
@@ -222,6 +223,29 @@ static THD_FUNCTION(aseba_imu_thd, p)
     }
 }
 
+/** This thread is responsible for handling new audio events for Aseba. */
+static THD_FUNCTION(aseba_audio_thd, p)
+{
+    (void) p;
+    chRegSetThreadName(__FUNCTION__);
+    messagebus_topic_t *topic;
+    audio_play_result_t res;
+
+    topic = messagebus_find_topic_blocking(&bus, "/audio/play/result");
+
+    while (true) {
+        messagebus_topic_wait(topic, &res, sizeof(res));
+
+        if (res.status == AUDIO_OK) {
+            chSysLock();
+            SET_EVENT(EVENT_SOUND_PLAY_FINISHED);
+            chSysUnlock();
+        }
+    }
+}
+
+
+
 
 static void aseba_timer_cb(void *p)
 {
@@ -256,6 +280,9 @@ void aseba_variables_init(parameter_namespace_t *aseba_ns)
 
     static THD_WORKING_AREA(imu_wa, 256);
     chThdCreateStatic(imu_wa, sizeof(imu_wa), NORMALPRIO, aseba_imu_thd, NULL);
+
+    static THD_WORKING_AREA(audio_wa, 256);
+    chThdCreateStatic(audio_wa, sizeof(audio_wa), NORMALPRIO, aseba_audio_thd, NULL);
 
     /* Start the virtual timer */
     static virtual_timer_t aseba_timer;
