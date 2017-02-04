@@ -3,8 +3,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <ff.h>
+#include "main.h"
+
 #include "sdcard.h"
 #include "audio/audio_dac.h"
+#include "audio/audio_thread.h"
 
 #define DAC_BUFFER_SIZE 1000
 static dacsample_t buffer[DAC_BUFFER_SIZE];
@@ -35,25 +38,39 @@ static bool file_read_cb(void *arg, dacsample_t *buffer, size_t len, size_t *sam
 void audio_thd_main(void *arg)
 {
     (void) arg;
+    static TOPIC_DECL(request_topic, audio_play_request_t);
+    static TOPIC_DECL(result_topic, audio_play_result_t);
+
+    messagebus_advertise_topic(&bus, &request_topic.topic, "/audio/play/request");
+    messagebus_advertise_topic(&bus, &result_topic.topic, "/audio/play/result");
 
     while (1) {
+        /* Wait for a request to play a file. */
+        audio_play_request_t req;
+        messagebus_topic_wait(&request_topic.topic, &req, sizeof(req));
+
+        /* If the file was not found, reply with appropriate status. */
         static FIL file;
-        FRESULT res = f_open(&file, "/sound.wav", FA_READ);
-        if (res != FR_OK) {
-            chThdSleepMilliseconds(100);
+        if (f_open(&file, req.path, FA_READ) != FR_OK) {
+            audio_play_result_t res;
+            res.status = AUDIO_FILE_NOT_FOUND;
+            messagebus_topic_publish(&result_topic.topic, &res, sizeof(res));
             continue;
         }
 
-        // todo: decode WAV header
+        // TODO decode WAV header
         uint32_t sample_rate = 44100;
 
+        /* Play the file. */
         audio_dac_init();
         audio_dac_play(file_read_cb, &file, sample_rate, buffer, DAC_BUFFER_SIZE);
         audio_dac_deinit();
-
         f_close(&file);
 
-        chThdSleepMilliseconds(100);
+        /* Signal success. */
+        audio_play_result_t res;
+        res.status = AUDIO_OK;
+        messagebus_topic_publish(&result_topic.topic, &res, sizeof(res));
     }
 }
 

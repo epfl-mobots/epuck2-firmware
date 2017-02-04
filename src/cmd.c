@@ -15,6 +15,7 @@
 #include "sensors/imu.h"
 #include "sensors/motor_current.h"
 #include "motor_pid_thread.h"
+#include "audio/audio_thread.h"
 #include "main.h"
 #include "body_leds.h"
 
@@ -515,6 +516,40 @@ static void cmd_mpu_test(BaseSequentialStream *chp, int argc, char *argv[])
     }
 }
 
+static void cmd_play(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    messagebus_topic_t *req_topic, *res_topic;
+    req_topic = messagebus_find_topic(&bus, "/audio/play/request");
+    res_topic = messagebus_find_topic(&bus, "/audio/play/result");
+
+    if (req_topic == NULL || res_topic == NULL) {
+        chprintf(chp, "Cannot find topics. Is audio thread running?\r\n");
+        return;
+    }
+
+    if (argc != 1) {
+        chprintf(chp, "Usage: play file.wav\r\n");
+        return;
+    }
+
+    /* Send the request */
+    audio_play_request_t request;
+    memset(&request, 0, sizeof(request));
+    strncpy(request.path, argv[0], sizeof(request.path) - 1);
+    chprintf(chp, "Playing %s...\r\n", request.path);
+    messagebus_topic_publish(req_topic, &request, sizeof(request));
+
+    /* Wait for the reply. */
+    audio_play_result_t result;
+    messagebus_topic_wait(res_topic, &result, sizeof(result));
+
+    if (result.status == AUDIO_OK) {
+        chprintf(chp, "Done.\r\n");
+    } else {
+        chprintf(chp, "Error: %d\r\n", result.status);
+    }
+}
+
 static ShellCommand shell_commands[] = {
     {"test", cmd_test},
     {"range", cmd_range},
@@ -537,6 +572,7 @@ static ShellCommand shell_commands[] = {
     {"shutdown", cmd_shutdown},
     {"leds", cmd_leds},
     {"mpu_test", cmd_mpu_test},
+    {"play", cmd_play},
 
     {NULL, NULL}
 };
