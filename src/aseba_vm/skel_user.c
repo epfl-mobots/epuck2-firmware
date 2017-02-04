@@ -20,6 +20,7 @@
 #include "sensors/encoder.h"
 #include "sensors/motor_current.h"
 #include "sensors/imu.h"
+#include "audio/audio_thread.h"
 
 #include "motor_pid_thread.h"
 
@@ -568,8 +569,6 @@ static void AsebaNative__system_settings_write(AsebaVMState *vm)
 }
 
 
-
-
 static AsebaNativeFunctionDescription AsebaNativeDescription_settings_save =
 {
     "_system.settings.flash",
@@ -615,6 +614,36 @@ void AsebaNative_settings_erase(AsebaVMState *vm)
     config_erase(&_config_start);
 }
 
+static AsebaNativeFunctionDescription AsebaNativeDescription_sound_play =
+{
+    "sound.play",
+    "Play pN.wav from the SD card",
+    {
+        {1, "Index of the sound to play"},
+        {0, 0}
+    }
+};
+
+void AsebaNative_sound_play(AsebaVMState *vm)
+{
+    uint16 sound_id = vm->variables[AsebaNativePopArg(vm)];
+
+    messagebus_topic_t *req_topic, *res_topic;
+    req_topic = messagebus_find_topic(&bus, "/audio/play/request");
+    res_topic = messagebus_find_topic(&bus, "/audio/play/result");
+
+    if (req_topic == NULL || res_topic == NULL) {
+        AsebaVMEmitNodeSpecificError(vm, "Cannot find topics. Is audio thread running?");
+        return;
+    }
+
+    /* Send the request */
+    audio_play_request_t request;
+    memset(&request, 0, sizeof(request));
+    snprintf(request.path, sizeof(request.path) - 1, "/p%d.wav", sound_id);
+    messagebus_topic_publish(req_topic, &request, sizeof(request));
+}
+
 // Native function descriptions
 const AsebaNativeFunctionDescription* nativeFunctionsDescription[] = {
     &AsebaNativeDescription__system_reboot,
@@ -622,6 +651,7 @@ const AsebaNativeFunctionDescription* nativeFunctionsDescription[] = {
     &AsebaNativeDescription__system_settings_write,
     &AsebaNativeDescription_settings_save,
     &AsebaNativeDescription_settings_erase,
+    &AsebaNativeDescription_sound_play,
     ASEBA_NATIVES_STD_DESCRIPTIONS,
     0
 };
@@ -633,6 +663,7 @@ AsebaNativeFunctionPointer nativeFunctions[] = {
     AsebaNative__system_settings_write,
     AsebaNative_settings_save,
     AsebaNative_settings_erase,
+    AsebaNative_sound_play,
     ASEBA_NATIVES_STD_FUNCTIONS,
 };
 
