@@ -29,6 +29,7 @@ enum AsebaLocalEvents {
     EVENT_ENCODERS, // New motor encoders measurement
     EVENT_IMU, // New acceleration and gyro measurement
     EVENT_TIMER, // Timer was fired
+    EVENT_SOUND_PLAY_FINISHED, // A sound finished playing
 };
 
 
