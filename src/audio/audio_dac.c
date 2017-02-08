@@ -20,7 +20,7 @@
  */
 
 /* Select DAC driver: DACD1 or DACD2 */
-#define DAC_DRIVER DACD2
+#define DAC_DRIVER DACD1
 
 static void dac_continuous_conversion_cb(DACDriver *dacp, const dacsample_t *prev, size_t n);
 static void dac_last_conversion_cb(DACDriver *dacp, const dacsample_t *prev, size_t n);

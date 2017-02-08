@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <math.h>
-#include <audio_dac.h>
+#include <audio/audio_dac.h>
 #include "file.h"
 #include <chprintf.h>
 extern BaseSequentialStream *stdout;
@@ -59,6 +59,18 @@ bool data_callback(void *arg, dacsample_t *buffer, size_t len, size_t *samples_w
     return false;
 }
 
+bool rect_callback(void *arg, dacsample_t *buffer, size_t len, size_t *samples_written)
+{
+    palTogglePad(GPIOD, GPIOD_LED4);
+    if (palReadPad(GPIOA, GPIOA_BUTTON)) {
+        *samples_written = 0;
+        return true;
+    }
+    *samples_written = len;
+    return false;
+}
+
+
 #define DAC_BUFFER_SIZE 10000
 void audio_thread_main(void *arg)
 {
@@ -68,7 +80,6 @@ void audio_thread_main(void *arg)
     static dacsample_t buffer[DAC_BUFFER_SIZE];
 
     sd_init();
-
     sdcard_mount();
     const char *file = "/sound.wav";
     int res = sound_file_open(file);
@@ -77,35 +88,32 @@ void audio_thread_main(void *arg)
     } else {
         chprintf(stdout, "open %s\n", file);
 
-        audio_dac_init();
-        audio_dac_play(sdc_callback, NULL, 44100, buffer, DAC_BUFFER_SIZE);
-        audio_dac_deinit();
+        audio_dac_convert(sdc_callback, NULL, 44100, buffer, DAC_BUFFER_SIZE);
 
         sound_file_close();
     }
     chprintf(stdout, "SD: unmount\n");
     sdcard_unmount();
 
-    while(1) {
-        chThdSleepMilliseconds(100);
+    uint32_t freq = 440;
+    dacsample_t rect_buf[2] = {0, 0xffff};
+    audio_dac_convert(rect_callback, NULL, 2*freq, rect_buf, 2);
+
+
+    struct callback_arg_s args;
+    args.sample_rate = 44100;
+    args.omega = (float) 440 / args.sample_rate;
+
+    args.time = 0;
+    args.func = sine;
+
+    while (true) {
+        audio_dac_convert(data_callback, &args, args.sample_rate, buffer, DAC_BUFFER_SIZE);
+
+        chThdSleepMilliseconds(500);
+        while(!palReadPad(GPIOA, GPIOA_BUTTON)) {
+            chThdSleepMilliseconds(100);
+        }
+        chThdSleepMilliseconds(500);
     }
-
-    // struct callback_arg_s args;
-    // args.sample_rate = 44100;
-    // args.omega = (float) 440 / args.sample_rate;
-
-    // args.time = 0;
-    // args.func = sine;
-
-    // while (true) {
-    //     audio_dac_init();
-    //     audio_dac_play(data_callback, &args, args.sample_rate, buffer, DAC_BUFFER_SIZE);
-    //     audio_dac_deinit();
-
-    //     chThdSleepMilliseconds(500);
-    //     while(!palReadPad(GPIOA, GPIOA_BUTTON)) {
-    //         chThdSleepMilliseconds(100);
-    //     }
-    //     chThdSleepMilliseconds(500);
-    // }
 }
