@@ -62,9 +62,7 @@ void audio_thd_main(void *arg)
         uint32_t sample_rate = 44100;
 
         /* Play the file. */
-        audio_dac_init();
-        audio_dac_play(file_read_cb, &file, sample_rate, buffer, DAC_BUFFER_SIZE);
-        audio_dac_deinit();
+        audio_dac_convert(file_read_cb, &file, sample_rate, buffer, DAC_BUFFER_SIZE);
         f_close(&file);
 
         /* Signal success. */
