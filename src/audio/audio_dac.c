@@ -4,57 +4,63 @@
 #include <stdbool.h>
 #include "audio_dac.h"
 
+/**
+ * Audio DAC driver
+ *
+ * The driver periodically calls a data callback to fill a sample buffer, which
+ * is converted continuously in the background by the DAC peripheral using DMA.
+ * The data callback must finish writing samples before the DAC driver starts
+ * converting the new buffer, otherwise audible glitches may appear.
+ *
+ * The STM32 DAC peripheral allows continuous conversion of a sample buffer:
+ * When it reaches the end of the buffer it restarts at the beginning.
+ * There are two interrupts generated during conversion, at half and at the end
+ * of the buffer. In the ISR the audio thread is notified about where to write
+ * new samples and the DAC is reconfigured for the next conversion.
+ */
+
+/* Select DAC driver: DACD1 or DACD2 */
+#define DAC_DRIVER DACD2
+
 static void dac_continuous_conversion_cb(DACDriver *dacp, const dacsample_t *prev, size_t n);
+static void dac_last_conversion_cb(DACDriver *dacp, const dacsample_t *prev, size_t n);
 static void dac_single_conversion_cb(DACDriver *dacp, const dacsample_t *prev, size_t n);
-static void dac_final_conversion_cb(DACDriver *dacp, const dacsample_t *prev, size_t n);
 static void dac_stop_cb(DACDriver *dacp, const dacsample_t *prev, size_t n);
 static void error_cb(DACDriver *dacp, dacerror_t err);
-static size_t dac_adjust_length(size_t len);
-static void dac_final_conversion(dacsample_t *buf, size_t len);
-static dacsample_t *get_next_buffer(void);
-static void dac_start_timer(uint32_t sample_rate);
-static void dac_single_conversion(uint32_t sample_rate, dacsample_t *buf, size_t len);
+static dacsample_t *dac_next_write_pos(void);
+static void dac_last_conversion(dacsample_t *buf, size_t len);
 static void dac_continuous_conversion(uint32_t sample_rate, dacsample_t *buf, size_t len);
+static void dac_single_conversion(uint32_t sample_rate, dacsample_t *buf, size_t len);
+static void dac_start_conversion(uint32_t sample_rate, dacsample_t *buf, size_t len);
+static void dac_start(void);
 
-static const DACConfig dac2cfg1 = {
-    init: 0,
-    datamode: DAC_DHRM_12BIT_LEFT
-};
-
-static DACConversionGroup dacgrpcfg1;
+static DACConversionGroup dac_conversion;
 static binary_semaphore_t dac_signal;
-static size_t buffer_len;
-static dacsample_t *next_buffer;
-static dacsample_t *dual_buffer;
+static size_t conversion_len;
+static dacsample_t *dac_write_pos;
+static dacsample_t *dac_buffer;
 
+/* DAC driver interrupt callbacks */
+
+/* Signals audio thread where to write new data. */
 static void dac_continuous_conversion_cb(DACDriver *dacp, const dacsample_t *prev, size_t n)
 {
     (void)dacp;
     chSysLockFromISR();
-    /* set next buffer to be filled */
-    if (prev == &dual_buffer[0]) {
-        next_buffer = &dual_buffer[0];
+    /* set next write position */
+    if (prev == &dac_buffer[0]) {
+        dac_write_pos = &dac_buffer[0];
     } else {
-        next_buffer = &dual_buffer[n];
+        dac_write_pos = &dac_buffer[n];
     }
 
-    /* signal thread */
+    /* wakeup thread */
     chBSemSignalI(&dac_signal);
     chSysUnlockFromISR();
 }
 
-/* second last callback, called on half conversion */
-static void dac_single_conversion_cb(DACDriver *dacp, const dacsample_t *prev, size_t n)
-{
-    (void)dacp;
-    (void)prev;
-    (void)n;
-    /* stop DAC when conversion is complete. */
-    dacgrpcfg1.end_cb = dac_stop_cb;
-}
-
-/* restarts DAC for final conversion length */
-static void dac_final_conversion_cb(DACDriver *dacp, const dacsample_t *prev, size_t n)
+/* configures DAC for last conversion with different buffer length */
+static void dac_last_conversion_cb(DACDriver *dacp, const dacsample_t *prev, size_t n)
 {
     (void)prev;
     (void)n;
@@ -62,14 +68,22 @@ static void dac_final_conversion_cb(DACDriver *dacp, const dacsample_t *prev, si
 
     /* start final conversion */
     dacStopConversionI(dacp);
-    dacgrpcfg1.end_cb = dac_single_conversion_cb;
+    dac_conversion.end_cb = dac_single_conversion_cb;
 
     /* restart dac for single conversion with new length */
-    dacStartConversionI(dacp, &dacgrpcfg1, next_buffer, buffer_len);
-
-    /* no thread signaling until last conversion done */
+    dacStartConversionI(dacp, &dac_conversion, dac_write_pos, conversion_len);
 
     chSysUnlockFromISR();
+}
+
+/* configures DAC to stop at end of ongoing conversion. */
+static void dac_single_conversion_cb(DACDriver *dacp, const dacsample_t *prev, size_t n)
+{
+    (void)dacp;
+    (void)prev;
+    (void)n;
+    /* stop DAC when conversion is complete. */
+    dac_conversion.end_cb = dac_stop_cb;
 }
 
 static void dac_stop_cb(DACDriver *dacp, const dacsample_t *prev, size_t n)
@@ -82,7 +96,7 @@ static void dac_stop_cb(DACDriver *dacp, const dacsample_t *prev, size_t n)
     gptStopTimerI(&GPTD6);
     dacStopConversionI(dacp);
 
-    /* signal thread */
+    /* wakeup thread */
     chBSemSignalI(&dac_signal);
     chSysUnlockFromISR();
 }
@@ -91,41 +105,67 @@ static void error_cb(DACDriver *dacp, dacerror_t err)
 {
     (void)dacp;
     (void)err;
-    chSysHalt("DAC failure");
+    chSysHalt("DAC error");
 }
 
-static size_t dac_adjust_length(size_t len)
+static dacsample_t *dac_next_write_pos(void)
 {
-    /* length must be an even number */
-    if (len & 1) {
-        len -= 1;
-    }
-    return len;
+    chBSemWait(&dac_signal);
+    return dac_write_pos;
 }
 
-static void dac_final_conversion(dacsample_t *buf, size_t len)
+static void dac_last_conversion(dacsample_t *buf, size_t len)
 {
     chSysLock();
-    len = dac_adjust_length(len);
+
+    /* buffer length must be even */
+    len -= len & 1;
+
     if (len > 0) {
-        next_buffer = buf;
-        buffer_len = len;
-        dacgrpcfg1.end_cb = dac_final_conversion_cb;
+        dac_write_pos = buf;
+        conversion_len = len;
+        dac_conversion.end_cb = dac_last_conversion_cb;
     } else {
-        dacgrpcfg1.end_cb = dac_stop_cb;
+        dac_conversion.end_cb = dac_stop_cb;
     }
+
+    /* wait until conversion done */
     chBSemWaitS(&dac_signal);
+
     chSysUnlock();
 }
 
-static dacsample_t *get_next_buffer(void)
+static void dac_single_conversion(uint32_t sample_rate, dacsample_t *buf, size_t len)
 {
+    /* buffer length must be even */
+    len -= len & 1;
+
+    if (len == 0) {
+        return;
+    }
+
+    dac_conversion.end_cb = dac_single_conversion_cb;
+    dac_start_conversion(sample_rate, buf, len);
+
+    /* wait until conversion done */
     chBSemWait(&dac_signal);
-    return next_buffer;
 }
 
-static void dac_start_timer(uint32_t sample_rate)
+static void dac_continuous_conversion(uint32_t sample_rate, dacsample_t *buf, size_t len)
 {
+    dac_buffer = buf;
+    dac_conversion.end_cb = dac_continuous_conversion_cb;
+    dac_start_conversion(sample_rate, buf, len);
+}
+
+static void dac_start_conversion(uint32_t sample_rate, dacsample_t *buf, size_t len)
+{
+    /* init thread signaling semaphore */
+    chBSemObjectInit(&dac_signal, true);
+
+    dacStartConversion(&DAC_DRIVER, &dac_conversion, buf, len);
+
+    /* start timer for DAC trigger */
     static GPTConfig config;
     config.frequency = STM32_TIMCLK1; /* run timer at full frequency */
     config.callback = NULL;
@@ -135,73 +175,68 @@ static void dac_start_timer(uint32_t sample_rate)
     gptStartContinuous(&GPTD6, STM32_TIMCLK1 / sample_rate); /* rounded divider */
 }
 
-static void dac_single_conversion(uint32_t sample_rate, dacsample_t *buf, size_t len)
+static void dac_start(void)
 {
-    dacgrpcfg1.end_cb = dac_single_conversion_cb;
+    dac_conversion.num_channels = 1U;
+    dac_conversion.end_cb = NULL;
+    dac_conversion.error_cb = error_cb;
+    dac_conversion.trigger = DAC_TRG(0);
 
-    chBSemObjectInit(&dac_signal, true);
+    static DACConfig dac_config;
+    dac_config.init = 0;
+    dac_config.datamode = DAC_DHRM_12BIT_LEFT;
 
-    dacStartConversion(&DACD2, &dacgrpcfg1, buf, len * 2);
-    dac_start_timer(sample_rate);
-
-    chBSemWait(&dac_signal);
+    dacStart(&DAC_DRIVER, &dac_config);
 }
 
-static void dac_continuous_conversion(uint32_t sample_rate, dacsample_t *buf, size_t len)
+int audio_dac_convert(audio_callback_t data_cb,
+                      void *cb_arg,
+                      uint32_t sample_rate,
+                      dacsample_t *buffer,
+                      size_t len)
 {
-    dual_buffer = buf;
-    dacgrpcfg1.end_cb = dac_continuous_conversion_cb;
-
-    chBSemObjectInit(&dac_signal, true);
-
-    dacStartConversion(&DACD2, &dacgrpcfg1, buf, len);
-    dac_start_timer(sample_rate);
-}
-
-void audio_dac_play(audio_callback_t data_cb,
-                    void *cb_arg,
-                    uint32_t sample_rate,
-                    dacsample_t *buffer,
-                    size_t len)
-{
-    size_t samples;
+    size_t nb_samples = 0;
     bool last;
 
-    len = dac_adjust_length(len);
-    if (len == 0) {
-        return;
+    if (len < 2) {
+        return AUDIO_DAC_ERR;
     }
 
-    last = data_cb(cb_arg, buffer, len, &samples);
+    if (len & 1) {
+        len -= 1;
+    }
+
+    dac_start();
+
+    /* fill the first buffer */
+    last = data_cb(cb_arg, buffer, len, &nb_samples);
+
     if (last) {
-        dac_single_conversion(sample_rate, buffer, samples);
-        return;
+        /* done after one conversion. */
+        dac_single_conversion(sample_rate, buffer, nb_samples);
+        goto stop;
     }
 
     dac_continuous_conversion(sample_rate, buffer, len);
 
+    /* data copy loop */
     while (1) {
         dacsample_t* buf;
-        buf = get_next_buffer();
-        samples = 0;
-        last = data_cb(cb_arg, buf, len / 2, &samples);
+        nb_samples = 0;
+
+        /* wait for next writing position to become free  */
+        buf = dac_next_write_pos();
+
+        last = data_cb(cb_arg, buf, len / 2, &nb_samples);
+
         if (last) {
-            dac_final_conversion(buf, samples);
+            /* start last conversion, waits until done */
+            dac_last_conversion(buf, nb_samples);
             break;
         }
     }
-}
 
-void audio_dac_init(void)
-{
-    dacgrpcfg1.num_channels = 1U;
-    dacgrpcfg1.end_cb = NULL;
-    dacgrpcfg1.error_cb = error_cb;
-    dacgrpcfg1.trigger = DAC_TRG(0);
-    dacStart(&DACD2, &dac2cfg1);
-}
-
-void audio_dac_deinit(void)
-{
-    dacStop(&DACD2);
+stop:
+    dacStop(&DAC_DRIVER);
+    return AUDIO_DAC_OK;
 }

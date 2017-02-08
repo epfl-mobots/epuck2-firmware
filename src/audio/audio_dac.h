@@ -7,15 +7,38 @@
 extern "C" {
 #endif
 
-typedef bool (*audio_callback_t)(void *arg, dacsample_t *buffer, size_t len,
+enum {
+    AUDIO_DAC_OK = 0,
+    AUDIO_DAC_ERR
+};
+
+/** Audio data callback
+ *
+ * @param [in] arg Argument pointer.
+ * @param [in] buffer Sample buffer.
+ * @param [in] len Buffer length.
+ * @param [out] samples_written The number of samples written by the callback.
+ * @returns true on last conversion.
+ */
+typedef bool (*audio_callback_t)(void *arg,
+                                 dacsample_t *buffer,
+                                 size_t len,
                                  size_t *samples_written);
 
-void audio_dac_play(audio_callback_t data_cb, void *cb_arg, uint32_t sample_rate,
-                    dacsample_t *buffer, size_t len);
-
-void audio_dac_init(void);
-
-void audio_dac_deinit(void);
+/** Contiuous audio conversion
+ *
+ * @param [in] data_cb Data callback which is periodically called to fill the DAC conversion buffer.
+ * @param [in] cb_arg Argument pointer passed to the data callback.
+ * @param [in] sample_rate Audio sample rate.
+ * @param [in] buffer Audio sample buffer.
+ * @param [in] len  Buffer length, must be multiple of 2.
+ * @returns 0 if successful, error code otherwise
+ */
+int audio_dac_convert(audio_callback_t data_cb,
+                      void *cb_arg,
+                      uint32_t sample_rate,
+                      dacsample_t *buffer,
+                      size_t len);
 
 #ifdef __cplusplus
 }
