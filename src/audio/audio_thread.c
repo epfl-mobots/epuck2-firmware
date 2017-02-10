@@ -3,37 +3,15 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <ff.h>
-#include "main.h"
+#include <sdcard.h>
+#include <main.h>
 
-#include "sdcard.h"
-#include "audio/audio_dac.h"
-#include "audio/audio_thread.h"
+#include "audio_dac.h"
+#include "audio_wav.h"
+#include "audio_thread.h"
 
 #define DAC_BUFFER_SIZE 1000
 static dacsample_t buffer[DAC_BUFFER_SIZE];
-
-static bool file_read_cb(void *arg, dacsample_t *buffer, size_t len, size_t *samples_written)
-{
-    FIL *file = (FIL *)arg;
-    UINT n;
-    FRESULT res = f_read(file, buffer, len * 2, &n);
-    if (res != FR_OK) {
-        /* read error, stop conversion */
-        *samples_written = 0;
-        return true;
-    }
-    size_t i;
-    for (i = 0; i < n / 2; i++) {
-        buffer[i] += -INT16_MIN;
-    }
-    *samples_written = n / 2;
-    if (n != len * 2) {
-        /* end of file */
-        return true;
-    } else {
-        return false;
-    }
-}
 
 void audio_thd_main(void *arg)
 {
@@ -58,11 +36,18 @@ void audio_thd_main(void *arg)
             continue;
         }
 
-        // TODO decode WAV header
-        uint32_t sample_rate = 44100;
+        /* WAV decodede error. */
+        static struct wav_data wav;
+        if (wav_read_header(&wav, &file) != 0) {
+            audio_play_result_t res;
+            res.status = AUDIO_WAV_DECODE;
+            messagebus_topic_publish(&result_topic.topic, &res, sizeof(res));
+            f_close(&file);
+            continue;
+        }
 
         /* Play the file. */
-        audio_dac_convert(file_read_cb, &file, sample_rate, buffer, DAC_BUFFER_SIZE);
+        audio_dac_convert(wav_read_cb, &wav, wav.sample_rate, buffer, DAC_BUFFER_SIZE);
         f_close(&file);
 
         /* Signal success. */

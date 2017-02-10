@@ -8,6 +8,7 @@ extern "C" {
 typedef enum {
     AUDIO_OK = 0,
     AUDIO_FILE_NOT_FOUND,
+    AUDIO_WAV_DECODE,
 } audio_play_status_t;
 
 typedef struct {
