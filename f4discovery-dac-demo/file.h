@@ -7,8 +7,10 @@ extern "C" {
 
 #include <stdbool.h>
 #include <hal.h>
+#include <ff.h>
 
 extern bool fatfs_mounted;
+extern FIL sound_file;
 
 void sd_init(void);
 void sdcard_mount(void);

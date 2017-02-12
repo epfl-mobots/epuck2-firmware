@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include <audio/audio_dac.h>
+#include <audio/audio_wav.h>
 #include "file.h"
 #include <chprintf.h>
 extern BaseSequentialStream *stdout;
@@ -71,7 +72,7 @@ bool rect_callback(void *arg, dacsample_t *buffer, size_t len, size_t *samples_w
 }
 
 
-#define DAC_BUFFER_SIZE 10000
+#define DAC_BUFFER_SIZE 1000
 void audio_thread_main(void *arg)
 {
     (void) arg;
@@ -88,16 +89,22 @@ void audio_thread_main(void *arg)
     } else {
         chprintf(stdout, "open %s\n", file);
 
-        audio_dac_convert(sdc_callback, NULL, 44100, buffer, DAC_BUFFER_SIZE);
+        static struct wav_data wav;
+        if (wav_read_header(&wav, &sound_file)) {
+            chprintf(stdout, "WAV decode haeader error\n");
+        } else {
+            chprintf(stdout, "WAV decode: sample rate %u, length %u\n", wav.sample_rate, wav.data_len);
+            audio_dac_convert(wav_read_cb, &wav, wav.sample_rate, buffer, DAC_BUFFER_SIZE);
+        }
 
         sound_file_close();
     }
     chprintf(stdout, "SD: unmount\n");
     sdcard_unmount();
 
-    uint32_t freq = 440;
-    dacsample_t rect_buf[2] = {0, 0xffff};
-    audio_dac_convert(rect_callback, NULL, 2*freq, rect_buf, 2);
+    // uint32_t freq = 440;
+    // dacsample_t rect_buf[2] = {0, 0xffff};
+    // audio_dac_convert(rect_callback, NULL, 2*freq, rect_buf, 2);
 
 
     struct callback_arg_s args;

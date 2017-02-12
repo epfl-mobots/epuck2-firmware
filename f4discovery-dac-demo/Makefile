@@ -115,6 +115,7 @@ CSRC = $(STARTUPSRC) \
        $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
        audio.c \
        ../src/audio/audio_dac.c \
+       ../src/audio/audio_wav.c \
        ../fatfs/src/ff.c \
        ../fatfs/src/option/unicode.c \
        fatfs_diskio.c \
