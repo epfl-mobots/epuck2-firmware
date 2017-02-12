@@ -11,7 +11,7 @@
 #include "audio_thread.h"
 
 #define DAC_BUFFER_SIZE 1000
-static dacsample_t buffer[DAC_BUFFER_SIZE];
+static audio_sample_t buffer[DAC_BUFFER_SIZE];
 
 void audio_thd_main(void *arg)
 {

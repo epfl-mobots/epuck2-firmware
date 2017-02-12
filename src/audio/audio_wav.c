@@ -69,12 +69,12 @@ int wav_read_header(struct wav_data *d, FIL *file)
     return 0;
 }
 
-bool wav_read_cb(void *arg, dacsample_t *buffer, size_t buf_len, size_t *samples_written)
+bool wav_read_cb(void *arg, audio_sample_t *buffer, size_t buf_len, size_t *samples_written)
 {
     struct wav_data *wav = (struct wav_data *)arg;
 
     /* Determine bytes to be read */
-    size_t len = buf_len * sizeof(dacsample_t);
+    size_t len = buf_len * sizeof(audio_sample_t);
     if (len > wav->data_len - wav->data_pos) {
         len = wav->data_len - wav->data_pos;
     }
@@ -89,12 +89,12 @@ bool wav_read_cb(void *arg, dacsample_t *buffer, size_t buf_len, size_t *samples
 
     /* Add offset to obtain positive integer for DAC.  */
     size_t i;
-    for (i = 0; i < n / sizeof(dacsample_t); i++) {
+    for (i = 0; i < n / sizeof(audio_sample_t); i++) {
         buffer[i] += -INT16_MIN;
     }
 
     wav->data_pos += n;
-    *samples_written = n / sizeof(dacsample_t);
+    *samples_written = n / sizeof(audio_sample_t);
     if (n != len || wav->data_pos == wav->data_len) {
         /* end of file */
         return true;

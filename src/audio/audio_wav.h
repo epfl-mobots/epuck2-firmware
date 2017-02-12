@@ -8,7 +8,6 @@ extern "C" {
 #include <ff.h>
 #include <stdint.h>
 #include <stddef.h>
-#include <hal.h>
 #include "audio_dac.h"
 
 struct wav_data {
@@ -21,7 +20,7 @@ struct wav_data {
 
 int wav_read_header(struct wav_data *d, FIL *f);
 
-bool wav_read_cb(void *arg, dacsample_t *buffer, size_t buf_len, size_t *samples_written);
+bool wav_read_cb(void *arg, audio_sample_t *buffer, size_t buf_len, size_t *samples_written);
 
 #ifdef __cplusplus
 }

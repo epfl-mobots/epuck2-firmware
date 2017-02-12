@@ -1,11 +1,15 @@
 #ifndef AUDIO_DAC_H
 #define AUDIO_DAC_H
 
-#include <hal.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include <stdint.h>
+#include <stddef.h>
+
+typedef uint16_t audio_sample_t;
 
 enum {
     AUDIO_DAC_OK = 0,
@@ -21,7 +25,7 @@ enum {
  * @returns true on last conversion.
  */
 typedef bool (*audio_callback_t)(void *arg,
-                                 dacsample_t *buffer,
+                                 audio_sample_t *buffer,
                                  size_t len,
                                  size_t *samples_written);
 
@@ -37,7 +41,7 @@ typedef bool (*audio_callback_t)(void *arg,
 int audio_dac_convert(audio_callback_t data_cb,
                       void *cb_arg,
                       uint32_t sample_rate,
-                      dacsample_t *buffer,
+                      audio_sample_t *buffer,
                       size_t len);
 
 #ifdef __cplusplus
