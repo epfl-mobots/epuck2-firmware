@@ -5,6 +5,7 @@
 #include <test.h>
 #include <chprintf.h>
 #include <shell.h>
+#include <ff.h>
 #include "usbconf.h"
 #include "sensors/imu.h"
 #include "sensors/encoder.h"
@@ -550,6 +551,36 @@ static void cmd_play(BaseSequentialStream *chp, int argc, char *argv[])
     }
 }
 
+static void cmd_rec(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    messagebus_topic_t *topic = messagebus_find_topic(&bus, "/microphone");
+    if (topic == NULL) {
+        chprintf(chp, "Cannot read topic, aborting.\r\n");
+        return;
+    }
+
+    static FIL file;
+    if (f_open(&file, "test.pcm", FA_WRITE) != FR_OK) {
+        chprintf(chp, "Cannot open file for writing.\r\n");
+        return;
+    }
+
+    microphone_msg_t msg;
+    unsigned sample_rate = 44100;
+
+    for(uint32_t i=0 ; i<5*sample_rate/64; i++) {
+        UINT written;
+        messagebus_topic_wait(topic, &msg, sizeof(msg));
+
+        if (f_write(&file, msg.samples, 64, &written) != FR_OK) {
+            chprintf(chp, "cannot write\r\n", written);
+        }
+
+    }
+
+    f_close(&file);
+}
+
 static ShellCommand shell_commands[] = {
     {"test", cmd_test},
     {"range", cmd_range},
@@ -573,6 +604,7 @@ static ShellCommand shell_commands[] = {
     {"leds", cmd_leds},
     {"mpu_test", cmd_mpu_test},
     {"play", cmd_play},
+    {"rec", cmd_rec},
 
     {NULL, NULL}
 };
