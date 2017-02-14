@@ -49,7 +49,7 @@ void can_init(void)
         .mcr = (1 << 6)  /* Automatic bus-off management enabled. */
                | (1 << 2), /* Message are prioritized by order of arrival. */
 
-        /* APB Clock is 42 Mhz
+        /* CAN1 is on APB1 @ 42 Mhz
            42MHz / 2 / (1tq + 12tq + 8tq) = 1MHz => 1Mbit */
         .btr = (1 << 0)  /* Baudrate prescaler (10 bits) */
                | (11 << 16) /* Time segment 1 (3 bits) */
