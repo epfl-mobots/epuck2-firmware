@@ -5,12 +5,12 @@
 
 static uint32_t u32_little_endian(uint8_t *buf)
 {
-    return (uint32_t) buf[0] | buf[1]<<8 | buf[2]<<16 | buf[3]<<24;
+    return (uint32_t) buf[0] | buf[1] << 8 | buf[2] << 16 | buf[3] << 24;
 }
 
 static uint16_t u16_little_endian(uint8_t *buf)
 {
-    return (uint16_t) buf[0] | buf[1]<<8;
+    return (uint16_t) buf[0] | buf[1] << 8;
 }
 
 int wav_read_header(struct wav_data *d, FIL *file)
@@ -102,4 +102,3 @@ bool wav_read_cb(void *arg, audio_sample_t *buffer, size_t buf_len, size_t *samp
         return false;
     }
 }
-

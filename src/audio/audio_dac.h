@@ -12,7 +12,7 @@ extern "C" {
 typedef uint16_t audio_sample_t;
 
 enum {
-    AUDIO_DAC_OK = 0,
+    AUDIO_DAC_OK=0,
     AUDIO_DAC_ERR
 };
 
