@@ -5,7 +5,7 @@
 #include "motor_pwm.h"
 
 #define PWM_CLK_FREQ 42000000
-#define PWM_FREQUENCY 21000
+#define PWM_FREQUENCY 44100
 #define PWM_CYCLE (PWM_CLK_FREQ / PWM_FREQUENCY)
 
 #define PWM_LIMIT 0.99f
