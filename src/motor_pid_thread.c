@@ -8,7 +8,7 @@
 #include "motor_controller.h"
 #include "motor_pwm.h"
 
-#define CONTROL_FREQUENCY_HZ 100
+#define CONTROL_FREQUENCY_HZ 200
 
 
 enum motor_enum {
@@ -151,6 +151,19 @@ static void wait_for_services(void)
     messagebus_find_topic_blocking(&bus, "/battery_level");
 }
 
+static BSEMAPHORE_DECL(timer_sem, true);
+
+static void timer_cb(void *p)
+{
+    virtual_timer_t *vt = (virtual_timer_t *)p;
+
+    chSysLockFromISR();
+    chBSemSignalI(&timer_sem);
+    chVTSetI(vt, CH_CFG_ST_FREQUENCY / CONTROL_FREQUENCY_HZ, timer_cb, p);
+    chSysUnlockFromISR();
+}
+
+
 static THD_FUNCTION(motor_pid_thd, arg)
 {
     (void) arg;
@@ -207,8 +220,14 @@ static THD_FUNCTION(motor_pid_thd, arg)
     /* Wait for needed services to come online. */
     wait_for_services();
 
+    static virtual_timer_t timer;
+    chVTSet(&timer, CH_CFG_ST_FREQUENCY / CONTROL_FREQUENCY_HZ, timer_cb, (void *)&timer);
+
     while (true) {
         wheels_setpoint_t msg;
+
+        chBSemWait(&timer_sem);
+
         if (messagebus_topic_read(&wheels_setpoint_topic.topic, &msg, sizeof(msg))) {
             motor_controller_set_mode(&left.controller, msg.mode);
             motor_controller_set_mode(&right.controller, msg.mode);
@@ -238,8 +257,6 @@ static THD_FUNCTION(motor_pid_thd, arg)
 
         left_wheel_voltage_set(&bus, left.voltage);
         right_wheel_voltage_set(&bus, right.voltage);
-
-        chThdSleepMilliseconds(1000 / CONTROL_FREQUENCY_HZ);
     }
 }
 

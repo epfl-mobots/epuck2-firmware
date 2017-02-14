@@ -90,8 +90,6 @@ static THD_FUNCTION(encoders_thd, arg)
                                            false);
 
 
-
-
     uint32_t left_encoder_old, right_encoder_old;
     encoders_msg_t encoders = {0, 0};
     wheel_pos_msg_t wheel_positions = {0.f, 0.f};
