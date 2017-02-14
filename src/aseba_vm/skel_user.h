@@ -30,6 +30,7 @@ enum AsebaLocalEvents {
     EVENT_IMU, // New acceleration and gyro measurement
     EVENT_TIMER, // Timer was fired
     EVENT_SOUND_PLAY_FINISHED, // A sound finished playing
+    EVENT_SOUND_ERROR, // An error occurred during sound playback
 };
 
 

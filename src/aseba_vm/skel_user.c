@@ -146,6 +146,7 @@ const AsebaLocalEventDescription localEvents[] = {
     {"imu", "New IMU (gyro and acc) measurement"},
     {"timer", "Periodic event"},
     {"sound.finished", "A sound finished playing"},
+    {"sound.error", "There was an error during sound playback"},
     {NULL, NULL}
 };
 
@@ -239,6 +240,10 @@ static THD_FUNCTION(aseba_audio_thd, p)
         if (res.status == AUDIO_OK) {
             chSysLock();
             SET_EVENT(EVENT_SOUND_PLAY_FINISHED);
+            chSysUnlock();
+        } else {
+            chSysLock();
+            SET_EVENT(EVENT_SOUND_ERROR);
             chSysUnlock();
         }
     }
