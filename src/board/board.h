@@ -449,7 +449,7 @@
                                      PIN_MODE_ANALOG(GPIOC_IR_AN10) |           \
                                      PIN_MODE_ANALOG(GPIOC_IR_AN11) |        \
                                      PIN_MODE_ANALOG(GPIOC_IR_AN12) |           \
-                                     PIN_MODE_INPUT(GPIOC_AUDIO_MIC1) |           \
+                                     PIN_MODE_ANALOG(GPIOC_AUDIO_MIC1) |           \
                                      PIN_MODE_INPUT(GPIOC_DCMI_D0) |           \
                                      PIN_MODE_INPUT(GPIOC_DCMI_D1) |       \
                                      PIN_MODE_ALTERNATE(GPIOC_SDIO_D0) |      \
@@ -465,7 +465,7 @@
                                      PIN_OTYPE_OPENDRAIN(GPIOC_IR_AN10) |       \
                                      PIN_OTYPE_OPENDRAIN(GPIOC_IR_AN11) |    \
                                      PIN_OTYPE_OPENDRAIN(GPIOC_IR_AN12) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOC_AUDIO_MIC1) |       \
+                                     PIN_OTYPE_OPENDRAIN(GPIOC_AUDIO_MIC1) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOC_DCMI_D0) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOC_DCMI_D1) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOC_SDIO_D0) |       \
@@ -497,7 +497,7 @@
                                      PIN_PUPDR_FLOATING(GPIOC_IR_AN10) |         \
                                      PIN_PUPDR_FLOATING(GPIOC_IR_AN11) |      \
                                      PIN_PUPDR_FLOATING(GPIOC_IR_AN12) |         \
-                                     PIN_PUPDR_PULLUP(GPIOC_AUDIO_MIC1) |         \
+                                     PIN_PUPDR_FLOATING(GPIOC_AUDIO_MIC1) |         \
                                      PIN_PUPDR_PULLUP(GPIOC_DCMI_D0) |         \
                                      PIN_PUPDR_PULLUP(GPIOC_DCMI_D1) |       \
                                      PIN_PUPDR_PULLUP(GPIOC_SDIO_D0) |         \
