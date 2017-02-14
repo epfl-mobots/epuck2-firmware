@@ -157,6 +157,25 @@ If the battery goes under a critical voltage (3V/cell), the robot self-shutdowns
 Running `make format` will reformat the code to follow the coding style more accurately.
 Please do it before committing.
 
+## Peripheral use
+
+| Peripheral | Use in this project |
+|------------|---------------------|
+| `USBD1`    | USB serial link |
+| `TIMER1`   | Left encoder    |
+| `TIMER2`   | Right encoder   |
+| `TIMER3`   | Left motor PWM   |
+| `TIMER4`   | Right motor PWM   |
+| `TIMER5`   | Periodic OS tick   |
+| `TIMER8`   | Proximity sensors (PWM + ADC clocking)  |
+| `SDIO1`   | MicroSD card |
+| `I2C1`   | Body LEDs, range sensor |
+| `SPI1`   | Inertial Motion Unit |
+| `ADC1`   | Motor current sense. ]
+| `ADC2`   | Proximity sensors & battery level.  |
+| `ADC3`   | Proximity sensors (cont.) |
+
+
 [cpputest]: http://cpputest.github.io
 [packager]: http://github.com/cvra/packager
 [messagepack]: http://messagepack.org/
