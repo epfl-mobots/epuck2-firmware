@@ -12,7 +12,7 @@ typedef struct {
 } motor_current_msg_t;
 
 typedef struct {
-    adcsample_t samples[128];
+    adcsample_t samples[64];
 } microphone_msg_t;
 
 /** Starts the motor current acquisition. */

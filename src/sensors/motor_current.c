@@ -13,7 +13,7 @@
 #error "Please select your motor current consumption type in board.h"
 #endif
 
-#define MOTOR_NB_CHANNELS 2
+#define MOTOR_NB_CHANNELS 3
 #define DMA_BUFFER_SIZE (128)
 
 /* Trigger ADC on Timer 4, Channel 4. */
@@ -26,21 +26,25 @@ static BSEMAPHORE_DECL(measurement_ready_sem, true);
 
 /* Motor current topic. */
 static TOPIC_DECL(motor_current_topic, motor_current_msg_t);
+static TOPIC_DECL(microphone_topic, microphone_msg_t);
+static microphone_msg_t microphone_value;
 
 static void adc_motor_cb(ADCDriver *adcp, adcsample_t *adc_motor_samples, size_t n)
 {
     (void)adcp;
     uint32_t accumulator[2] = {0};
 
-    size_t i;
+    size_t i, j;
 
     /* Computes the average over the whole period. */
-    for (i = 0; i < n; i += MOTOR_NB_CHANNELS) {
+    for (i = 0, j = 0; i < n; i += MOTOR_NB_CHANNELS, j++) {
         accumulator[0] += adc_motor_samples[i];
         accumulator[1] += adc_motor_samples[i + 1];
+        microphone_value.samples[j] = adc_motor_samples[i + 2];
     }
-    accumulator[0] /= (n / 2);
-    accumulator[1] /= (n / 2);
+
+    accumulator[0] /= (n / MOTOR_NB_CHANNELS);
+    accumulator[1] /= (n / MOTOR_NB_CHANNELS);
 
     chSysLockFromISR();
     motor_value[0] = accumulator[0];
@@ -69,8 +73,8 @@ static void motor_current_start_adc(void)
         .end_cb = adc_motor_cb,
         .error_cb = NULL,
 
-        /* Discontinuous mode, 2 conversions per trigger. */
-        .cr1 = ADC_CR1_DISCEN | ADC_CR1_DISCNUM_0,
+        /* Discontinuous mode, 3 conversions per trigger. */
+        .cr1 = ADC_CR1_DISCEN | ADC_CR1_DISCNUM_1,
 
         /* External trigger on timer 4 CC4 event. */
         .cr2 = ADC_CR2_EXTEN_1 | ADC_CR2_EXTSEL_SRC(EXTSEL_TIM4_CC4),
@@ -85,10 +89,10 @@ static void motor_current_start_adc(void)
          */
         .smpr2 = ADC_SMPR2_SMP_AN0(ADC_SAMPLE_15) |
                  ADC_SMPR2_SMP_AN2(ADC_SAMPLE_15),
-        .smpr1 = 0,
+        .smpr1 = ADC_SMPR1_SMP_AN15(ADC_SAMPLE_15),
 
         /* Sequence registers */
-        .sqr3 = ADC_SQR3_SQ1_N(0) | ADC_SQR3_SQ2_N(2),
+        .sqr3 = ADC_SQR3_SQ1_N(0) | ADC_SQR3_SQ2_N(2) | ADC_SQR3_SQ3_N(15),
         .sqr2 = 0,
         .sqr1 = ADC_SQR1_NUM_CH(MOTOR_NB_CHANNELS),
     };
@@ -125,6 +129,14 @@ static THD_FUNCTION(adc_motor_current, arg)
     /* First create the topic on which the motor currents will be published. */
     motor_current_topic_create("/motors/current");
 
+    messagebus_topic_init(&microphone_topic.topic,
+                          &microphone_topic.lock,
+                          &microphone_topic.condvar,
+                          &microphone_topic.value,
+                          sizeof(microphone_topic.value));
+    messagebus_advertise_topic(&bus, &microphone_topic.topic, "/microphone");
+
+
     /* Then start the measurement itself. */
     motor_current_start_adc();
 
@@ -155,6 +167,7 @@ static THD_FUNCTION(adc_motor_current, arg)
 
         /* Publish them. */
         messagebus_topic_publish(&motor_current_topic.topic, &msg, sizeof(msg));
+        messagebus_topic_publish(&microphone_topic.topic, &microphone_value, sizeof(microphone_msg_t));
     }
 }
 
