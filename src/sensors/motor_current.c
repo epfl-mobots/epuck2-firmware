@@ -25,10 +25,7 @@ static int32_t motor_value[MOTOR_NB_CHANNELS];
 static BSEMAPHORE_DECL(measurement_ready_sem, true);
 
 /* Motor current topic. */
-static messagebus_topic_t motor_current_topic;
-static MUTEX_DECL(motor_current_topic_lock);
-static CONDVAR_DECL(motor_current_topic_condvar);
-static motor_current_msg_t motor_current_value;
+static TOPIC_DECL(motor_current_topic, motor_current_msg_t);
 
 static void adc_motor_cb(ADCDriver *adcp, adcsample_t *adc_motor_samples, size_t n)
 {
@@ -54,12 +51,12 @@ static void adc_motor_cb(ADCDriver *adcp, adcsample_t *adc_motor_samples, size_t
 
 static void motor_current_topic_create(const char *name)
 {
-    messagebus_topic_init(&motor_current_topic,
-                          &motor_current_topic_lock,
-                          &motor_current_topic_condvar,
-                          &motor_current_value,
-                          sizeof(motor_current_value));
-    messagebus_advertise_topic(&bus, &motor_current_topic, name);
+    messagebus_topic_init(&motor_current_topic.topic,
+                          &motor_current_topic.lock,
+                          &motor_current_topic.condvar,
+                          &motor_current_topic.value,
+                          sizeof(motor_current_topic.value));
+    messagebus_advertise_topic(&bus, &motor_current_topic.topic, name);
 }
 
 static void motor_current_start_adc(void)
@@ -157,7 +154,7 @@ static THD_FUNCTION(adc_motor_current, arg)
         }
 
         /* Publish them. */
-        messagebus_topic_publish(&motor_current_topic, &msg, sizeof(msg));
+        messagebus_topic_publish(&motor_current_topic.topic, &msg, sizeof(msg));
     }
 }
 
