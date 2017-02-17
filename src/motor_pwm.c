@@ -9,11 +9,13 @@
 #define PWM_CYCLE (PWM_CLK_FREQ / PWM_FREQUENCY)
 
 #define PWM_LIMIT 0.99f
+#define ADC_MEASUREMENT_POS 0.01
 
 #define MOT0_PHASE_A 2
 #define MOT0_PHASE_B 3
 #define MOT1_PHASE_A 0
 #define MOT1_PHASE_B 1
+#define PWM4_ADC_TRIGGER 3
 
 static const PWMConfig pwmcfg1 = {
     .frequency = PWM_CLK_FREQ,
@@ -38,11 +40,13 @@ static const PWMConfig pwmcfg2 = {
         {.mode = PWM_OUTPUT_ACTIVE_HIGH, .callback = NULL},
         {.mode = PWM_OUTPUT_ACTIVE_HIGH, .callback = NULL},
         {.mode = PWM_OUTPUT_DISABLED, .callback = NULL},
-        {.mode = PWM_OUTPUT_DISABLED, .callback = NULL}
+        {.mode = PWM_OUTPUT_ACTIVE_HIGH, .callback = NULL},
     },
     .cr2 = 0,
     .bdtr = 0,
-    .dier = 0
+
+    /* Expose a DMA trigger, which is used by the motor current sense. */
+    .dier = TIM_DIER_CC4DE,
 };
 
 static parameter_namespace_t encoders_ns;
@@ -69,6 +73,10 @@ void motor_pwm_start(void)
 
     pwmStart(&PWMD3, &pwmcfg1);
     pwmStart(&PWMD4, &pwmcfg2);
+
+    /* This channel is used to trigger the motor current sense on the "enabled"
+     * part of the waveform. */
+    pwmEnableChannel(&PWMD4, PWM4_ADC_TRIGGER, (pwmcnt_t)PWM_CYCLE * ADC_MEASUREMENT_POS);
 }
 
 void motor_right_pwm_set(float duty_cycle)
