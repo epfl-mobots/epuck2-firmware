@@ -194,8 +194,8 @@ static THD_FUNCTION(motor_pid_thd, arg)
     parameter_scalar_set(parameter_find(&left.ns, "control/velocity/kp"), 0.2);
     parameter_scalar_set(parameter_find(&right.ns, "control/velocity/kp"), 0.2);
 
-    parameter_scalar_set(parameter_find(&left.ns, "control/velocity/kp"), 0.2);
-    parameter_scalar_set(parameter_find(&right.ns, "control/velocity/kp"), 0.2);
+    parameter_scalar_set(parameter_find(&left.ns, "control/position/kp"), 30);
+    parameter_scalar_set(parameter_find(&right.ns, "control/position/kp"), 30);
 
     parameter_scalar_set(parameter_find(&right.ns, "control/limits/current"), 2.);
     parameter_scalar_set(parameter_find(&left.ns, "control/limits/current"), 2.);
