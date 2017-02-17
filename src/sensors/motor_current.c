@@ -14,7 +14,7 @@
 #endif
 
 #define MOTOR_NB_CHANNELS 2
-#define DMA_BUFFER_SIZE (128)
+#define DMA_BUFFER_SIZE 16
 
 /* Trigger ADC on Timer 4, Channel 4. */
 #define EXTSEL_TIM4_CC4 0x9

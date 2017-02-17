@@ -10,7 +10,7 @@
 
 #define TICKS_PER_RADIAN (12 * 100 / (2 * M_PI))  // 12 ticks times 100 reduction
 
-#define LOOP_FREQUENCY 100.0  // Hz
+#define LOOP_FREQUENCY 200.0  // Hz
 #define VELOCITY_SMOOTHING_FACTOR 0.5
 
 static void setup_timer(stm32_tim_t *tmr);

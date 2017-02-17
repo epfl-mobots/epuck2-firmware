@@ -8,7 +8,7 @@
 #include "motor_controller.h"
 #include "motor_pwm.h"
 
-#define CONTROL_FREQUENCY_HZ 200
+#define CONTROL_FREQUENCY_HZ 1000
 
 
 enum motor_enum {
