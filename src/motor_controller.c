@@ -6,10 +6,11 @@
 #include <math.h>
 #include <string.h>
 
-#define KTHETA      51.41
-#define KXD         -0.2511
-#define KTHETAD     7.5385
+#define KTHETA      11
+#define KXD         -1.58
+#define KTHETAD     1.7
 #define RWHEEL      0.034
+
 
 
 static float safe_get_current(motor_controller_t *controller);
@@ -17,6 +18,7 @@ static float safe_get_velocity(motor_controller_t *controller);
 static float safe_get_position(motor_controller_t *controller);
 static float safe_get_theta(motor_controller_t *controller);
 static float safe_get_thetad(motor_controller_t *controller);
+
 
 
 float motor_controller_limit_symmetric(float value, float limit);
@@ -110,87 +112,105 @@ void motor_controller_set_prescaler(motor_controller_t *controller, int velocity
 
 float motor_controller_process(motor_controller_t *controller)
 {
-//    /* Update controller gains. */
-//    pid_param_update(&controller->position.params, &controller->position.pid);
-//    pid_param_update(&controller->velocity.params, &controller->velocity.pid);
-//    pid_param_update(&controller->current.params, &controller->current.pid);
-//
-//    /* Position control */
-//    float max_velocity = parameter_scalar_get(&controller->limits.velocity);
-//    float max_acceleration = parameter_scalar_get(&controller->limits.acceleration);
-//
-//    controller->position.divider_counter ++;
-//    if (controller->mode >= MOTOR_CONTROLLER_POSITION &&
-//        controller->position.divider_counter >= controller->position.divider) {
-//        controller->position.divider_counter = 0;
-//        float delta_t = 1.0 / controller->position.pid.frequency;
-//        float desired_acceleration = motor_controller_vel_ramp(controller->position.setpoint,
-//                                                               controller->velocity.target_setpoint,
-//                                                               controller->position.target_setpoint,
-//                                                               delta_t,
-//                                                               max_velocity,
-//                                                               max_acceleration);
-//        controller->position.setpoint =
-//            motor_controller_pos_setpt_interpolation(controller->position.setpoint,
-//                                                     controller->velocity.target_setpoint,
-//                                                     desired_acceleration,
-//                                                     delta_t);
-//        controller->velocity.target_setpoint =
-//            motor_controller_vel_setpt_interpolation(controller->velocity.target_setpoint,
-//                                                     desired_acceleration,
-//                                                     delta_t);
-//        float position = safe_get_position(controller);
-//        controller->position.error = position - controller->position.setpoint;
-//        controller->velocity.setpoint = controller->velocity.target_setpoint +
-//                                        pid_process(&controller->position.pid,
-//                                                    controller->position.error);
-//    }
-//
-//    if (controller->mode == MOTOR_CONTROLLER_VELOCITY) {
-//        float delta_t = 1.0 / controller->velocity.pid.frequency;
-//        /* Clamp velocity */
-//        controller->velocity.target_setpoint =
-//            motor_controller_limit_symmetric(controller->velocity.target_setpoint,
-//                                             max_velocity);
-//        float delta_velocity = controller->velocity.target_setpoint
-//                               - controller->velocity.setpoint;
-//        delta_velocity = motor_controller_limit_symmetric(delta_velocity,
-//                                                          delta_t * max_acceleration);
-//        controller->velocity.setpoint += delta_velocity;
-//    }
-//
-//    /* Velocity control */
-//    controller->velocity.divider_counter ++;
-//    if (controller->mode >= MOTOR_CONTROLLER_VELOCITY &&
-//        controller->velocity.divider_counter >= controller->velocity.divider) {
-//        controller->velocity.divider_counter = 0;
-//        float velocity = safe_get_velocity(controller);
-//        controller->velocity.error = velocity - controller->velocity.setpoint;
-//        controller->current.setpoint = pid_process(&controller->velocity.pid,
-//                                                   controller->velocity.error);
-//    }
-//
-//    /* Current (torque) control. */
-//    float max_current = parameter_scalar_get(&controller->limits.current);
-//    if (controller->mode == MOTOR_CONTROLLER_CURRENT) {
-//        controller->current.setpoint = controller->current.target_setpoint;
-//    }
-//    controller->current.setpoint =
-//        motor_controller_limit_symmetric(controller->current.setpoint,
-//                                         max_current);
-//
-//    float current = safe_get_current(controller);
-//    controller->current.error = current - controller->current.setpoint;
-//
-//    return pid_process(&controller->current.pid, controller->current.error);
+    /* Update controller gains. */
+    pid_param_update(&controller->position.params, &controller->position.pid);
+    pid_param_update(&controller->velocity.params, &controller->velocity.pid);
+    pid_param_update(&controller->current.params, &controller->current.pid);
 
+    /* Position control */
+    float max_velocity = parameter_scalar_get(&controller->limits.velocity);
+    float max_acceleration = parameter_scalar_get(&controller->limits.acceleration);
+
+    controller->position.divider_counter ++;
+    if (controller->mode >= MOTOR_CONTROLLER_POSITION &&
+        controller->position.divider_counter >= controller->position.divider) {
+        controller->position.divider_counter = 0;
+        float delta_t = 1.0 / controller->position.pid.frequency;
+        float desired_acceleration = motor_controller_vel_ramp(controller->position.setpoint,
+                                                               controller->velocity.target_setpoint,
+                                                               controller->position.target_setpoint,
+                                                               delta_t,
+                                                               max_velocity,
+                                                               max_acceleration);
+        controller->position.setpoint =
+            motor_controller_pos_setpt_interpolation(controller->position.setpoint,
+                                                     controller->velocity.target_setpoint,
+                                                     desired_acceleration,
+                                                     delta_t);
+        controller->velocity.target_setpoint =
+            motor_controller_vel_setpt_interpolation(controller->velocity.target_setpoint,
+                                                     desired_acceleration,
+                                                     delta_t);
+        float position = safe_get_position(controller);
+        controller->position.error = position - controller->position.setpoint;
+        controller->velocity.setpoint = controller->velocity.target_setpoint +
+                                        pid_process(&controller->position.pid,
+                                                    controller->position.error);
+    }
+
+    if (controller->mode == MOTOR_CONTROLLER_VELOCITY) {
+        float delta_t = 1.0 / controller->velocity.pid.frequency;
+        /* Clamp velocity */
+        controller->velocity.target_setpoint =
+            motor_controller_limit_symmetric(controller->velocity.target_setpoint,
+                                             max_velocity);
+        float delta_velocity = controller->velocity.target_setpoint
+                               - controller->velocity.setpoint;
+        delta_velocity = motor_controller_limit_symmetric(delta_velocity,
+                                                          delta_t * max_acceleration);
+        controller->velocity.setpoint += delta_velocity;
+    }
+
+    /* Velocity control */
+    controller->velocity.divider_counter ++;
+    if (controller->mode >= MOTOR_CONTROLLER_VELOCITY &&
+        controller->velocity.divider_counter >= controller->velocity.divider) {
+        controller->velocity.divider_counter = 0;
+        float velocity = safe_get_velocity(controller);
+        controller->velocity.error = velocity - controller->velocity.setpoint;
+        controller->current.setpoint = pid_process(&controller->velocity.pid,
+                                                   controller->velocity.error);
+    }
+
+    /* Current (torque) control. */
+
+
+    float max_current = parameter_scalar_get(&controller->limits.current);
+    if (controller->mode == MOTOR_CONTROLLER_CURRENT) {
+        controller->current.setpoint = controller->current.target_setpoint;
+    }
+    controller->current.setpoint =
+        motor_controller_limit_symmetric(controller->current.setpoint,
+                                         max_current);
+
+    float current = safe_get_current(controller);
+    controller->current.error = current - controller->current.setpoint;
+
+    return pid_process(&controller->current.pid, controller->current.error);
+
+}
+
+float segway_voltage_setpoint(motor_controller_t *controller,void *arg)
+{
+    float setpoint=0;
     float velocity = safe_get_velocity(controller);
     float theta = safe_get_theta(controller);
     float thetad = safe_get_thetad(controller);
+    enum motor_enum {
+    LEFT=0,
+    RIGHT=1
+    };
+
+    if ((int)arg == LEFT) {
+    setpoint = KTHETA*theta-KTHETAD*thetad-KXD*velocity*RWHEEL;
+    }
+    else
+    {
+    setpoint = -KTHETA*theta+KTHETAD*thetad+KXD*velocity*RWHEEL;
+    }
 
 
-    return -0*KTHETA*theta+KTHETAD*thetad-KXD*velocity*RWHEEL;
-
+    return setpoint;
 }
 
 static float safe_get_current(motor_controller_t *controller)

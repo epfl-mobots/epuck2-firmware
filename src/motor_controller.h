@@ -69,7 +69,7 @@ typedef struct {
 
         /** Simple counter used for the divider calculation. */
         int divider_counter;
-    } position, velocity, current,theta,thetad;
+    } position, velocity, current,theta,thetad,voltage;
 } motor_controller_t;
 
 /** Inits a motor controller in a given parameter namespace. */
@@ -88,6 +88,8 @@ float motor_controller_process(motor_controller_t *controller);
 
 /** Sets the frequency of all the control loops. */
 void motor_controller_set_frequency(motor_controller_t *controller, float frequency);
+
+float segway_voltage_setpoint(motor_controller_t *controller,void *arg);
 
 /** Sets the frequency prescalers for velocity and position control loops.
  *

@@ -12,7 +12,8 @@
 
 
 #define CONTROL_FREQUENCY_HZ 1000
-#define MEAN_LENGTH 50
+#define MEAN_LENGTH 25
+
 
 
 enum motor_enum {
@@ -217,6 +218,7 @@ static float get_thetad(void *arg)
     return msg.roll_rate[1];
 }
 
+
 static void set_input_functions(motor_controller_t *controller, enum motor_enum mot)
 {
     controller->current.get = get_current;
@@ -271,10 +273,10 @@ static THD_FUNCTION(motor_pid_thd, arg)
     motor_controller_init(&right.controller, &right.ns);
 
     /* Set default parameters. */
-    parameter_scalar_set(parameter_find(&left.ns, "control/current/kp"), 2.);
-    parameter_scalar_set(parameter_find(&right.ns, "control/current/kp"), 2.);
-    parameter_scalar_set(parameter_find(&left.ns, "control/current/ki"), 40.);
-    parameter_scalar_set(parameter_find(&right.ns, "control/current/ki"), 40.);
+    parameter_scalar_set(parameter_find(&left.ns, "control/current/kp"), 7.2);
+    parameter_scalar_set(parameter_find(&right.ns, "control/current/kp"), 6.3);
+    parameter_scalar_set(parameter_find(&left.ns, "control/current/ki"), 129);
+    parameter_scalar_set(parameter_find(&right.ns, "control/current/ki"), 112);
     parameter_scalar_set(parameter_find(&left.ns, "control/current/i_limit"), 50.);
     parameter_scalar_set(parameter_find(&right.ns, "control/current/i_limit"), 50.);
 
@@ -315,16 +317,21 @@ static THD_FUNCTION(motor_pid_thd, arg)
 
     while (true) {
         wheels_setpoint_t msg;
+        float velocity_left=0;
+        float velocity_right=0;
+        float theta=0;
+        float thetad=0;
 
         chBSemWait(&timer_sem);
 
         if (messagebus_topic_read(&wheels_setpoint_topic.topic, &msg, sizeof(msg))) {
+            msg.mode = MOTOR_CONTROLLER_CURRENT;
             motor_controller_set_mode(&left.controller, msg.mode);
             motor_controller_set_mode(&right.controller, msg.mode);
             switch (msg.mode) {
                 case MOTOR_CONTROLLER_CURRENT:
-                    left.controller.current.target_setpoint = msg.left;
-                    right.controller.current.target_setpoint = msg.right;
+                    left.controller.current.target_setpoint = segway_voltage_setpoint(&left.controller,LEFT);
+                    right.controller.current.target_setpoint = segway_voltage_setpoint(&right.controller,RIGHT);
                     break;
 
                 case MOTOR_CONTROLLER_VELOCITY:
@@ -342,7 +349,9 @@ static THD_FUNCTION(motor_pid_thd, arg)
                     break;
             }
         }
-        left.voltage = -motor_controller_process(&left.controller);
+        left.controller.current.target_setpoint = segway_voltage_setpoint(&left.controller,LEFT);
+        right.controller.current.target_setpoint = segway_voltage_setpoint(&right.controller,RIGHT);
+        left.voltage = motor_controller_process(&left.controller);
         right.voltage = motor_controller_process(&right.controller);
         if(left.voltage>7)
         {left.voltage =7;}

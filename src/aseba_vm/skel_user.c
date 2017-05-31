@@ -25,7 +25,7 @@
 
 #include "motor_pid_thread.h"
 
-#define MEAN_LENGTH 25
+#define MEAN_LENGTH 10
 
 /* Struct used to share Aseba parameters between C-style API and Aseba. */
 static parameter_t aseba_settings[SETTINGS_COUNT];
