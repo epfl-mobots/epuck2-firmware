@@ -4,11 +4,15 @@
 #include "sensors/battery_level.h"
 #include "sensors/motor_current.h"
 #include "sensors/encoder.h"
+#include "sensors/imu.h"
 #include "motor_pid_thread.h"
 #include "motor_controller.h"
 #include "motor_pwm.h"
+#include "madgwick.h"
+
 
 #define CONTROL_FREQUENCY_HZ 1000
+#define MEAN_LENGTH 50
 
 
 enum motor_enum {
@@ -133,14 +137,97 @@ static float get_position(void *arg)
     }
 }
 
+static float get_theta(void *arg)
+{
+    messagebus_topic_t *topic;
+    imu_msg_t msg;
+    topic = messagebus_find_topic(&bus, "/imu");
+
+    if (topic == NULL) {
+        return 0.;
+    }
+
+    if (messagebus_topic_read(topic, &msg, sizeof(msg)) == false) {
+        return 0.;
+    }
+    messagebus_topic_read(topic, &msg, sizeof(msg));
+
+
+        MadgwickAHRSupdateIMU(msg.roll_rate[0],msg.roll_rate[1],msg.roll_rate[2],
+        msg.acceleration[0],msg.acceleration[1],msg.acceleration[2]);
+
+        float R31 = 2*(q1*q3-q0*q2);
+        float R33 = q0*q0-q1*q1-q2*q2+q3*q3;
+        float theta_angle = 0;
+
+        if(R33>0)
+        {
+            if(-R31>0){theta_angle=atan2(-R31,R33)/(2*3.14154)*360;}
+            else{theta_angle=+atan2(-R31,R33)/(2*3.14154)*360;}
+        }
+        else if(R33<0)
+        {
+             if(-R31>0){theta_angle=180-atan2(-R31,R33)/(2*3.14154)*360;}
+            else{theta_angle=-180-atan2(-R31,R33)/(2*3.14154)*360;}
+        }
+        else if (R33==0)
+        {
+            if(-R31>0){theta_angle=90;}
+            else{theta_angle=-90;}
+        }
+
+        float theta_mean=0;
+
+
+        static float tab_theta[MEAN_LENGTH];
+
+
+         for (int i = MEAN_LENGTH-2; i >= 0; i--) {
+         tab_theta [i+1] =tab_theta[i];
+
+         theta_mean+=tab_theta [i+1];
+
+         }
+
+         theta_mean =(theta_mean+theta_angle)/MEAN_LENGTH;
+
+
+         tab_theta [0]=theta_angle;
+
+    return theta_mean*2*3.14154/360;
+
+}
+
+static float get_thetad(void *arg)
+{
+    messagebus_topic_t *topic;
+    imu_msg_t msg;
+    topic = messagebus_find_topic(&bus, "/imu");
+
+    if (topic == NULL) {
+        return 0.;
+    }
+
+    if (messagebus_topic_read(topic, &msg, sizeof(msg)) == false) {
+        return 0.;
+    }
+    messagebus_topic_read(topic, &msg, sizeof(msg));
+
+
+    return msg.roll_rate[1];
+}
+
 static void set_input_functions(motor_controller_t *controller, enum motor_enum mot)
 {
     controller->current.get = get_current;
     controller->current.get_arg = (void *)mot;
     controller->velocity.get = get_velocity;
     controller->velocity.get_arg = (void *)mot;
-    controller->position.get = get_position;
-    controller->position.get_arg = (void *)mot;
+    controller->theta.get = get_theta;
+    controller->theta.get_arg = (void *)mot;
+    controller->thetad.get = get_thetad;
+    controller->thetad.get_arg = (void *)mot;
+
 }
 
 static void wait_for_services(void)
@@ -255,8 +342,17 @@ static THD_FUNCTION(motor_pid_thd, arg)
                     break;
             }
         }
-        left.voltage = motor_controller_process(&left.controller);
+        left.voltage = -motor_controller_process(&left.controller);
         right.voltage = motor_controller_process(&right.controller);
+        if(left.voltage>7)
+        {left.voltage =7;}
+        if(left.voltage<-7)
+        {left.voltage =-7;}
+
+        if(right.voltage>7)
+        {right.voltage =7;}
+        if(right.voltage<-7)
+        {right.voltage =-7;}
 
         left_wheel_voltage_set(&bus, left.voltage);
         right_wheel_voltage_set(&bus, right.voltage);

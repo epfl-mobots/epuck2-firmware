@@ -8,6 +8,7 @@ extern "C" {
 typedef struct {
     float acceleration[3];
     float roll_rate[3];
+    float theta;
 } imu_msg_t;
 
 /** Starts the Inertial Motion Unit (IMU) publisher. */

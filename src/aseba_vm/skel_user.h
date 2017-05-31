@@ -12,7 +12,7 @@ extern "C" {
 #include "sensors/proximity.h"
 
 #include "body_leds.h"
-
+#include "madgwick.h"
 
 /** Number of variables usable by the Aseba script. */
 #define VM_VARIABLES_FREE_SPACE 256
@@ -68,6 +68,9 @@ struct _vmVariables {
 
     sint16 acceleration[3];
     sint16 gyro[3];
+    sint16 theta;
+    sint16 phi;
+    sint16 psi;
 
     /* Led values as percentages. */
     uint16 leds[BODY_LED_COUNT];

@@ -21,8 +21,11 @@
 #include "sensors/motor_current.h"
 #include "sensors/imu.h"
 #include "audio/audio_thread.h"
+#include "madgwick.h"
 
 #include "motor_pid_thread.h"
+
+#define MEAN_LENGTH 25
 
 /* Struct used to share Aseba parameters between C-style API and Aseba. */
 static parameter_t aseba_settings[SETTINGS_COUNT];
@@ -97,6 +100,10 @@ const AsebaVMDescription vmDescription = {
 
         {3, "acc"},
         {3, "gyro"},
+        {1, "theta"},
+        {1, "phi"},
+        {1, "psi"},
+
         {BODY_LED_COUNT, "leds"},
 
         {1, "motor.left.setpoint.current"},
@@ -363,6 +370,63 @@ void aseba_read_variables_from_system(AsebaVMState *vm)
             vmVariables.acceleration[i] = msg.acceleration[i] * 1000;
             vmVariables.gyro[i] = msg.roll_rate[i] * 1000;
         }
+
+        MadgwickAHRSupdateIMU(msg.roll_rate[0],msg.roll_rate[1],msg.roll_rate[2],
+        msg.acceleration[0],msg.acceleration[1],msg.acceleration[2]);
+        float R12 = 2*(q1*q2-q0*q3);
+        float R22 = q0*q0-q1*q1+q2*q2-q3*q3;
+        float R31 = 2*(q1*q3-q0*q2);
+        float R32 = 2*(q2*q3+q0*q1);
+        float R33 = q0*q0-q1*q1-q2*q2+q3*q3;
+        float phi_angle = asin(R32)/(2*3.14154)*360;
+        float theta_angle = 0;
+        if(R33>0)
+        {
+            if(-R31>0){theta_angle=atan2(-R31,R33)/(2*3.14154)*360;}
+            else{theta_angle=+atan2(-R31,R33)/(2*3.14154)*360;}
+        }
+        else if(R33<0)
+        {
+             if(-R31>0){theta_angle=180-atan2(-R31,R33)/(2*3.14154)*360;}
+            else{theta_angle=-180-atan2(-R31,R33)/(2*3.14154)*360;}
+        }
+        else if (R33==0)
+        {
+            if(-R31>0){theta_angle=90;}
+            else{theta_angle=-90;}
+        }
+
+        float psi_angle = atan2(-R12,R22)/(2*3.14154)*360;
+
+        float theta_mean=0;
+        float phi_mean =0;
+        float psi_mean =0;
+
+        static float tab_theta[MEAN_LENGTH];
+        static float tab_phi[MEAN_LENGTH];
+        static float tab_psi[MEAN_LENGTH];
+
+         for (int i = MEAN_LENGTH-2; i >= 0; i--) {
+         tab_theta [i+1] =tab_theta[i];
+         tab_phi[i+1] =tab_phi[i];
+         tab_psi[i+1] =tab_psi[i];
+         theta_mean+=tab_theta [i+1];
+         phi_mean+=tab_phi [i+1];
+         psi_mean+=tab_psi [i+1];
+         }
+
+         theta_mean =(theta_mean+theta_angle)/MEAN_LENGTH;
+         phi_mean=(phi_mean+phi_angle)/MEAN_LENGTH;
+         psi_mean=(psi_mean+psi_angle)/MEAN_LENGTH;
+
+
+         tab_theta [0]=theta_angle;
+         tab_phi [0]=phi_angle;
+         tab_psi[0]=psi_angle;
+
+        vmVariables.theta=theta_mean;
+        vmVariables.phi=phi_mean;
+        vmVariables.psi=psi_mean;
     }
 
     /* Read motor current */

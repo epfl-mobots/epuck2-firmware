@@ -8,6 +8,7 @@
 
 #define IMU_INTERRUPT_EVENT 1
 
+
 /** Inits all the IMU peripherals. */
 static void imu_low_level_init(mpu60X0_t *mpu)
 {
@@ -33,7 +34,7 @@ static void imu_low_level_init(mpu60X0_t *mpu)
 
     mpu60X0_setup(mpu, MPU60X0_ACC_FULL_RANGE_2G
                   | MPU60X0_GYRO_FULL_RANGE_250DPS
-                  | MPU60X0_SAMPLE_RATE_DIV(100)
+                  | MPU60X0_SAMPLE_RATE_DIV(10)
                   | MPU60X0_LOW_PASS_FILTER_6);
 }
 

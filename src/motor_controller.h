@@ -69,7 +69,7 @@ typedef struct {
 
         /** Simple counter used for the divider calculation. */
         int divider_counter;
-    } position, velocity, current;
+    } position, velocity, current,theta,thetad;
 } motor_controller_t;
 
 /** Inits a motor controller in a given parameter namespace. */
