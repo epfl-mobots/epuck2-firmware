@@ -21,7 +21,7 @@
 #include "sensors/motor_current.h"
 #include "sensors/imu.h"
 #include "audio/audio_thread.h"
-#include "madgwick.h"
+#include "madgwickAHRS.h"
 
 #include "motor_pid_thread.h"
 

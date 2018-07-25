@@ -1,5 +1,6 @@
 #include <ch.h>
 #include <hal.h>
+#include <math.h>
 #include "main.h"
 #include "sensors/battery_level.h"
 #include "sensors/motor_current.h"
@@ -8,7 +9,7 @@
 #include "motor_pid_thread.h"
 #include "motor_controller.h"
 #include "motor_pwm.h"
-#include "madgwick.h"
+#include "madgwickAHRS.h"
 
 
 #define CONTROL_FREQUENCY_HZ 1000

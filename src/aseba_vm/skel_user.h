@@ -12,7 +12,7 @@ extern "C" {
 #include "sensors/proximity.h"
 
 #include "body_leds.h"
-#include "madgwick.h"
+#include "madgwickAHRS.h"
 
 /** Number of variables usable by the Aseba script. */
 #define VM_VARIABLES_FREE_SPACE 256

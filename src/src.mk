@@ -1,0 +1,120 @@
+
+INCDIR += ./fatfs/src/
+
+INCDIR += ./src/board
+
+INCDIR += src/aseba_vm/../../aseba
+
+INCDIR += src/lwip/bindings
+
+INCDIR += src/lwip/config
+
+INCDIR += src/lwip/lwip/src/include
+
+INCDIR += src/lwip/lwip/src/include/ipv4
+
+INCDIR += src/Madgwick/
+
+INCDIR += src
+
+
+CSRC += ./fatfs/src/ff.c
+CSRC += ./src/audio/audio_dac.c
+CSRC += ./src/audio/audio_thread.c
+CSRC += ./src/audio/audio_wav.c
+CSRC += ./src/battery_protection.c
+CSRC += ./src/board/board.c
+CSRC += ./src/body_leds.c
+CSRC += ./src/cmd.c
+CSRC += ./src/encoder.c
+CSRC += ./src/exti.c
+CSRC += ./src/fatfs_diskio.c
+CSRC += ./src/fatfs_syscall.c
+CSRC += ./src/flash/flash.c
+CSRC += ./src/main.c
+CSRC += ./src/memory_protection.c
+CSRC += ./src/motor_pwm.c
+CSRC += ./src/panic.c
+CSRC += ./src/sdcard.c
+CSRC += ./src/sensors/battery_level.c
+CSRC += ./src/sensors/imu.c
+CSRC += ./src/sensors/motor_current.c
+CSRC += ./src/sensors/motor_pid_thread.c
+CSRC += ./src/sensors/mpu60X0.c
+CSRC += ./src/sensors/proximity.c
+CSRC += ./src/sensors/range.c
+CSRC += ./src/sensors/vl6180x/vl6180x_chibios.c
+CSRC += ./src/usbconf.c
+CSRC += src/aseba_vm/../../aseba/transport/buffer/vm-buffer.c
+CSRC += src/aseba_vm/../../aseba/transport/can/can-buffer.c
+CSRC += src/aseba_vm/../../aseba/transport/can/can-net.c
+CSRC += src/aseba_vm/../../aseba/vm/natives.c
+CSRC += src/aseba_vm/../../aseba/vm/vm.c
+CSRC += src/aseba_vm/aseba_node.c
+CSRC += src/aseba_vm/aseba_vm/aseba_can_interface.c
+CSRC += src/aseba_vm/skel_user.c
+CSRC += src/chibios-syscalls/malloc_lock.c
+CSRC += src/chibios-syscalls/newlib_syscalls.c
+CSRC += src/lwip/bindings/arch/sys_arch.c
+CSRC += src/lwip/bindings/lwipthread.c
+CSRC += src/lwip/bindings/serial_io.c
+CSRC += src/lwip/lwip/src/api/api_lib.c
+CSRC += src/lwip/lwip/src/api/api_msg.c
+CSRC += src/lwip/lwip/src/api/err.c
+CSRC += src/lwip/lwip/src/api/netbuf.c
+CSRC += src/lwip/lwip/src/api/netdb.c
+CSRC += src/lwip/lwip/src/api/netifapi.c
+CSRC += src/lwip/lwip/src/api/sockets.c
+CSRC += src/lwip/lwip/src/api/tcpip.c
+CSRC += src/lwip/lwip/src/core/def.c
+CSRC += src/lwip/lwip/src/core/dhcp.c
+CSRC += src/lwip/lwip/src/core/dns.c
+CSRC += src/lwip/lwip/src/core/inet_chksum.c
+CSRC += src/lwip/lwip/src/core/init.c
+CSRC += src/lwip/lwip/src/core/ipv4/autoip.c
+CSRC += src/lwip/lwip/src/core/ipv4/icmp.c
+CSRC += src/lwip/lwip/src/core/ipv4/igmp.c
+CSRC += src/lwip/lwip/src/core/ipv4/ip4.c
+CSRC += src/lwip/lwip/src/core/ipv4/ip4_addr.c
+CSRC += src/lwip/lwip/src/core/ipv4/ip_frag.c
+CSRC += src/lwip/lwip/src/core/ipv6/dhcp6.c
+CSRC += src/lwip/lwip/src/core/ipv6/ethip6.c
+CSRC += src/lwip/lwip/src/core/ipv6/icmp6.c
+CSRC += src/lwip/lwip/src/core/ipv6/inet6.c
+CSRC += src/lwip/lwip/src/core/ipv6/ip6.c
+CSRC += src/lwip/lwip/src/core/ipv6/ip6_addr.c
+CSRC += src/lwip/lwip/src/core/ipv6/ip6_frag.c
+CSRC += src/lwip/lwip/src/core/ipv6/mld6.c
+CSRC += src/lwip/lwip/src/core/ipv6/nd6.c
+CSRC += src/lwip/lwip/src/core/mem.c
+CSRC += src/lwip/lwip/src/core/memp.c
+CSRC += src/lwip/lwip/src/core/netif.c
+CSRC += src/lwip/lwip/src/core/pbuf.c
+CSRC += src/lwip/lwip/src/core/raw.c
+CSRC += src/lwip/lwip/src/core/snmp/asn1_dec.c
+CSRC += src/lwip/lwip/src/core/snmp/asn1_enc.c
+CSRC += src/lwip/lwip/src/core/snmp/mib2.c
+CSRC += src/lwip/lwip/src/core/snmp/mib_structs.c
+CSRC += src/lwip/lwip/src/core/snmp/msg_in.c
+CSRC += src/lwip/lwip/src/core/snmp/msg_out.c
+CSRC += src/lwip/lwip/src/core/stats.c
+CSRC += src/lwip/lwip/src/core/sys.c
+CSRC += src/lwip/lwip/src/core/tcp.c
+CSRC += src/lwip/lwip/src/core/tcp_in.c
+CSRC += src/lwip/lwip/src/core/tcp_out.c
+CSRC += src/lwip/lwip/src/core/timers.c
+CSRC += src/lwip/lwip/src/core/udp.c
+CSRC += src/lwip/lwip/src/netif/slipif.c
+CSRC += src/msgbus/examples/chibios/port.c
+CSRC += ./src/cmp/cmp.c
+CSRC += ./src/config_flash_storage.c
+CSRC += ./src/motor_controller.c
+CSRC += ./src/sensors/vl6180x/vl6180x.c
+CSRC += src/cmp_mem_access/cmp_mem_access.c
+CSRC += src/crc/crc32.c
+CSRC += src/msgbus/messagebus.c
+CSRC += src/parameter/parameter.c
+CSRC += src/parameter/parameter_msgpack.c
+CSRC += src/parameter/parameter_print.c
+CSRC += src/pid/pid.c
+CSRC += src/Madgwick/MadgwickAHRS.c
