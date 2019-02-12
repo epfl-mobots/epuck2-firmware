@@ -1,6 +1,6 @@
 Epuck Firmware
 ==============
-Firmware for the Epuck 2
+Firmware for the Epuck 2 prototype, the one used at the begining of the e-puck2 project by 4 students on their semester projects.
 
 ## Requirements
 
